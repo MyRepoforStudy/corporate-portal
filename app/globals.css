@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tailwind's white/gray palette is redefined here as CSS variables so every
+   existing bg-white / text-gray-* / border-gray-* utility across the app
+   automatically flips under the .dark class - see tailwind.config.ts. This
+   avoids hand-adding dark: variants to every one of the ~80 components that
+   already use the standard gray scale. `black` is intentionally left as a
+   static Tailwind color (not themed) since bg-black/30 is used for modal
+   backdrops, which must stay dark in both themes. */
+:root {
+  --c-white: 255 255 255;
+  --c-gray-50: 249 250 251;
+  --c-gray-100: 243 244 246;
+  --c-gray-200: 229 231 235;
+  --c-gray-300: 209 213 219;
+  --c-gray-400: 156 163 175;
+  --c-gray-500: 107 114 128;
+  --c-gray-600: 75 85 99;
+  --c-gray-700: 55 65 81;
+  --c-gray-800: 31 41 55;
+  --c-gray-900: 17 24 39;
+}
+
+.dark {
+  --c-white: 24 24 27;
+  --c-gray-50: 39 39 42;
+  --c-gray-100: 63 63 70;
+  --c-gray-200: 82 82 91;
+  --c-gray-300: 113 113 122;
+  --c-gray-400: 161 161 170;
+  --c-gray-500: 212 212 216;
+  --c-gray-600: 228 228 231;
+  --c-gray-700: 244 244 245;
+  --c-gray-800: 244 244 245;
+  --c-gray-900: 255 255 255;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-enter 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
+@keyframes mark-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9) var(--mark-rotate, rotate(0deg));
+  }
+  to {
+    opacity: 0.08;
+    transform: translateY(0) scale(1) var(--mark-rotate, rotate(0deg));
+  }
+}
+
+.mark-enter {
+  animation: mark-enter 1.1s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark-enter {
+    animation: none;
+    opacity: 0.08;
+  }
+}
+
+@keyframes chart-node-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chart-node-enter {
+  animation: chart-node-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes chart-line-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.chart-line-enter {
+  animation: chart-line-grow 0.25s ease-out both;
+  transform-origin: top;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-node-enter,
+  .chart-line-enter {
+    animation: none;
+  }
+}

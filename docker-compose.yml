@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: portal
+      POSTGRES_DB: corporate_portal
+    ports:
+      - "5432:5432"
+    volumes:
+      - portal_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portal -d corporate_portal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-off job: applies Prisma migrations before the app starts.
+  # Uses the "builder" stage, which still has the full node_modules
+  # (including the prisma CLI) - the runtime "runner" image does not.
+  # Mirrors how this would be run as a k8s initContainer/Job.
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+      args:
+        HTTP_PROXY: "${HTTP_PROXY:-}"
+        HTTPS_PROXY: "${HTTPS_PROXY:-}"
+        NO_PROXY: "${NO_PROXY:-}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://portal:portal@postgres:5432/corporate_portal?schema=public"
+      # Read by prisma/seed.ts when `prisma migrate reset` auto-runs the seed,
+      # or when running the seed manually via this service.
+      ADMIN_LDAP_UID: "${ADMIN_LDAP_UID:-admin}"
+    command: ["npx", "prisma", "migrate", "deploy"]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HTTP_PROXY: "${HTTP_PROXY:-}"
+        HTTPS_PROXY: "${HTTPS_PROXY:-}"
+        NO_PROXY: "${NO_PROXY:-}"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: "postgresql://portal:portal@postgres:5432/corporate_portal?schema=public"
+      NEXTAUTH_URL: "${NEXTAUTH_URL:-http://localhost:3000}"
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET}"
+      LDAP_URL: "${LDAP_URL}"
+      LDAP_BIND_DN: "${LDAP_BIND_DN}"
+      LDAP_BIND_PASSWORD: "${LDAP_BIND_PASSWORD}"
+      LDAP_BASE_DN: "${LDAP_BASE_DN}"
+      LDAP_SEARCH_FILTER: "${LDAP_SEARCH_FILTER}"
+      LDAP_SYNC_FILTER: "${LDAP_SYNC_FILTER:-}"
+      LDAP_SYNC_BASE_DN: "${LDAP_SYNC_BASE_DN:-}"
+      AUTH_DEV_MODE: "${AUTH_DEV_MODE:-false}"
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persists uploaded news images across container recreates/rebuilds -
+      # otherwise they'd live only in the container's writable layer.
+      - portal_uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  portal_pgdata:
+  portal_uploads:

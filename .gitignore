@@ -1,0 +1,21 @@
+node_modules
+.next
+out
+build
+dist
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+.DS_Store
+*.pem
+.vercel
+next-env.d.ts
+*.tsbuildinfo
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Claude Code agent tooling (not part of the app)
+/.agents/
+/.claude/skills/
+/.claude/settings.local.json

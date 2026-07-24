@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "corporate-portal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "server-inventory",
+      "runtimeExecutable": "C:\\Users\\b.muratbek\\Documents\\Base\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "C:\\Users\\b.muratbek\\Documents\\Base"],
+      "port": 8000
+    }
+  ]
+}
