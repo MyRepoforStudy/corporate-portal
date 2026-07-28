@@ -10,7 +10,7 @@ function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-function RailLink({
+function NavRow({
   href,
   label,
   icon: Icon,
@@ -23,39 +23,29 @@ function RailLink({
   active: boolean;
   external?: boolean;
 }) {
+  const className = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+    active
+      ? "bg-brand-600 font-medium text-white"
+      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+  }`;
   const content = (
     <>
-      <span
-        className={`flex h-11 w-11 items-center justify-center rounded-xl transition ${
-          active
-            ? "bg-brand-600 text-white"
-            : "bg-brand-50 text-brand-700 hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-900/50"
-        }`}
-      >
-        <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
-      </span>
-      <span className={`line-clamp-2 text-[10px] leading-tight ${active ? "text-gray-900" : "text-gray-500"}`}>
-        {label}
-      </span>
+      <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {external && <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-50" aria-hidden="true" />}
     </>
   );
 
   if (external) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        title={label}
-        className="flex shrink-0 flex-col items-center gap-1 px-1 py-1 text-center"
-      >
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
         {content}
       </a>
     );
   }
 
   return (
-    <Link href={href} title={label} className="flex shrink-0 flex-col items-center gap-1 px-1 py-1 text-center">
+    <Link href={href} className={className}>
       {content}
     </Link>
   );
@@ -73,26 +63,34 @@ export function IconSidebar({
   const pathname = usePathname();
 
   const links = [
-    { href: "/profile", label: dict.nav.profile, icon: User },
     { href: "/", label: dict.nav.home, icon: Home },
     { href: "/org-structure", label: dict.nav.orgStructure, icon: Building2 },
     { href: "/bookings", label: dict.nav.bookings, icon: CalendarClock },
+    { href: "/profile", label: dict.nav.profile, icon: User },
   ];
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-20 shrink-0 flex-col border-r border-gray-200 bg-white py-5 sm:flex">
-      <div className="flex flex-1 flex-col items-center gap-5 overflow-y-auto">
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-white py-4 dark:bg-gray-900 sm:flex">
+      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
         {links.map((link) => (
-          <RailLink key={link.href} {...link} active={isActive(pathname, link.href)} />
+          <NavRow key={link.href} {...link} active={isActive(pathname, link.href)} />
         ))}
-        {resourceLinks.length > 0 && <div className="h-px w-8 shrink-0 bg-gray-200" />}
-        {resourceLinks.map((link) => (
-          <RailLink key={link.id} href={link.url} label={link.title} icon={ExternalLink} active={false} external />
-        ))}
+
+        {resourceLinks.length > 0 && (
+          <>
+            <div className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+              {dict.nav.resourceLinks}
+            </div>
+            {resourceLinks.map((link) => (
+              <NavRow key={link.id} href={link.url} label={link.title} icon={ExternalLink} active={false} external />
+            ))}
+          </>
+        )}
       </div>
+
       {isAdmin && (
-        <div className="flex shrink-0 flex-col items-center pt-3">
-          <RailLink href="/admin" label={dict.nav.admin} icon={ShieldCheck} active={isActive(pathname, "/admin")} />
+        <div className="shrink-0 border-t border-gray-200 px-3 pt-3 dark:border-gray-800">
+          <NavRow href="/admin" label={dict.nav.admin} icon={ShieldCheck} active={isActive(pathname, "/admin")} />
         </div>
       )}
     </aside>

@@ -110,6 +110,9 @@ model Employee {
   user      User?
   workplace Workplace?
 
+  recognitionsGiven    Recognition[] @relation("RecognitionFrom")
+  recognitionsReceived Recognition[] @relation("RecognitionTo")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -209,6 +212,39 @@ model Booking {
 
   @@index([roomId, startTime, endTime])
   @@index([organizerId])
+}
+
+// Peer-to-peer public kudos shown on the home page - "X thanked Y for...".
+model Recognition {
+  id      String  @id @default(cuid())
+  title   String
+  message String?
+
+  fromEmployeeId String
+  fromEmployee   Employee @relation("RecognitionFrom", fields: [fromEmployeeId], references: [id])
+
+  toEmployeeId String
+  toEmployee   Employee @relation("RecognitionTo", fields: [toEmployeeId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([toEmployeeId])
+  @@index([createdAt])
+}
+
+// Admin-managed photo spotlight carousel for the home page ("Team members
+// in action") - separate from News since it's a lightweight rotating photo
+// gallery, not an article.
+model TeamSpotlight {
+  id       String @id @default(cuid())
+  imageUrl String
+  caption  String
+  order    Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
 }
 
 model Workplace {

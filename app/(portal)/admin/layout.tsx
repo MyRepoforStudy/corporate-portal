@@ -7,6 +7,7 @@ const ADMIN_LINKS = [
   { href: "/admin", label: "Обзор", adminOnly: false },
   { href: "/admin/news", label: "Новости", adminOnly: false },
   { href: "/admin/resource-links", label: "Ресурсы", adminOnly: false },
+  { href: "/admin/team-spotlights", label: "Команда в деле", adminOnly: false },
   { href: "/admin/holidays", label: "Праздники", adminOnly: false },
   { href: "/admin/departments", label: "Отделы", adminOnly: false },
   { href: "/admin/positions", label: "Должности", adminOnly: false },

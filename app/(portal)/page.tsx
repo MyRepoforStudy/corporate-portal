@@ -6,6 +6,9 @@ import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
 import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
+import { HomeStats } from "@/components/home/home-stats";
+import { RecognitionsWidget } from "@/components/home/recognitions-widget";
+import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel";
 import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
 import { getLocale, getDictionary } from "@/lib/i18n";
@@ -18,43 +21,73 @@ export default async function HomePage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
 
-  const [news, nearestBooking, employeesWithBirthdays, upcomingHolidays, recentHires] = await Promise.all([
-    prisma.news.findMany({
-      where: { isPublished: true },
-      orderBy: { createdAt: "desc" },
-      take: 9,
-    }),
-    prisma.booking.findFirst({
-      where: {
-        status: "CONFIRMED",
-        startTime: { gte: new Date() },
-        OR: [{ organizerId: userId }, { participants: { some: { id: userId } } }],
-      },
-      orderBy: { startTime: "asc" },
-      include: { room: true },
-    }),
-    prisma.employee.findMany({
-      where: { birthDate: { not: null } },
-      select: { id: true, fullName: true, birthDate: true, photoUrl: true, email: true, position: { select: { title: true } } },
-    }),
-    prisma.holiday.findMany({
-      where: { date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
-      orderBy: { date: "asc" },
-      take: 3,
-    }),
-    prisma.employee.findMany({
-      where: { hireDate: { not: null } },
-      include: { position: true, department: true },
-      orderBy: { hireDate: "desc" },
-      take: 3,
-    }),
-  ]);
+  const [
+    news,
+    nearestBooking,
+    employeesWithBirthdays,
+    upcomingHolidays,
+    recentHires,
+    recognitions,
+    currentUser,
+    teamSpotlights,
+  ] = await Promise.all([
+      prisma.news.findMany({
+        where: { isPublished: true },
+        orderBy: { createdAt: "desc" },
+        take: 9,
+      }),
+      prisma.booking.findFirst({
+        where: {
+          status: "CONFIRMED",
+          startTime: { gte: new Date() },
+          OR: [{ organizerId: userId }, { participants: { some: { id: userId } } }],
+        },
+        orderBy: { startTime: "asc" },
+        include: { room: true },
+      }),
+      prisma.employee.findMany({
+        where: { birthDate: { not: null } },
+        select: { id: true, fullName: true, birthDate: true, photoUrl: true, email: true, position: { select: { title: true } } },
+      }),
+      prisma.holiday.findMany({
+        where: { date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+        orderBy: { date: "asc" },
+        take: 3,
+      }),
+      prisma.employee.findMany({
+        where: { hireDate: { not: null } },
+        include: { position: true, department: true },
+        orderBy: { hireDate: "desc" },
+        take: 3,
+      }),
+      prisma.recognition.findMany({
+        include: {
+          fromEmployee: { select: { id: true, fullName: true, photoUrl: true } },
+          toEmployee: { select: { id: true, fullName: true, photoUrl: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }),
+      prisma.user.findUnique({ where: { id: userId }, select: { employeeId: true } }),
+      prisma.teamSpotlight.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
+    ]);
 
   const upcomingBirthdays = getUpcomingBirthdays(employeesWithBirthdays);
 
   return (
     <div className="space-y-6">
       <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
+
+      <HomeStats
+        nearestBooking={nearestBooking}
+        birthdaysCount={upcomingBirthdays.length}
+        newHiresCount={recentHires.length}
+        recognitionsCount={recognitions.length}
+        locale={locale}
+        dict={dict.home.stats}
+      />
+
+      <TeamSpotlightCarousel spotlights={teamSpotlights} dict={dict.home.teamSpotlight} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_260px]">
         <div>
@@ -70,6 +103,12 @@ export default async function HomePage() {
               dict={dict.home.birthdays}
             />
             <NewHiresWidget employees={recentHires} dict={dict.home.newHires} />
+            <RecognitionsWidget
+              recognitions={recognitions}
+              locale={locale}
+              dict={dict.home.recognitions}
+              canGive={!!currentUser?.employeeId}
+            />
             <HolidaysWidget
               holidays={upcomingHolidays}
               locale={locale}
