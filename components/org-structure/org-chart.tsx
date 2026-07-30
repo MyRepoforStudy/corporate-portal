@@ -208,6 +208,13 @@ export function OrgChart({
             {isRoot ? <RootBox node={currentNode} delay={0} /> : <CurrentDeptBar node={currentNode} dict={dict} />}
           </div>
 
+          {head && (
+            <div className="mt-4 w-full max-w-2xl">
+              <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">{dict.headLabel}</p>
+              <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} />
+            </div>
+          )}
+
           {(staff.length > 0 || currentNode.vacancies.length > 0) && (
             <div className="mt-6 w-full max-w-2xl space-y-4 border-t border-gray-200 pt-6">
               {staff.length > 0 && (
