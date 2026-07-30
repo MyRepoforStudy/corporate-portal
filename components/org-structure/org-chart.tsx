@@ -12,7 +12,6 @@ import {
 import { EmployeeCard } from "@/components/org-structure/employee-card";
 import { VacancyCard } from "@/components/org-structure/vacancy-card";
 import type { Dictionary, Locale } from "@/lib/i18n";
-import { formatEmployeesCount } from "@/lib/i18n/format";
 
 const ROOT_ID = "__root__";
 
@@ -125,10 +124,11 @@ function TeamPill({ node, onClick }: { node: DepartmentNode; onClick: () => void
     <button
       type="button"
       onClick={onClick}
-      className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:bg-gray-800 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+      title={node.name}
+      className="flex w-full items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:bg-gray-800 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
     >
-      {node.name}
-      {employeeTotal > 0 && <span className="ml-1 text-gray-400">{employeeTotal}</span>}
+      <span className="truncate">{node.name}</span>
+      {employeeTotal > 0 && <span className="shrink-0 text-gray-400">{employeeTotal}</span>}
     </button>
   );
 }
@@ -189,107 +189,68 @@ export function OrgChart({
         ))}
       </nav>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
-          <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
-            <div className="flex flex-wrap items-start justify-center gap-4">
-              {isRoot ? (
-                <RootBox node={currentNode} delay={0} />
-              ) : (
-                <DeptCard node={currentNode} size="lg" delay={0} showHeadName={!head} />
-              )}
-              {head && (
-                <div className="w-full max-w-[240px]">
-                  <p className="mb-1.5 text-center text-xs font-medium uppercase tracking-wide text-gray-400">
-                    {dict.headLabel}
-                  </p>
-                  <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} />
-                </div>
-              )}
-            </div>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
+        <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
+          <div className="flex flex-wrap items-stretch justify-center gap-4">
+            {isRoot ? (
+              <RootBox node={currentNode} delay={0} />
+            ) : (
+              <DeptCard node={currentNode} size="lg" delay={0} showHeadName={!head} />
+            )}
+            {head && (
+              <div className="w-full max-w-[220px]">
+                <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} variant="card" />
+              </div>
+            )}
+          </div>
 
-            {children.length === 0 && staff.length > 0 && (
-              <div className="mt-6 w-full max-w-2xl border-t border-gray-200 pt-6">
+          {(staff.length > 0 || currentNode.vacancies.length > 0) && (
+            <div className="mt-6 w-full max-w-2xl space-y-4 border-t border-gray-200 pt-6">
+              {staff.length > 0 && (
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {staff.map((employee) => (
                     <EmployeeCard key={employee.id} employee={employee} locale={locale} dict={dict.employeeModal} />
                   ))}
                 </div>
-              </div>
-            )}
-
-            {children.length > 0 && (
-              <>
-                <div className="chart-line-enter h-6 w-px bg-gray-300" />
-                <div className="flex w-full flex-wrap justify-center gap-x-8 gap-y-6 border-t border-gray-300 pt-6">
-                  {children.map((child, i) => {
-                    const grandchildren = publishedChildren(child);
-                    return (
-                      <div key={child.id} className="relative flex flex-col items-center gap-2.5">
-                        <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                        <div className="w-[170px]">
-                          <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
-                        </div>
-                        {grandchildren.length > 0 && (
-                          <div className="flex w-full max-w-[360px] flex-wrap justify-center gap-1.5">
-                            {grandchildren.map((grandchild) => (
-                              <TeamPill key={grandchild.id} node={grandchild} onClick={() => goTo(grandchild.id)} />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-4 xl:sticky xl:top-4">
-          {isRoot ? (
-            <p className="text-sm text-gray-500">{dict.chartSelectDepartment}</p>
-          ) : (
-            <>
-              <h3 className="mb-3 font-medium text-gray-900">
-                {currentNode.name}
-                <span className="ml-2 text-sm font-normal text-gray-500">
-                  {formatEmployeesCount(currentNode.employees.length, locale)}
-                </span>
-              </h3>
-              {currentNode.employees.length === 0 && currentNode.vacancies.length === 0 ? (
-                <p className="text-sm text-gray-500">{dict.noEmployeesInDept}</p>
-              ) : (
-                <div className="space-y-4">
-                  {head && (
-                    <div>
-                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">
-                        {dict.headLabel}
-                      </p>
-                      <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} />
-                    </div>
-                  )}
-                  {staff.length > 0 && (
-                    <div className="space-y-2">
-                      {staff.map((employee) => (
-                        <EmployeeCard key={employee.id} employee={employee} locale={locale} dict={dict.employeeModal} />
-                      ))}
-                    </div>
-                  )}
-                  {currentNode.vacancies.length > 0 && (
-                    <div>
-                      <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">
-                        {dict.vacanciesTitle}
-                      </p>
-                      <div className="space-y-2">
-                        {currentNode.vacancies.map((vacancy) => (
-                          <VacancyCard key={vacancy.id} vacancy={vacancy} label={dict.vacancyLabel} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              )}
+              {currentNode.vacancies.length > 0 && (
+                <div>
+                  <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">
+                    {dict.vacanciesTitle}
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {currentNode.vacancies.map((vacancy) => (
+                      <VacancyCard key={vacancy.id} vacancy={vacancy} label={dict.vacancyLabel} />
+                    ))}
+                  </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {children.length > 0 && (
+            <>
+              <div className="chart-line-enter h-6 w-px bg-gray-300" />
+              <div className="flex w-full flex-wrap justify-center gap-x-8 gap-y-6 border-t border-gray-300 pt-6">
+                {children.map((child, i) => {
+                  const grandchildren = publishedChildren(child);
+                  return (
+                    <div key={child.id} className="relative flex flex-col items-center gap-2.5">
+                      <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
+                      <div className="w-[170px]">
+                        <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
+                      </div>
+                      {grandchildren.length > 0 && (
+                        <div className="grid w-[360px] grid-cols-2 gap-1.5">
+                          {grandchildren.map((grandchild) => (
+                            <TeamPill key={grandchild.id} node={grandchild} onClick={() => goTo(grandchild.id)} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </>
           )}
         </div>
