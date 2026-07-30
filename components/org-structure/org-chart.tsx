@@ -76,39 +76,52 @@ function RootBox({ node, delay }: { node: DepartmentNode; delay: number }) {
   );
 }
 
+/** The current node's own card: a wide horizontal bar (name, head, count in
+ * one row) rather than the compact vertical cards used for its children -
+ * it's alone at the top and can use the full width productively. */
+function CurrentDeptBar({ node, dict }: { node: DepartmentNode; dict: Dictionary["orgStructure"] }) {
+  const head = resolveHead(node);
+  return (
+    <div className="chart-node-enter flex w-full items-center gap-4 rounded-lg border border-gray-200 border-l-4 border-l-brand-600 bg-white px-5 py-4 text-left">
+      <HeadAvatar node={node} size={44} />
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium text-gray-900">{node.name}</p>
+        {head && (
+          <p className="truncate text-sm text-gray-500">
+            {dict.headLabel}: {head.fullName}
+          </p>
+        )}
+      </div>
+      <CountBadge node={node} />
+    </div>
+  );
+}
+
 function DeptCard({
   node,
-  size,
   onClick,
   delay,
-  showHeadName = true,
 }: {
   node: DepartmentNode;
-  size: "lg" | "sm";
-  onClick?: () => void;
+  onClick: () => void;
   delay: number;
-  showHeadName?: boolean;
 }) {
   const head = resolveHead(node);
-  const isLg = size === "lg";
-  const isClickable = !!onClick;
 
   return (
     <button
       type="button"
-      onClick={onClick ?? (() => {})}
-      className={`chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 bg-white text-center transition ${
-        isClickable ? "hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm" : "cursor-default"
-      } ${isLg ? "border-l-4 border-l-brand-600 px-5 py-3" : "border-t-[3px] border-t-brand-600 px-3 py-2.5"}`}
+      onClick={onClick}
+      className="chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 border-t-[3px] border-t-brand-600 bg-white px-3 py-2.5 text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <HeadAvatar node={node} size={isLg ? 44 : 32} />
+      <HeadAvatar node={node} size={32} />
       <div className="min-w-0">
-        <p className={`truncate font-medium text-gray-900 ${isLg ? "text-sm" : "text-xs"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
+        <p className="truncate text-xs font-medium text-gray-900" style={{ maxWidth: 130 }}>
           {node.name}
         </p>
-        {showHeadName && head && (
-          <p className={`truncate text-gray-500 ${isLg ? "text-xs" : "text-[11px]"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
+        {head && (
+          <p className="truncate text-[11px] text-gray-500" style={{ maxWidth: 130 }}>
             {head.fullName}
           </p>
         )}
@@ -191,17 +204,8 @@ export function OrgChart({
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
         <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
-          <div className="flex flex-wrap items-stretch justify-center gap-4">
-            {isRoot ? (
-              <RootBox node={currentNode} delay={0} />
-            ) : (
-              <DeptCard node={currentNode} size="lg" delay={0} showHeadName={!head} />
-            )}
-            {head && (
-              <div className="w-full max-w-[220px]">
-                <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} variant="card" />
-              </div>
-            )}
+          <div className="w-full max-w-2xl">
+            {isRoot ? <RootBox node={currentNode} delay={0} /> : <CurrentDeptBar node={currentNode} dict={dict} />}
           </div>
 
           {(staff.length > 0 || currentNode.vacancies.length > 0) && (
@@ -238,7 +242,7 @@ export function OrgChart({
                     <div key={child.id} className="relative flex flex-col items-center gap-2.5">
                       <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
                       <div className="w-[170px]">
-                        <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
+                        <DeptCard node={child} onClick={() => goTo(child.id)} delay={i * 40} />
                       </div>
                       {grandchildren.length > 0 && (
                         <div className="grid w-[360px] grid-cols-2 gap-1.5">

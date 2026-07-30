@@ -13,13 +13,10 @@ export function EmployeeCard({
   employee,
   locale,
   dict,
-  variant = "list",
 }: {
   employee: EmployeeWithPosition;
   locale: Locale;
   dict: Dictionary["orgStructure"]["employeeModal"];
-  /** "card": centered, fixed-size presentation matching the org chart's department cards. */
-  variant?: "list" | "card";
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [detail, setDetail] = useState<EmployeeDetail | null>(null);
@@ -48,61 +45,32 @@ export function EmployeeCard({
 
   return (
     <>
-      {variant === "card" ? (
-        <button
-          type="button"
-          onClick={handleOpen}
-          className="chart-node-enter flex w-full flex-col items-center gap-2 rounded-lg border border-gray-200 border-l-4 border-l-brand-600 bg-white px-5 py-3 text-center transition hover:-translate-y-0.5 hover:shadow-sm"
-        >
-          {employee.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={employee.photoUrl}
-              alt=""
-              className="h-11 w-11 shrink-0 rounded-full border border-gray-200 object-cover"
-            />
-          ) : (
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 font-medium text-gray-500">
-              {employee.fullName.charAt(0)}
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-gray-900" style={{ maxWidth: 180 }}>
-              {employee.fullName}
-            </p>
-            <p className="truncate text-xs text-gray-500" style={{ maxWidth: 180 }}>
-              {employee.position.title}
-            </p>
+      <button
+        type="button"
+        onClick={handleOpen}
+        className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
+      >
+        {employee.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={employee.photoUrl}
+            alt=""
+            className="h-16 w-16 shrink-0 rounded-full border border-gray-200 object-cover"
+          />
+        ) : (
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg font-medium text-gray-500">
+            {employee.fullName.charAt(0)}
           </div>
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={handleOpen}
-          className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
-        >
-          {employee.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={employee.photoUrl}
-              alt=""
-              className="h-16 w-16 shrink-0 rounded-full border border-gray-200 object-cover"
-            />
-          ) : (
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg font-medium text-gray-500">
-              {employee.fullName.charAt(0)}
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="truncate font-medium text-gray-900">{employee.fullName}</p>
-            <p className="text-gray-600">{employee.position.title}</p>
-            <div className="mt-1 space-y-0.5 text-gray-500">
-              <p className="truncate">{employee.email}</p>
-              {employee.phone && <p>{employee.phone}</p>}
-            </div>
+        )}
+        <div className="min-w-0">
+          <p className="truncate font-medium text-gray-900">{employee.fullName}</p>
+          <p className="text-gray-600">{employee.position.title}</p>
+          <div className="mt-1 space-y-0.5 text-gray-500">
+            <p className="truncate">{employee.email}</p>
+            {employee.phone && <p>{employee.phone}</p>}
           </div>
-        </button>
-      )}
+        </div>
+      </button>
 
       {isOpen && (
         <div
