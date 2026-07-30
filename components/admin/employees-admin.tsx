@@ -92,6 +92,12 @@ export function EmployeesAdmin() {
   const [query, setQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDepartmentId, setBulkDepartmentId] = useState("");
+  const [bulkPositionId, setBulkPositionId] = useState("");
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
@@ -103,6 +109,94 @@ export function EmployeesAdmin() {
         employee.position.title.toLowerCase().includes(q)
     );
   }, [items, query]);
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every((e) => selectedIds.has(e.id));
+
+  function toggleSelect(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds((prev) => {
+      if (allFilteredSelected) {
+        const next = new Set(prev);
+        for (const e of filtered) next.delete(e.id);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const e of filtered) next.add(e.id);
+      return next;
+    });
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
+    setBulkDepartmentId("");
+    setBulkPositionId("");
+    setBulkError(null);
+  }
+
+  async function handleBulkApply() {
+    if (!bulkDepartmentId && !bulkPositionId) return;
+    setBulkError(null);
+    const targets = items.filter((e) => selectedIds.has(e.id));
+    setBulkProgress({ done: 0, total: targets.length });
+
+    let failed = 0;
+    for (const employee of targets) {
+      const res = await fetch(`/api/employees/${employee.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: employee.fullName,
+          email: employee.email,
+          phone: employee.phone ?? "",
+          photoUrl: employee.photoUrl ?? "",
+          birthDate: employee.birthDate ? toDateInputValue(new Date(employee.birthDate)) : "",
+          hireDate: employee.hireDate ? toDateInputValue(new Date(employee.hireDate)) : "",
+          departmentId: bulkDepartmentId || employee.departmentId,
+          positionId: bulkPositionId || employee.positionId,
+        }),
+      });
+      if (!res.ok) failed += 1;
+      setBulkProgress((p) => (p ? { ...p, done: p.done + 1 } : p));
+    }
+
+    setBulkProgress(null);
+    if (failed > 0) {
+      setBulkError(`Не удалось обновить: ${failed} из ${targets.length}`);
+    } else {
+      clearSelection();
+    }
+    await reload();
+  }
+
+  async function handleBulkDelete() {
+    if (!confirm(`Удалить выбранных сотрудников (${selectedIds.size})?`)) return;
+    setBulkError(null);
+    const ids = [...selectedIds];
+    setBulkProgress({ done: 0, total: ids.length });
+
+    let failed = 0;
+    for (const id of ids) {
+      const res = await fetch(`/api/employees/${id}`, { method: "DELETE" });
+      if (!res.ok) failed += 1;
+      setBulkProgress((p) => (p ? { ...p, done: p.done + 1 } : p));
+    }
+
+    setBulkProgress(null);
+    if (failed > 0) {
+      setBulkError(`Не удалось удалить: ${failed} из ${ids.length}`);
+    } else {
+      clearSelection();
+    }
+    await reload();
+  }
 
   useEffect(() => {
     fetch("/api/departments")
@@ -326,6 +420,70 @@ export function EmployeesAdmin() {
         />
       </div>
 
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-brand-200 bg-brand-50 p-3 dark:border-brand-800 dark:bg-brand-900/20">
+          <span className="text-sm font-medium text-gray-700">Выбрано: {selectedIds.size}</span>
+
+          <select
+            value={bulkDepartmentId}
+            onChange={(e) => setBulkDepartmentId(e.target.value)}
+            className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm"
+          >
+            <option value="">Отдел — не менять</option>
+            {departments.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={bulkPositionId}
+            onChange={(e) => setBulkPositionId(e.target.value)}
+            className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm"
+          >
+            <option value="">Должность — не менять</option>
+            {positions.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={handleBulkApply}
+            disabled={(!bulkDepartmentId && !bulkPositionId) || bulkProgress !== null}
+            className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+          >
+            Применить
+          </button>
+          <button
+            type="button"
+            onClick={handleBulkDelete}
+            disabled={bulkProgress !== null}
+            className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 dark:text-red-400"
+          >
+            Удалить выбранных
+          </button>
+          <button
+            type="button"
+            onClick={clearSelection}
+            disabled={bulkProgress !== null}
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            Снять выделение
+          </button>
+
+          {bulkProgress && (
+            <span className="text-xs text-gray-500">
+              Применяю: {bulkProgress.done}/{bulkProgress.total}...
+            </span>
+          )}
+          {bulkError && <span className="text-sm text-red-600 dark:text-red-400">{bulkError}</span>}
+        </div>
+      )}
+
       {isLoading ? (
         <p className="text-sm text-gray-500">Загрузка...</p>
       ) : filtered.length === 0 ? (
@@ -334,10 +492,28 @@ export function EmployeesAdmin() {
           text={query ? "Сотрудники не найдены" : "Сотрудников пока нет"}
         />
       ) : (
-        <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
-          {filtered.map((employee) => (
+        <div className="rounded-lg border border-gray-200 bg-white">
+          <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-2">
+            <input
+              type="checkbox"
+              checked={allFilteredSelected}
+              onChange={toggleSelectAll}
+              aria-label="Выбрать всех"
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <span className="text-xs text-gray-500">Выбрать все ({filtered.length})</span>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {filtered.map((employee) => (
             <div key={employee.id} className="flex items-center justify-between px-4 py-2.5">
               <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(employee.id)}
+                  onChange={() => toggleSelect(employee.id)}
+                  aria-label={`Выбрать ${employee.fullName}`}
+                  className="h-4 w-4 shrink-0 rounded border-gray-300"
+                />
                 {employee.photoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -373,7 +549,8 @@ export function EmployeesAdmin() {
                 </button>
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
