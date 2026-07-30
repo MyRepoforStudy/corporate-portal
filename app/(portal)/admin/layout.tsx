@@ -12,7 +12,6 @@ const ADMIN_LINKS = [
   { href: "/admin/departments", label: "Отделы", adminOnly: false },
   { href: "/admin/positions", label: "Должности", adminOnly: false },
   { href: "/admin/employees", label: "Сотрудники", adminOnly: false },
-  { href: "/admin/workplaces", label: "Рабочие места", adminOnly: false },
   { href: "/admin/rooms", label: "Переговорные", adminOnly: false },
   { href: "/admin/bookings", label: "Бронирования", adminOnly: false },
   { href: "/admin/users", label: "Пользователи", adminOnly: true },

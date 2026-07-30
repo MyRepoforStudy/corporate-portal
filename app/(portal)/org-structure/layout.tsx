@@ -15,10 +15,6 @@ export default function OrgStructureLayout({
         tabs={[
           { href: "/org-structure", label: dict.orgStructure.tabStructure },
           { href: "/org-structure/chart", label: dict.orgStructure.tabChart },
-          { href: "/org-structure/workplaces", label: dict.orgStructure.tabWorkplaces },
-          { href: "/org-structure/floor-plan", label: dict.orgStructure.tabFloorPlan },
-          { href: "/org-structure/new-hires", label: dict.orgStructure.tabNewHires },
-          { href: "/org-structure/birthdays", label: dict.orgStructure.tabBirthdays },
         ]}
       />
       {children}
