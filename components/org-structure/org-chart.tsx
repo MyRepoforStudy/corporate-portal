@@ -116,15 +116,9 @@ function DeptCard({
       style={{ animationDelay: `${delay}ms` }}
     >
       <HeadAvatar node={node} size={32} />
-      <div className="min-w-0">
-        <p className="truncate text-xs font-medium text-gray-900" style={{ maxWidth: 130 }}>
-          {node.name}
-        </p>
-        {head && (
-          <p className="truncate text-[11px] text-gray-500" style={{ maxWidth: 130 }}>
-            {head.fullName}
-          </p>
-        )}
+      <div className="min-w-0 w-full">
+        <p className="text-xs font-medium leading-snug text-gray-900">{node.name}</p>
+        {head && <p className="truncate text-[11px] text-gray-500">{head.fullName}</p>}
       </div>
       <CountBadge node={node} />
     </button>
@@ -248,7 +242,7 @@ export function OrgChart({
                   return (
                     <div key={child.id} className="relative flex flex-col items-center gap-2.5">
                       <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                      <div className="w-[170px]">
+                      <div className="w-[230px]">
                         <DeptCard node={child} onClick={() => goTo(child.id)} delay={i * 40} />
                       </div>
                       {grandchildren.length > 0 && (
