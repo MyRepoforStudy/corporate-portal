@@ -82,11 +82,13 @@ function DeptCard({
   size,
   onClick,
   delay,
+  showHeadName = true,
 }: {
   node: DepartmentNode;
   size: "lg" | "sm";
   onClick?: () => void;
   delay: number;
+  showHeadName?: boolean;
 }) {
   const head = resolveHead(node);
   const isLg = size === "lg";
@@ -106,7 +108,7 @@ function DeptCard({
         <p className={`truncate font-medium text-gray-900 ${isLg ? "text-sm" : "text-xs"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
           {node.name}
         </p>
-        {head && (
+        {showHeadName && head && (
           <p className={`truncate text-gray-500 ${isLg ? "text-xs" : "text-[11px]"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
             {head.fullName}
           </p>
@@ -190,7 +192,31 @@ export function OrgChart({
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
         <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
           <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
-            {isRoot ? <RootBox node={currentNode} delay={0} /> : <DeptCard node={currentNode} size="lg" delay={0} />}
+            <div className="flex flex-wrap items-start justify-center gap-4">
+              {isRoot ? (
+                <RootBox node={currentNode} delay={0} />
+              ) : (
+                <DeptCard node={currentNode} size="lg" delay={0} showHeadName={!head} />
+              )}
+              {head && (
+                <div className="w-full max-w-[240px]">
+                  <p className="mb-1.5 text-center text-xs font-medium uppercase tracking-wide text-gray-400">
+                    {dict.headLabel}
+                  </p>
+                  <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} />
+                </div>
+              )}
+            </div>
+
+            {children.length === 0 && staff.length > 0 && (
+              <div className="mt-6 w-full max-w-2xl border-t border-gray-200 pt-6">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {staff.map((employee) => (
+                    <EmployeeCard key={employee.id} employee={employee} locale={locale} dict={dict.employeeModal} />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {children.length > 0 && (
               <>
@@ -199,11 +225,13 @@ export function OrgChart({
                   {children.map((child, i) => {
                     const grandchildren = publishedChildren(child);
                     return (
-                      <div key={child.id} className="relative flex w-[170px] flex-col items-center gap-2.5">
+                      <div key={child.id} className="relative flex flex-col items-center gap-2.5">
                         <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                        <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
+                        <div className="w-[170px]">
+                          <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
+                        </div>
                         {grandchildren.length > 0 && (
-                          <div className="flex w-full flex-wrap justify-center gap-1.5">
+                          <div className="flex w-full max-w-[360px] flex-wrap justify-center gap-1.5">
                             {grandchildren.map((grandchild) => (
                               <TeamPill key={grandchild.id} node={grandchild} onClick={() => goTo(grandchild.id)} />
                             ))}
