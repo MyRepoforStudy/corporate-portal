@@ -89,6 +89,8 @@ export const ru = {
     noResults: "Ничего не найдено.",
     empty: "Оргструктура пока не заполнена.",
     selectDepartment: "Выберите отдел слева.",
+    chartSelectDepartment: "Выберите отдел на диаграмме, чтобы увидеть сотрудников.",
+    headLabel: "Руководитель",
     noEmployeesInDept: "В этом отделе пока нет сотрудников.",
     collapse: "Свернуть",
     expand: "Развернуть",

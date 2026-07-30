@@ -91,6 +91,8 @@ export const ko: Dictionary = {
     noResults: "검색 결과가 없습니다.",
     empty: "아직 등록된 조직 정보가 없습니다.",
     selectDepartment: "왼쪽에서 부서를 선택하세요.",
+    chartSelectDepartment: "직원을 보려면 다이어그램에서 부서를 선택하세요.",
+    headLabel: "부서장",
     noEmployeesInDept: "이 부서에는 아직 직원이 없습니다.",
     collapse: "접기",
     expand: "펼치기",

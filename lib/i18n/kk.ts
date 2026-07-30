@@ -91,6 +91,8 @@ export const kk: Dictionary = {
     noResults: "Ештеңе табылмады.",
     empty: "Ұйымдық құрылым әлі толтырылмаған.",
     selectDepartment: "Сол жақтан бөлімді таңдаңыз.",
+    chartSelectDepartment: "Қызметкерлерді көру үшін диаграммадан бөлімді таңдаңыз.",
+    headLabel: "Басшы",
     noEmployeesInDept: "Бұл бөлімде әзірге қызметкерлер жоқ.",
     collapse: "Жию",
     expand: "Жаю",
