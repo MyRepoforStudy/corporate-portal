@@ -50,6 +50,18 @@ model Department {
   parent   Department?  @relation("DeptTree", fields: [parentId], references: [id])
   children Department[] @relation("DeptTree")
 
+  // Explicit head of this department, assigned by an admin. When unset, the
+  // UI falls back to the highest-ranked employee in the department (see
+  // resolveHead() in lib/org-tree.ts) so the chart never looks empty.
+  headEmployeeId String?
+  headEmployee   Employee? @relation("DepartmentHead", fields: [headEmployeeId], references: [id])
+
+  // Manual sibling ordering for the org chart (lower first).
+  order Int @default(0)
+  // Hidden departments are skipped when rendering the public org chart's
+  // navigation, but remain fully editable in the admin panel.
+  isPublished Boolean @default(true)
+
   employees Employee[]
   vacancies Vacancy[]
 
@@ -57,6 +69,7 @@ model Department {
   updatedAt DateTime @updatedAt
 
   @@index([parentId])
+  @@index([headEmployeeId])
 }
 
 model Position {
@@ -112,6 +125,8 @@ model Employee {
 
   recognitionsGiven    Recognition[] @relation("RecognitionFrom")
   recognitionsReceived Recognition[] @relation("RecognitionTo")
+
+  headOfDepartments Department[] @relation("DepartmentHead")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

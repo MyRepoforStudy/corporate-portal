@@ -5,7 +5,7 @@ import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export default async function OrgChartPage() {
+export default async function OrgChartDepartmentPage({ params }: { params: { id: string } }) {
   const [departments, employees, vacancies] = await Promise.all([
     prisma.department.findMany({ orderBy: { name: "asc" } }),
     prisma.employee.findMany({
@@ -22,5 +22,5 @@ export default async function OrgChartPage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
 
-  return <OrgChart tree={tree} currentId={null} locale={locale} dict={dict.orgStructure} />;
+  return <OrgChart tree={tree} currentId={params.id} locale={locale} dict={dict.orgStructure} />;
 }

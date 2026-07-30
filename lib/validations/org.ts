@@ -3,6 +3,9 @@ import { z } from "zod";
 export const departmentSchema = z.object({
   name: z.string().trim().min(2, "Минимум 2 символа").max(200),
   parentId: z.string().cuid().nullable().optional(),
+  headEmployeeId: z.string().cuid().nullable().optional(),
+  order: z.coerce.number().int("Должно быть целым числом").min(0).max(10000).default(0),
+  isPublished: z.boolean().default(true),
 });
 
 export const positionSchema = z.object({

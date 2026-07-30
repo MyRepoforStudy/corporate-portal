@@ -6,9 +6,16 @@ export type VacancyWithPosition = Vacancy & { position: Position };
 export interface DepartmentNode {
   id: string;
   name: string;
+  order: number;
+  isPublished: boolean;
+  headEmployeeId: string | null;
   employees: EmployeeWithPosition[];
   vacancies: VacancyWithPosition[];
   children: DepartmentNode[];
+}
+
+function byOrderThenName(a: DepartmentNode, b: DepartmentNode): number {
+  return a.order - b.order || a.name.localeCompare(b.name);
 }
 
 export function buildDepartmentTree(
@@ -19,7 +26,16 @@ export function buildDepartmentTree(
   const nodeById = new Map<string, DepartmentNode>();
 
   for (const dept of departments) {
-    nodeById.set(dept.id, { id: dept.id, name: dept.name, employees: [], vacancies: [], children: [] });
+    nodeById.set(dept.id, {
+      id: dept.id,
+      name: dept.name,
+      order: dept.order,
+      isPublished: dept.isPublished,
+      headEmployeeId: dept.headEmployeeId,
+      employees: [],
+      vacancies: [],
+      children: [],
+    });
   }
 
   for (const employee of employees) {
@@ -40,7 +56,26 @@ export function buildDepartmentTree(
     }
   }
 
+  for (const node of nodeById.values()) {
+    node.children.sort(byOrderThenName);
+  }
+  roots.sort(byOrderThenName);
+
   return roots;
+}
+
+/**
+ * The department's assigned head, or - if none was explicitly set (or the
+ * assigned employee no longer belongs to this department) - the
+ * highest-ranked employee in the department (employees are pre-sorted by
+ * Position.rank desc, name asc by the caller's query).
+ */
+export function resolveHead(node: DepartmentNode): EmployeeWithPosition | null {
+  if (node.headEmployeeId) {
+    const explicit = node.employees.find((e) => e.id === node.headEmployeeId);
+    if (explicit) return explicit;
+  }
+  return node.employees[0] ?? null;
 }
 
 export function findDepartmentNode(nodes: DepartmentNode[], id: string): DepartmentNode | null {

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, Users } from "lucide-react";
 import {
   countEmployees,
   countVacancies,
   findNodePath,
+  resolveHead,
   type DepartmentNode,
 } from "@/lib/org-tree";
 import { EmployeeCard } from "@/components/org-structure/employee-card";
@@ -14,6 +15,10 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatEmployeesCount } from "@/lib/i18n/format";
 
 const ROOT_ID = "__root__";
+
+function publishedChildren(node: DepartmentNode): DepartmentNode[] {
+  return node.children.filter((child) => child.isPublished);
+}
 
 function CountBadge({ node }: { node: DepartmentNode }) {
   const employeeTotal = countEmployees(node);
@@ -35,7 +40,7 @@ function CountBadge({ node }: { node: DepartmentNode }) {
 }
 
 function HeadAvatar({ node, size }: { node: DepartmentNode; size: number }) {
-  const head = node.employees[0];
+  const head = resolveHead(node);
   const className = `shrink-0 rounded-full border border-gray-200 object-cover`;
   if (head?.photoUrl) {
     return (
@@ -54,13 +59,11 @@ function HeadAvatar({ node, size }: { node: DepartmentNode; size: number }) {
   );
 }
 
-function RootBox({ node, onClick, delay }: { node: DepartmentNode; onClick: () => void; delay: number }) {
-  const hasChildren = node.children.length > 0;
+function RootBox({ node, delay }: { node: DepartmentNode; delay: number }) {
+  const hasChildren = publishedChildren(node).length > 0;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="chart-node-enter group relative flex min-w-[160px] flex-col items-center gap-1 rounded-xl border border-brand-700 bg-brand-600 px-5 py-3 text-center transition hover:bg-brand-700"
+    <div
+      className="chart-node-enter relative flex min-w-[160px] flex-col items-center gap-1 rounded-xl border border-brand-700 bg-brand-600 px-5 py-3 text-center"
       style={{ animationDelay: `${delay}ms` }}
     >
       <span className="truncate text-sm font-medium text-white">{node.name}</span>
@@ -70,7 +73,7 @@ function RootBox({ node, onClick, delay }: { node: DepartmentNode; onClick: () =
           aria-hidden="true"
         />
       )}
-    </button>
+    </div>
   );
 }
 
@@ -82,19 +85,20 @@ function DeptCard({
 }: {
   node: DepartmentNode;
   size: "lg" | "sm";
-  onClick: () => void;
+  onClick?: () => void;
   delay: number;
 }) {
-  const head = node.employees[0];
+  const head = resolveHead(node);
   const isLg = size === "lg";
+  const isClickable = !!onClick;
 
   return (
     <button
       type="button"
-      onClick={onClick}
-      className={`chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 bg-white text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm ${
-        isLg ? "border-l-4 border-l-brand-600 px-5 py-3" : "border-t-[3px] border-t-brand-600 px-3 py-2.5"
-      }`}
+      onClick={onClick ?? (() => {})}
+      className={`chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 bg-white text-center transition ${
+        isClickable ? "hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm" : "cursor-default"
+      } ${isLg ? "border-l-4 border-l-brand-600 px-5 py-3" : "border-t-[3px] border-t-brand-600 px-3 py-2.5"}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <HeadAvatar node={node} size={isLg ? 44 : 32} />
@@ -129,19 +133,35 @@ function TeamPill({ node, onClick }: { node: DepartmentNode; onClick: () => void
 
 export function OrgChart({
   tree,
+  currentId,
   locale,
   dict,
 }: {
   tree: DepartmentNode[];
+  currentId: string | null;
   locale: Locale;
   dict: Dictionary["orgStructure"];
 }) {
-  const [currentId, setCurrentId] = useState<string | null>(null);
+  const router = useRouter();
 
-  const root: DepartmentNode = { id: ROOT_ID, name: "BNK", employees: [], vacancies: [], children: tree };
+  function goTo(id: string | null) {
+    router.push(id ? `/org-structure/chart/${id}` : "/org-structure/chart");
+  }
+
+  const root: DepartmentNode = {
+    id: ROOT_ID,
+    name: "BNK",
+    order: 0,
+    isPublished: true,
+    headEmployeeId: null,
+    employees: [],
+    vacancies: [],
+    children: tree,
+  };
   const path = currentId ? (findNodePath([root], currentId) ?? [root]) : [root];
   const currentNode = path[path.length - 1];
   const isRoot = currentNode.id === ROOT_ID;
+  const children = publishedChildren(currentNode);
 
   return (
     <div className="space-y-6">
@@ -154,7 +174,7 @@ export function OrgChart({
             ) : (
               <button
                 type="button"
-                onClick={() => setCurrentId(node.id === ROOT_ID ? null : node.id)}
+                onClick={() => goTo(node.id === ROOT_ID ? null : node.id)}
                 className="text-gray-500 hover:text-brand-700 hover:underline dark:hover:text-brand-300"
               >
                 {node.name}
@@ -166,29 +186,28 @@ export function OrgChart({
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
         <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
-          {isRoot ? (
-            <RootBox node={currentNode} onClick={() => {}} delay={0} />
-          ) : (
-            <DeptCard node={currentNode} size="lg" onClick={() => {}} delay={0} />
-          )}
+          {isRoot ? <RootBox node={currentNode} delay={0} /> : <DeptCard node={currentNode} size="lg" delay={0} />}
 
-          {currentNode.children.length > 0 && (
+          {children.length > 0 && (
             <>
               <div className="chart-line-enter h-6 w-px bg-gray-300" />
               <div className="flex w-full flex-wrap justify-center gap-x-8 gap-y-6 border-t border-gray-300 pt-6">
-                {currentNode.children.map((child, i) => (
-                  <div key={child.id} className="relative flex w-[170px] flex-col items-center gap-2.5">
-                    <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                    <DeptCard node={child} size="sm" onClick={() => setCurrentId(child.id)} delay={i * 40} />
-                    {child.children.length > 0 && (
-                      <div className="flex w-full flex-wrap justify-center gap-1.5">
-                        {child.children.map((grandchild) => (
-                          <TeamPill key={grandchild.id} node={grandchild} onClick={() => setCurrentId(grandchild.id)} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                {children.map((child, i) => {
+                  const grandchildren = publishedChildren(child);
+                  return (
+                    <div key={child.id} className="relative flex w-[170px] flex-col items-center gap-2.5">
+                      <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
+                      <DeptCard node={child} size="sm" onClick={() => goTo(child.id)} delay={i * 40} />
+                      {grandchildren.length > 0 && (
+                        <div className="flex w-full flex-wrap justify-center gap-1.5">
+                          {grandchildren.map((grandchild) => (
+                            <TeamPill key={grandchild.id} node={grandchild} onClick={() => goTo(grandchild.id)} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}

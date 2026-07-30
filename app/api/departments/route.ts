@@ -9,7 +9,10 @@ export async function GET() {
     await requireSession();
     const departments = await prisma.department.findMany({
       orderBy: { name: "asc" },
-      include: { _count: { select: { employees: true } } },
+      include: {
+        _count: { select: { employees: true } },
+        headEmployee: { select: { id: true, fullName: true, photoUrl: true, position: { select: { title: true } } } },
+      },
     });
     return NextResponse.json(departments);
   } catch (error) {
