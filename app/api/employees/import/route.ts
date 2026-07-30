@@ -5,12 +5,11 @@ import { requireAdmin, handleApiError, ApiError } from "@/lib/rbac";
 import { parseCsv } from "@/lib/csv";
 import { logAudit } from "@/lib/audit";
 
-const REQUIRED_COLUMNS = ["fullname", "email", "department", "position"];
+const REQUIRED_COLUMNS = ["fullname", "email", "position"];
 
 const rowSchema = z.object({
   fullName: z.string().trim().min(2, "ФИО обязательно"),
   email: z.string().trim().email("Некорректный email"),
-  department: z.string().trim().min(1, "Отдел обязателен"),
   position: z.string().trim().min(1, "Должность обязательна"),
   phone: z
     .string()
@@ -55,6 +54,11 @@ export async function POST(request: NextRequest) {
         throw new ApiError(400, `Отсутствует обязательная колонка: ${col}`);
       }
     }
+    const hasDepartmentPath = headers.includes("department_path");
+    const hasDepartment = headers.includes("department");
+    if (!hasDepartmentPath && !hasDepartment) {
+      throw new ApiError(400, "Отсутствует обязательная колонка: department или department_path");
+    }
     const colIndex = (name: string) => headers.indexOf(name);
 
     let createdCount = 0;
@@ -62,6 +66,7 @@ export async function POST(request: NextRequest) {
     const errors: { row: number; message: string }[] = [];
 
     const departmentCache = new Map<string, string>();
+    const departmentPathCache = new Map<string, string>();
     const positionCache = new Map<string, string>();
 
     async function resolveDepartmentId(name: string): Promise<string> {
@@ -73,6 +78,40 @@ export async function POST(request: NextRequest) {
       const department = existing ?? (await prisma.department.create({ data: { name } }));
       departmentCache.set(key, department.id);
       return department.id;
+    }
+
+    /**
+     * Resolves a ">"-joined department_path (e.g. "IT > Development > Backend"),
+     * creating each level under its correct parent so the hierarchy matches the
+     * path exactly. Mirrors getDepartmentPath()'s output format from the
+     * employees export, so exporting then re-importing round-trips losslessly.
+     */
+    async function resolveDepartmentPath(path: string): Promise<string> {
+      const segments = path
+        .split(">")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      let parentId: string | null = null;
+      let departmentId = "";
+
+      for (const segment of segments) {
+        const cacheKey = `${parentId ?? "root"}::${segment.toLowerCase()}`;
+        const cached = departmentPathCache.get(cacheKey);
+        let currentId: string;
+        if (cached) {
+          currentId = cached;
+        } else {
+          const existing = await prisma.department.findFirst({ where: { name: segment, parentId } });
+          const department = existing ?? (await prisma.department.create({ data: { name: segment, parentId } }));
+          currentId = department.id;
+          departmentPathCache.set(cacheKey, currentId);
+        }
+        departmentId = currentId;
+        parentId = currentId;
+      }
+
+      return departmentId;
     }
 
     async function resolvePositionId(title: string): Promise<string> {
@@ -96,7 +135,6 @@ export async function POST(request: NextRequest) {
       const raw = {
         fullName: row[colIndex("fullname")] ?? "",
         email: row[colIndex("email")] ?? "",
-        department: row[colIndex("department")] ?? "",
         position: row[colIndex("position")] ?? "",
         phone: colIndex("phone") >= 0 ? (row[colIndex("phone")] ?? "") : undefined,
         birthDate: colIndex("birthdate") >= 0 ? (row[colIndex("birthdate")] ?? "") : undefined,
@@ -113,9 +151,17 @@ export async function POST(request: NextRequest) {
       }
       const data = parsed.data;
 
+      const departmentValue = (
+        hasDepartmentPath ? row[colIndex("department_path")] : row[colIndex("department")]
+      )?.trim();
+      if (!departmentValue) {
+        errors.push({ row: rowNumber, message: "Отдел обязателен" });
+        continue;
+      }
+
       try {
         const [departmentId, positionId] = await Promise.all([
-          resolveDepartmentId(data.department),
+          hasDepartmentPath ? resolveDepartmentPath(departmentValue) : resolveDepartmentId(departmentValue),
           resolvePositionId(data.position),
         ]);
 

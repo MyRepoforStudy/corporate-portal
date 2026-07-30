@@ -47,10 +47,15 @@ export function ImportAdmin() {
       <div>
         <h1 className="text-xl font-semibold text-gray-900">Импорт сотрудников из CSV</h1>
         <p className="text-sm text-gray-500">
-          Обязательные колонки: <code>fullName</code>, <code>email</code>, <code>department</code>,{" "}
-          <code>position</code>. Необязательные: <code>phone</code>, <code>birthDate</code> (в
-          формате ГГГГ-ММ-ДД). Отдел и должность создаются автоматически, если ещё не существуют.
-          Сотрудник обновляется, если email уже есть в системе.
+          Обязательные колонки: <code>fullName</code>, <code>email</code>, <code>position</code>, а
+          также <code>department</code> (одно название отдела) или{" "}
+          <code>department_path</code> (полная иерархия через «{">"}», например{" "}
+          <code>ИТ{">"}Департамент ИТ{">"}Управление разработки</code> — так же, как в файле из
+          «Экспорт в CSV»: каждый уровень пути создаётся автоматически с правильной
+          вложенностью). Необязательные: <code>phone</code>, <code>birthDate</code>,{" "}
+          <code>hireDate</code> (в формате ГГГГ-ММ-ДД). Отдел(ы) и должность создаются
+          автоматически, если ещё не существуют. Сотрудник обновляется, если email уже есть в
+          системе.
         </p>
       </div>
 
