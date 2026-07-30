@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Download } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { Download, Search, SearchX, Users } from "lucide-react";
 import type { Department, Employee, Position } from "@prisma/client";
 import { useCrudList } from "@/lib/hooks/use-crud-list";
 import { toDateInputValue } from "@/lib/booking-time";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type EmployeeWithRelations = Employee & { department: Department; position: Position };
 
@@ -88,7 +89,20 @@ export function EmployeesAdmin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [query, setQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter(
+      (employee) =>
+        employee.fullName.toLowerCase().includes(q) ||
+        employee.email.toLowerCase().includes(q) ||
+        employee.department.name.toLowerCase().includes(q) ||
+        employee.position.title.toLowerCase().includes(q)
+    );
+  }, [items, query]);
 
   useEffect(() => {
     fetch("/api/departments")
@@ -301,11 +315,27 @@ export function EmployeesAdmin() {
         </div>
       </form>
 
+      <div className="relative max-w-sm">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Поиск по имени, email, отделу или должности..."
+          className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        />
+      </div>
+
       {isLoading ? (
         <p className="text-sm text-gray-500">Загрузка...</p>
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          icon={query ? SearchX : Users}
+          text={query ? "Сотрудники не найдены" : "Сотрудников пока нет"}
+        />
       ) : (
         <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
-          {items.map((employee) => (
+          {filtered.map((employee) => (
             <div key={employee.id} className="flex items-center justify-between px-4 py-2.5">
               <div className="flex items-center gap-3">
                 {employee.photoUrl ? (
