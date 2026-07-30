@@ -15,65 +15,114 @@ import { formatEmployeesCount } from "@/lib/i18n/format";
 
 const ROOT_ID = "__root__";
 
-function ChartBox({
+function CountBadge({ node }: { node: DepartmentNode }) {
+  const employeeTotal = countEmployees(node);
+  const vacancyTotal = countVacancies(node);
+  return (
+    <span className="flex items-center gap-2 text-xs text-gray-500">
+      <span className="flex items-center gap-1">
+        <Users className="h-3 w-3" aria-hidden="true" />
+        {employeeTotal}
+      </span>
+      {vacancyTotal > 0 && (
+        <span className="flex items-center gap-1 text-brand-700 dark:text-brand-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-600" aria-hidden="true" />
+          {vacancyTotal}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function HeadAvatar({ node, size }: { node: DepartmentNode; size: number }) {
+  const head = node.employees[0];
+  const className = `shrink-0 rounded-full border border-gray-200 object-cover`;
+  if (head?.photoUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={head.photoUrl} alt="" className={className} style={{ width: size, height: size }} />
+    );
+  }
+  const initial = (head?.fullName ?? node.name).charAt(0);
+  return (
+    <div
+      className="flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 font-medium text-gray-500"
+      style={{ width: size, height: size, fontSize: size * 0.4 }}
+    >
+      {initial}
+    </div>
+  );
+}
+
+function RootBox({ node, onClick, delay }: { node: DepartmentNode; onClick: () => void; delay: number }) {
+  const hasChildren = node.children.length > 0;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="chart-node-enter group relative flex min-w-[160px] flex-col items-center gap-1 rounded-xl border border-brand-700 bg-brand-600 px-5 py-3 text-center transition hover:bg-brand-700"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <span className="truncate text-sm font-medium text-white">{node.name}</span>
+      {hasChildren && (
+        <ChevronDown
+          className="absolute -bottom-2 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full border border-brand-700 bg-white p-0.5 text-brand-600"
+          aria-hidden="true"
+        />
+      )}
+    </button>
+  );
+}
+
+function DeptCard({
   node,
-  isRoot,
-  isCurrent,
+  size,
   onClick,
   delay,
 }: {
   node: DepartmentNode;
-  isRoot?: boolean;
-  isCurrent?: boolean;
+  size: "lg" | "sm";
   onClick: () => void;
   delay: number;
 }) {
-  const employeeTotal = countEmployees(node);
-  const vacancyTotal = countVacancies(node);
-  const hasChildren = node.children.length > 0;
+  const head = node.employees[0];
+  const isLg = size === "lg";
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`chart-node-enter group relative flex min-w-[160px] max-w-[220px] flex-col items-center gap-1.5 rounded-xl border px-4 py-3 text-center transition hover:-translate-y-0.5 hover:shadow-sm ${
-        isRoot
-          ? "border-brand-700 bg-brand-600 text-white hover:bg-brand-700"
-          : isCurrent
-            ? "border-brand-600 bg-brand-50 dark:border-brand-500 dark:bg-brand-900/30"
-            : "border-gray-200 bg-white hover:border-brand-300"
+      className={`chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 bg-white text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm ${
+        isLg ? "border-l-4 border-l-brand-600 px-5 py-3" : "border-t-[3px] border-t-brand-600 px-3 py-2.5"
       }`}
       style={{ animationDelay: `${delay}ms` }}
     >
-      <span
-        className={`truncate text-sm font-medium ${
-          isRoot ? "text-white" : isCurrent ? "text-brand-800 dark:text-brand-200" : "text-gray-900"
-        }`}
-      >
-        {node.name}
-      </span>
-      {!isRoot && (
-        <span className="flex items-center gap-2 text-xs text-gray-500">
-          <span className="flex items-center gap-1">
-            <Users className="h-3 w-3" aria-hidden="true" />
-            {employeeTotal}
-          </span>
-          {vacancyTotal > 0 && (
-            <span className="flex items-center gap-1 text-brand-700 dark:text-brand-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-600" aria-hidden="true" />
-              {vacancyTotal}
-            </span>
-          )}
-        </span>
-      )}
-      {hasChildren && (
-        <ChevronDown
-          className={`absolute -bottom-2 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full border bg-white p-0.5 ${
-            isRoot ? "border-brand-700 text-brand-600" : "border-gray-200 text-gray-400"
-          }`}
-          aria-hidden="true"
-        />
-      )}
+      <HeadAvatar node={node} size={isLg ? 44 : 32} />
+      <div className="min-w-0">
+        <p className={`truncate font-medium text-gray-900 ${isLg ? "text-sm" : "text-xs"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
+          {node.name}
+        </p>
+        {head && (
+          <p className={`truncate text-gray-500 ${isLg ? "text-xs" : "text-[11px]"}`} style={{ maxWidth: isLg ? 180 : 130 }}>
+            {head.fullName}
+          </p>
+        )}
+      </div>
+      <CountBadge node={node} />
+    </button>
+  );
+}
+
+function TeamPill({ node, onClick }: { node: DepartmentNode; onClick: () => void }) {
+  const employeeTotal = countEmployees(node);
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:bg-gray-800 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+    >
+      {node.name}
+      {employeeTotal > 0 && <span className="ml-1 text-gray-400">{employeeTotal}</span>}
     </button>
   );
 }
@@ -92,6 +141,7 @@ export function OrgChart({
   const root: DepartmentNode = { id: ROOT_ID, name: "BNK", employees: [], vacancies: [], children: tree };
   const path = currentId ? (findNodePath([root], currentId) ?? [root]) : [root];
   const currentNode = path[path.length - 1];
+  const isRoot = currentNode.id === ROOT_ID;
 
   return (
     <div className="space-y-6">
@@ -116,26 +166,27 @@ export function OrgChart({
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
         <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
-          <ChartBox
-            node={currentNode}
-            isRoot={currentNode.id === ROOT_ID}
-            isCurrent
-            onClick={() => {}}
-            delay={0}
-          />
+          {isRoot ? (
+            <RootBox node={currentNode} onClick={() => {}} delay={0} />
+          ) : (
+            <DeptCard node={currentNode} size="lg" onClick={() => {}} delay={0} />
+          )}
 
           {currentNode.children.length > 0 && (
             <>
               <div className="chart-line-enter h-6 w-px bg-gray-300" />
-              <div className="flex w-fit gap-6 border-t border-gray-300 pt-6">
+              <div className="flex w-full flex-wrap justify-center gap-x-8 gap-y-6 border-t border-gray-300 pt-6">
                 {currentNode.children.map((child, i) => (
-                  <div key={child.id} className="relative">
+                  <div key={child.id} className="relative flex w-[170px] flex-col items-center gap-2.5">
                     <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                    <ChartBox
-                      node={child}
-                      onClick={() => setCurrentId(child.id)}
-                      delay={i * 40}
-                    />
+                    <DeptCard node={child} size="sm" onClick={() => setCurrentId(child.id)} delay={i * 40} />
+                    {child.children.length > 0 && (
+                      <div className="flex w-full flex-wrap justify-center gap-1.5">
+                        {child.children.map((grandchild) => (
+                          <TeamPill key={grandchild.id} node={grandchild} onClick={() => setCurrentId(grandchild.id)} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -144,7 +195,7 @@ export function OrgChart({
         </div>
       </div>
 
-      {currentNode.id !== ROOT_ID && (
+      {!isRoot && (
         <div>
           <h3 className="mb-3 font-medium text-gray-900">
             {currentNode.name}
