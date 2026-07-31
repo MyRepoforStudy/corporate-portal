@@ -9,16 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        // The fallback chain lives *inside* var()'s second argument rather
+        // than as sibling items - a bare `var(--font-sans), ui-sans-serif, ...`
+        // becomes entirely invalid (not just that one token) if --font-sans
+        // is ever unset, e.g. when next/font can't reach Google Fonts during
+        // a build with no outbound network access.
         sans: [
-          "var(--font-sans)",
-          "ui-sans-serif",
-          "system-ui",
-          "-apple-system",
-          "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Arial",
-          "sans-serif",
+          'var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
         ],
       },
       colors: {
