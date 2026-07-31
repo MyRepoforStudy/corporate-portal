@@ -157,7 +157,11 @@ export function OrgChart({
     router.push(id ? `/org-structure/chart/${id}` : "/org-structure/chart");
   }
 
-  const root: DepartmentNode = {
+  // With a single real top-level department, that department IS the top of
+  // the chart - no need for a synthetic "BNK" wrapper level above it. Only
+  // fall back to the wrapper if there's genuinely more than one root to list.
+  const hasSingleRoot = tree.length === 1;
+  const syntheticRoot: DepartmentNode = {
     id: ROOT_ID,
     name: "BNK",
     order: 0,
@@ -167,13 +171,15 @@ export function OrgChart({
     vacancies: [],
     children: tree,
   };
-  const path = currentId ? (findNodePath([root], currentId) ?? [root]) : [root];
+  const effectiveRoot = hasSingleRoot ? tree[0] : syntheticRoot;
+
+  const path = currentId ? (findNodePath([effectiveRoot], currentId) ?? [effectiveRoot]) : [effectiveRoot];
   const currentNode = path[path.length - 1];
-  const isRoot = currentNode.id === ROOT_ID;
+  const isSyntheticRoot = currentNode.id === ROOT_ID;
   const children = publishedChildren(currentNode);
 
-  const head = isRoot ? null : resolveHead(currentNode);
-  const staff = currentNode.employees.filter((e) => e.id !== head?.id);
+  const head = isSyntheticRoot ? null : resolveHead(currentNode);
+  const staff = isSyntheticRoot ? [] : currentNode.employees.filter((e) => e.id !== head?.id);
 
   return (
     <div className="space-y-6">
@@ -186,7 +192,7 @@ export function OrgChart({
             ) : (
               <button
                 type="button"
-                onClick={() => goTo(node.id === ROOT_ID ? null : node.id)}
+                onClick={() => goTo(node.id === effectiveRoot.id ? null : node.id)}
                 className="text-gray-500 hover:text-brand-700 hover:underline dark:hover:text-brand-300"
               >
                 {node.name}
@@ -199,7 +205,11 @@ export function OrgChart({
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-8">
         <div key={currentNode.id} className="flex min-w-fit flex-col items-center">
           <div className="w-full max-w-2xl">
-            {isRoot ? <RootBox node={currentNode} delay={0} /> : <CurrentDeptBar node={currentNode} dict={dict} />}
+            {isSyntheticRoot ? (
+              <RootBox node={currentNode} delay={0} />
+            ) : (
+              <CurrentDeptBar node={currentNode} dict={dict} />
+            )}
           </div>
 
           {head && (
