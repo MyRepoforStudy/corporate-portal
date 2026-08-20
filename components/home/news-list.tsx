@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Paperclip, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Newspaper, Paperclip, X } from "lucide-react";
 import type { News } from "@prisma/client";
 import type { Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
@@ -59,7 +59,7 @@ function FeaturedCard({
     return (
       <article
         onClick={onOpen}
-        className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm"
+        className="group flex min-h-[280px] cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm"
       >
         <div className="mb-1 flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
@@ -70,7 +70,7 @@ function FeaturedCard({
           </div>
           <span className="shrink-0 text-xs text-gray-500">{formatDateLong(item.createdAt, locale, true)}</span>
         </div>
-        <p className="line-clamp-4 max-w-prose whitespace-pre-line text-sm text-gray-600">{item.content}</p>
+        <p className="line-clamp-6 max-w-prose whitespace-pre-line text-sm text-gray-600">{item.content}</p>
         <DocumentLink item={item} />
       </article>
     );
@@ -123,7 +123,9 @@ function ListRow({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={item.imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-md object-cover" />
       ) : (
-        <div className="h-16 w-16 shrink-0 rounded-md bg-gray-100" />
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md bg-gray-100">
+          <Newspaper className="h-5 w-5 text-gray-300" aria-hidden="true" />
+        </div>
       )}
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
@@ -164,7 +166,9 @@ function SecondaryCard({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={item.imageUrl} alt="" className="h-32 w-full object-cover" />
       ) : (
-        <div className="h-32 w-full bg-gray-100" />
+        <div className="flex h-32 w-full items-center justify-center bg-gray-100">
+          <Newspaper className="h-8 w-8 text-gray-300" aria-hidden="true" />
+        </div>
       )}
       <div className="p-3">
         {showBadge && <NewBadge label={newBadge} className="mb-1.5 inline-block" />}
