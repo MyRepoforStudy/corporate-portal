@@ -13,13 +13,17 @@ export function DayTimeline({
   currentUserId,
   isAdmin,
   onCancel,
+  onEdit,
   cancelLabel,
+  editLabel,
 }: {
   bookings: BookingWithRelations[];
   currentUserId: string;
   isAdmin: boolean;
-  onCancel: (bookingId: string) => void;
+  onCancel: (booking: BookingWithRelations) => void;
+  onEdit: (booking: BookingWithRelations) => void;
   cancelLabel: string;
+  editLabel: string;
 }) {
   return (
     <div className="flex rounded-lg border border-gray-200 bg-white">
@@ -58,12 +62,20 @@ export function DayTimeline({
                 {booking.organizer.displayName}
               </p>
               {canCancel && (
-                <button
-                  onClick={() => onCancel(booking.id)}
-                  className="absolute right-1 top-1 hidden rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-red-600 dark:text-red-400 hover:bg-white group-hover:block"
-                >
-                  {cancelLabel}
-                </button>
+                <div className="absolute right-1 top-1 hidden gap-1 group-hover:flex">
+                  <button
+                    onClick={() => onEdit(booking)}
+                    className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-200 hover:bg-white"
+                  >
+                    {editLabel}
+                  </button>
+                  <button
+                    onClick={() => onCancel(booking)}
+                    className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-red-600 dark:text-red-400 hover:bg-white"
+                  >
+                    {cancelLabel}
+                  </button>
+                </div>
               )}
             </div>
           );

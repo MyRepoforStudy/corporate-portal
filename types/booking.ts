@@ -11,6 +11,7 @@ export interface BookingWithRelations {
   startTime: string;
   endTime: string;
   status: "CONFIRMED" | "CANCELLED";
+  recurrenceGroupId: string | null;
   organizer: BookingUserSummary;
   participants: BookingUserSummary[];
 }

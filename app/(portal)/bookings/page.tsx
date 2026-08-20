@@ -9,7 +9,10 @@ export const dynamic = "force-dynamic";
 
 export default async function BookingsPage() {
   const session = await getServerSession(authOptions);
-  const rooms = await prisma.room.findMany({ orderBy: [{ floor: "asc" }, { name: "asc" }] });
+  const rooms = await prisma.room.findMany({
+    where: { isActive: true },
+    orderBy: [{ floor: "asc" }, { name: "asc" }],
+  });
   const locale = getLocale();
   const dict = getDictionary(locale);
 

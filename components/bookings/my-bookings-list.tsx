@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarX2, History } from "lucide-react";
 import type { Room } from "@prisma/client";
@@ -9,6 +10,7 @@ import { formatDateLong } from "@/lib/i18n/format";
 import type { BookingUserSummary } from "@/types/booking";
 import { useToast } from "@/components/ui/toast-provider";
 import { EmptyState } from "@/components/ui/empty-state";
+import { BookingFormModal } from "@/components/bookings/booking-form-modal";
 
 interface MyBooking {
   id: string;
@@ -16,8 +18,11 @@ interface MyBooking {
   startTime: Date;
   endTime: Date;
   status: "CONFIRMED" | "CANCELLED";
+  recurrenceGroupId: string | null;
+  roomId: string;
   room: Room;
   organizer: BookingUserSummary;
+  participants: BookingUserSummary[];
 }
 
 function formatDate(date: Date, locale: Locale): string {
@@ -27,22 +32,29 @@ function formatDate(date: Date, locale: Locale): string {
 export function MyBookingsList({
   upcoming,
   past,
+  rooms,
   currentUserId,
   locale,
   dict,
 }: {
   upcoming: MyBooking[];
   past: MyBooking[];
+  rooms: Room[];
   currentUserId: string;
   locale: Locale;
   dict: Dictionary["bookings"];
 }) {
   const router = useRouter();
   const toast = useToast();
+  const [editingBooking, setEditingBooking] = useState<MyBooking | undefined>(undefined);
 
-  async function handleCancel(bookingId: string) {
+  async function handleCancel(booking: MyBooking) {
     if (!confirm(dict.confirmCancel)) return;
-    const res = await fetch(`/api/bookings/${bookingId}`, { method: "DELETE" });
+    const cancelSeries = booking.recurrenceGroupId && confirm(dict.confirmCancelSeries);
+    const res = await fetch(
+      `/api/bookings/${booking.id}${cancelSeries ? "?scope=series" : ""}`,
+      { method: "DELETE" }
+    );
     if (res.ok) {
       router.refresh();
     } else {
@@ -51,7 +63,8 @@ export function MyBookingsList({
     }
   }
 
-  function renderBooking(booking: MyBooking, allowCancel: boolean) {
+  function renderBooking(booking: MyBooking, allowActions: boolean) {
+    const isOwn = booking.organizer.id === currentUserId;
     return (
       <div
         key={booking.id}
@@ -69,18 +82,26 @@ export function MyBookingsList({
           <p className="text-xs text-gray-500">
             {booking.room.name} · {formatDate(booking.startTime, locale)},{" "}
             {formatTime(booking.startTime)}–{formatTime(booking.endTime)}
-            {booking.organizer.id !== currentUserId && (
+            {!isOwn && (
               <> · {dict.myBookings.organizerLabel} {booking.organizer.displayName}</>
             )}
           </p>
         </div>
-        {allowCancel && booking.status === "CONFIRMED" && booking.organizer.id === currentUserId && (
-          <button
-            onClick={() => handleCancel(booking.id)}
-            className="shrink-0 text-sm text-red-600 dark:text-red-400 hover:underline"
-          >
-            {dict.cancelAction}
-          </button>
+        {allowActions && booking.status === "CONFIRMED" && isOwn && (
+          <div className="flex shrink-0 items-center gap-3">
+            <button
+              onClick={() => setEditingBooking(booking)}
+              className="text-sm text-brand-700 hover:underline dark:text-brand-300"
+            >
+              {dict.editAction}
+            </button>
+            <button
+              onClick={() => handleCancel(booking)}
+              className="text-sm text-red-600 dark:text-red-400 hover:underline"
+            >
+              {dict.cancelAction}
+            </button>
+          </div>
         )}
       </div>
     );
@@ -104,6 +125,32 @@ export function MyBookingsList({
           <div className="space-y-2">{past.map((b) => renderBooking(b, false))}</div>
         )}
       </div>
+
+      {editingBooking && (
+        <BookingFormModal
+          rooms={rooms}
+          defaultRoomId={editingBooking.roomId}
+          defaultDate={editingBooking.startTime}
+          editingBooking={{
+            id: editingBooking.id,
+            topic: editingBooking.topic,
+            roomId: editingBooking.roomId,
+            startTime: editingBooking.startTime.toISOString(),
+            endTime: editingBooking.endTime.toISOString(),
+            status: editingBooking.status,
+            recurrenceGroupId: editingBooking.recurrenceGroupId,
+            organizer: editingBooking.organizer,
+            participants: editingBooking.participants,
+          }}
+          onClose={() => setEditingBooking(undefined)}
+          onCreated={() => {
+            setEditingBooking(undefined);
+            router.refresh();
+          }}
+          locale={locale}
+          dict={dict}
+        />
+      )}
     </div>
   );
 }

@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 import type { Room } from "@prisma/client";
 import { addDays, startOfDay, startOfWeek } from "@/lib/booking-time";
 import { WeekStrip } from "@/components/bookings/week-strip";
 import { DayTimeline } from "@/components/bookings/day-timeline";
 import { BookingFormModal } from "@/components/bookings/booking-form-modal";
+import { FindRoomSearch } from "@/components/bookings/find-room-search";
 import type { BookingWithRelations } from "@/types/booking";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatFloor, formatCapacity } from "@/lib/i18n/format";
@@ -31,6 +33,9 @@ export function BookingBoard({
   const [selectedDate, setSelectedDate] = useState(() => startOfDay(new Date()));
   const [weekBookings, setWeekBookings] = useState<BookingWithRelations[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingBooking, setEditingBooking] = useState<BookingWithRelations | undefined>(undefined);
+  const [prefill, setPrefill] = useState<{ roomId: string; date: Date; start: string; end: string } | null>(null);
+  const [isFindingRoom, setIsFindingRoom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
@@ -69,9 +74,13 @@ export function BookingBoard({
     [weekBookings, selectedDate]
   );
 
-  async function handleCancel(bookingId: string) {
+  async function handleCancel(booking: BookingWithRelations) {
     if (!confirm(dict.confirmCancel)) return;
-    const res = await fetch(`/api/bookings/${bookingId}`, { method: "DELETE" });
+    const cancelSeries = booking.recurrenceGroupId && confirm(dict.confirmCancelSeries);
+    const res = await fetch(
+      `/api/bookings/${booking.id}${cancelSeries ? "?scope=series" : ""}`,
+      { method: "DELETE" }
+    );
     if (res.ok) {
       loadWeek();
     } else {
@@ -80,25 +89,45 @@ export function BookingBoard({
     }
   }
 
+  function handleFoundRoom(room: Room, date: Date, start: string, end: string) {
+    setIsFindingRoom(false);
+    setPrefill({ roomId: room.id, date, start, end });
+    setEditingBooking(undefined);
+    setIsFormOpen(true);
+  }
+
   const selectedRoom = rooms.find((r) => r.id === roomId);
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <select
-          value={roomId}
-          onChange={(e) => setRoomId(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-        >
-          {rooms.map((room) => (
-            <option key={room.id} value={room.id}>
-              {room.name} · {formatFloor(room.floor, locale)} · {formatCapacity(room.capacity, locale)}
-            </option>
-          ))}
-        </select>
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          >
+            {rooms.map((room) => (
+              <option key={room.id} value={room.id}>
+                {room.name} · {formatFloor(room.floor, locale)} · {formatCapacity(room.capacity, locale)}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => setIsFindingRoom(true)}
+            className="flex items-center gap-1.5 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <Search className="h-4 w-4" aria-hidden="true" />
+            {dict.findRoom.button}
+          </button>
+        </div>
 
         <button
-          onClick={() => setIsFormOpen(true)}
+          onClick={() => {
+            setEditingBooking(undefined);
+            setPrefill(null);
+            setIsFormOpen(true);
+          }}
           className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           {dict.newBooking}
@@ -128,18 +157,43 @@ export function BookingBoard({
           currentUserId={currentUserId}
           isAdmin={isAdmin}
           onCancel={handleCancel}
+          onEdit={(booking) => {
+            setEditingBooking(booking);
+            setPrefill(null);
+            setIsFormOpen(true);
+          }}
           cancelLabel={dict.cancelAction}
+          editLabel={dict.editAction}
+        />
+      )}
+
+      {isFindingRoom && (
+        <FindRoomSearch
+          onClose={() => setIsFindingRoom(false)}
+          onSelectRoom={handleFoundRoom}
+          defaultDate={selectedDate}
+          locale={locale}
+          dict={dict.findRoom}
         />
       )}
 
       {isFormOpen && (
         <BookingFormModal
           rooms={rooms}
-          defaultRoomId={roomId}
-          defaultDate={selectedDate}
-          onClose={() => setIsFormOpen(false)}
+          defaultRoomId={prefill?.roomId ?? roomId}
+          defaultDate={prefill?.date ?? selectedDate}
+          defaultStartTime={prefill?.start}
+          defaultEndTime={prefill?.end}
+          editingBooking={editingBooking}
+          onClose={() => {
+            setIsFormOpen(false);
+            setEditingBooking(undefined);
+            setPrefill(null);
+          }}
           onCreated={() => {
             setIsFormOpen(false);
+            setEditingBooking(undefined);
+            setPrefill(null);
             loadWeek();
           }}
           locale={locale}

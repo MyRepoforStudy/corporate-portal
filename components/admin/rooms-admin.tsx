@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { Room } from "@prisma/client";
 import { useCrudList } from "@/lib/hooks/use-crud-list";
 
-const emptyForm = { name: "", capacity: "", floor: "", equipment: "" };
+const emptyForm = { name: "", capacity: "", floor: "", equipment: "", isActive: true };
 
 export function RoomsAdmin() {
   const { items, isLoading, create, update, remove } = useCrudList<Room>("/api/rooms");
@@ -23,6 +23,7 @@ export function RoomsAdmin() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
+      isActive: form.isActive,
     };
     const result = editingId ? await update(editingId, payload) : await create(payload);
     if (result) {
@@ -40,6 +41,7 @@ export function RoomsAdmin() {
       capacity: String(room.capacity),
       floor: String(room.floor),
       equipment: room.equipment.join(", "),
+      isActive: room.isActive,
     });
   }
 
@@ -91,6 +93,15 @@ export function RoomsAdmin() {
           onChange={(e) => setForm({ ...form, equipment: e.target.value })}
           className="rounded-md border border-gray-300 px-3 py-2 text-sm"
         />
+        <label className="flex items-center gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={form.isActive}
+            onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+          Активна (доступна для бронирования)
+        </label>
 
         {error && <p className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{error}</p>}
 
@@ -120,7 +131,14 @@ export function RoomsAdmin() {
           {items.map((room) => (
             <div key={room.id} className="flex items-center justify-between px-4 py-2.5">
               <div>
-                <p className="text-sm font-medium text-gray-900">{room.name}</p>
+                <p className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                  {room.name}
+                  {!room.isActive && (
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-normal text-gray-500 dark:bg-gray-800">
+                      Не используется
+                    </span>
+                  )}
+                </p>
                 <p className="text-xs text-gray-500">
                   {room.floor} этаж · до {room.capacity} чел.
                   {room.equipment.length > 0 && ` · ${room.equipment.join(", ")}`}

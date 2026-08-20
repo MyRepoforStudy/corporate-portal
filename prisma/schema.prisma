@@ -32,6 +32,7 @@ model User {
 
   bookingsOrganized     Booking[] @relation("BookingOrganizer")
   bookingsParticipating Booking[] @relation("BookingParticipants")
+  notifications         Notification[]
   news                  News[]
   auditLogs             AuditLog[]
 
@@ -199,6 +200,9 @@ model Room {
   capacity  Int
   floor     Int
   equipment String[]
+  // Out-of-service rooms stay in history/existing bookings but are hidden
+  // from the booking form and "find a free room" search.
+  isActive  Boolean  @default(true)
 
   bookings Booking[]
 
@@ -222,11 +226,35 @@ model Booking {
   endTime   DateTime
   status    BookingStatus @default(CONFIRMED)
 
+  // Groups the individual occurrences created together for a recurring
+  // meeting - each occurrence is its own Booking row with its own overlap
+  // check, not a computed series.
+  recurrenceGroupId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([roomId, startTime, endTime])
+  @@index([recurrenceGroupId])
   @@index([organizerId])
+}
+
+// In-app notification feed (bell icon). Also triggers a best-effort email
+// via lib/email.ts, which is a no-op until SMTP_* env vars are configured.
+model Notification {
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+  type    String
+  title   String
+  message String
+  link    String?
+  isRead  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
 }
 
 // Peer-to-peer public kudos shown on the home page - "X thanked Y for...".

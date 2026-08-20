@@ -13,16 +13,20 @@ export default async function MyBookingsPage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
 
-  const bookings = await prisma.booking.findMany({
-    where: {
-      OR: [{ organizerId: userId }, { participants: { some: { id: userId } } }],
-    },
-    include: {
-      room: true,
-      organizer: { select: { id: true, displayName: true, email: true } },
-    },
-    orderBy: { startTime: "desc" },
-  });
+  const [bookings, rooms] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        OR: [{ organizerId: userId }, { participants: { some: { id: userId } } }],
+      },
+      include: {
+        room: true,
+        organizer: { select: { id: true, displayName: true, email: true } },
+        participants: { select: { id: true, displayName: true, email: true } },
+      },
+      orderBy: { startTime: "desc" },
+    }),
+    prisma.room.findMany({ where: { isActive: true }, orderBy: [{ floor: "asc" }, { name: "asc" }] }),
+  ]);
 
   const now = new Date();
   const upcoming = bookings
@@ -43,6 +47,7 @@ export default async function MyBookingsPage() {
       <MyBookingsList
         upcoming={upcoming}
         past={past}
+        rooms={rooms}
         currentUserId={userId}
         locale={locale}
         dict={dict.bookings}

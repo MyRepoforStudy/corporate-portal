@@ -4,6 +4,7 @@ import { SignOutButton } from "@/components/layout/sign-out-button";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { GlobalSearch } from "@/components/layout/global-search";
+import { NotificationsBell } from "@/components/layout/notifications-bell";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import type { Theme } from "@/lib/theme";
 
@@ -29,6 +30,7 @@ export function Header({
           <GlobalSearch dict={dict.search} />
         </div>
         <div className="flex items-center gap-3">
+          <NotificationsBell dict={dict.notifications} />
           <ThemeToggle theme={theme} />
           <LanguageSwitcher locale={locale} />
           <span className="hidden text-sm text-gray-500 sm:inline">{session.user.name}</span>
