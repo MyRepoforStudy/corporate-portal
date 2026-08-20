@@ -4,6 +4,7 @@ import { requireSession, requireBookingPermission, handleApiError, ApiError } fr
 import { createBookingSchema } from "@/lib/validations/booking";
 import { createBookingWithOverlapCheck, createRecurringBookings } from "@/lib/booking";
 import { notifyUser } from "@/lib/notifications";
+import { formatTime } from "@/lib/booking-time";
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,15 +39,46 @@ export async function GET(request: NextRequest) {
   }
 }
 
+function bookingEmailHtml(booking: {
+  topic: string;
+  startTime: Date;
+  endTime: Date;
+  room: { name: string };
+  organizer: { displayName: string };
+}, intro: string) {
+  const date = booking.startTime.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  const time = `${formatTime(booking.startTime)}–${formatTime(booking.endTime)}`;
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:4px 12px 4px 0;color:#6b7280;white-space:nowrap;">${label}</td><td style="padding:4px 0;color:#111827;">${value}</td></tr>`;
+
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:480px;">
+      <p style="color:#111827;">${intro}</p>
+      <table style="border-collapse:collapse;font-size:14px;">
+        ${row("Тема", `<strong>${booking.topic}</strong>`)}
+        ${row("Переговорная", booking.room.name)}
+        ${row("Дата", date)}
+        ${row("Время", time)}
+        ${row("Организатор", booking.organizer.displayName)}
+      </table>
+      <p style="margin-top:16px;">
+        <a href="${(process.env.NEXTAUTH_URL ?? "").replace(/\/$/, "")}/bookings/mine" style="color:#d80010;">Мои брони →</a>
+      </p>
+    </div>
+  `;
+}
+
 async function notifyBookingCreated(booking: {
   id: string;
   topic: string;
   startTime: Date;
+  endTime: Date;
   organizerId: string;
+  room: { name: string };
   organizer: { id: string; email: string; displayName: string };
   participants: { id: string; email: string }[];
 }) {
-  const when = booking.startTime.toLocaleString("ru-RU");
+  const when = `${booking.startTime.toLocaleDateString("ru-RU")}, ${formatTime(booking.startTime)}`;
   await notifyUser({
     userId: booking.organizer.id,
     email: booking.organizer.email,
@@ -54,6 +86,7 @@ async function notifyBookingCreated(booking: {
     title: "Бронь создана",
     message: `«${booking.topic}», ${when}`,
     link: "/bookings/mine",
+    emailHtml: bookingEmailHtml(booking, "Ваша бронь переговорной подтверждена."),
   });
   await Promise.all(
     booking.participants
@@ -66,6 +99,7 @@ async function notifyBookingCreated(booking: {
           title: "Вас пригласили на встречу",
           message: `«${booking.topic}», ${when}, организатор: ${booking.organizer.displayName}`,
           link: "/bookings/mine",
+          emailHtml: bookingEmailHtml(booking, `${booking.organizer.displayName} пригласил(а) вас на встречу.`),
         })
       )
   );

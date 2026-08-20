@@ -65,6 +65,14 @@ services:
       LDAP_SYNC_FILTER: "${LDAP_SYNC_FILTER:-}"
       LDAP_SYNC_BASE_DN: "${LDAP_SYNC_BASE_DN:-}"
       AUTH_DEV_MODE: "${AUTH_DEV_MODE:-false}"
+      # Optional - email notifications stay a silent no-op (see lib/email.ts)
+      # until SMTP_HOST is set. SMTP_USER/PASSWORD/FROM are optional too,
+      # for internal relay servers that allow unauthenticated sending.
+      SMTP_HOST: "${SMTP_HOST:-}"
+      SMTP_PORT: "${SMTP_PORT:-587}"
+      SMTP_USER: "${SMTP_USER:-}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
+      SMTP_FROM: "${SMTP_FROM:-}"
     ports:
       - "3000:3000"
     volumes:
