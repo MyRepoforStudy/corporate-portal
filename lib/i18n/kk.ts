@@ -43,6 +43,7 @@ export const kk: Dictionary = {
     news: "Жаңалықтар",
     noNews: "Әзірге жаңалықтар жоқ.",
     newBadge: "Жаңа",
+    moreNews: "Тағы жаңалықтар",
     upcoming: "Жақын арада",
     birthdays: {
       title: "Осы аптадағы туған күндер",

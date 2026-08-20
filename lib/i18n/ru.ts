@@ -41,6 +41,7 @@ export const ru = {
     news: "Новости",
     noNews: "Новостей пока нет.",
     newBadge: "Новое",
+    moreNews: "Ещё новости",
     upcoming: "Ближайшее",
     birthdays: {
       title: "Дни рождения на неделе",

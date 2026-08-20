@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Tailwind's white/gray palette is redefined here as CSS variables so every
    existing bg-white / text-gray-* / border-gray-* utility across the app
    automatically flips under the .dark class - see tailwind.config.ts. This
