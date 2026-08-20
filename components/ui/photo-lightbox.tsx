@@ -20,8 +20,9 @@ export function PhotoLightbox({ src, onClose }: { src: string; onClose: () => vo
       <img
         src={src}
         alt=""
+        draggable={false}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[85vh] max-w-[85vw] rounded-lg object-contain shadow-2xl"
+        className="max-h-[85vh] max-w-[85vw] select-none rounded-lg object-contain shadow-2xl"
       />
     </div>
   );
@@ -82,7 +83,12 @@ export function ClickablePhoto({
         style={style}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="" className="h-full w-full rounded-full border border-gray-200 object-cover" />
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          className="pointer-events-none h-full w-full select-none rounded-full border border-gray-200 object-cover"
+        />
       </div>
       {isOpen && <PhotoLightbox src={src} onClose={onClose} />}
     </>

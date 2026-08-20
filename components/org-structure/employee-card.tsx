@@ -50,7 +50,7 @@ export function EmployeeCard({
       <button
         type="button"
         onClick={handleOpen}
-        className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
+        className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-brand-300 hover:shadow-sm"
       >
         <ClickablePhoto
           src={employee.photoUrl}
