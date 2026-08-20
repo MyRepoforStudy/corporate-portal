@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { X, Mail, Phone, Building2, CalendarDays, MapPin } from "lucide-react";
+import { X, Mail, Phone, Building2, Briefcase, CalendarDays, MapPin } from "lucide-react";
 import type { Department, Employee, Position, Workplace } from "@prisma/client";
 import type { EmployeeWithPosition } from "@/lib/org-tree";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
+import { ClickablePhoto } from "@/components/ui/photo-lightbox";
 
 type EmployeeDetail = Employee & { department: Department; position: Position; workplace: Workplace | null };
 
@@ -21,6 +22,7 @@ export function EmployeeCard({
   const [isOpen, setIsOpen] = useState(false);
   const [detail, setDetail] = useState<EmployeeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
 
   function handleOpen() {
     setIsOpen(true);
@@ -50,18 +52,15 @@ export function EmployeeCard({
         onClick={handleOpen}
         className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
       >
-        {employee.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={employee.photoUrl}
-            alt=""
-            className="h-16 w-16 shrink-0 rounded-full border border-gray-200 object-cover"
-          />
-        ) : (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg font-medium text-gray-500">
-            {employee.fullName.charAt(0)}
-          </div>
-        )}
+        <ClickablePhoto
+          src={employee.photoUrl}
+          size={80}
+          fallbackText={employee.fullName.charAt(0)}
+          className="text-lg"
+          isOpen={isPhotoOpen}
+          onOpen={() => setIsPhotoOpen(true)}
+          onClose={() => setIsPhotoOpen(false)}
+        />
         <div className="min-w-0">
           <p className="truncate font-medium text-gray-900">{employee.fullName}</p>
           <p className="text-gray-600">{employee.position.title}</p>
@@ -83,18 +82,15 @@ export function EmployeeCard({
           >
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="flex items-center gap-4">
-                {employee.photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={employee.photoUrl}
-                    alt=""
-                    className="h-20 w-20 shrink-0 rounded-full border border-gray-200 object-cover"
-                  />
-                ) : (
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gray-100 text-2xl font-medium text-gray-500">
-                    {employee.fullName.charAt(0)}
-                  </div>
-                )}
+                <ClickablePhoto
+                  src={employee.photoUrl}
+                  size={96}
+                  fallbackText={employee.fullName.charAt(0)}
+                  className="text-2xl"
+                  isOpen={isPhotoOpen}
+                  onOpen={() => setIsPhotoOpen(true)}
+                  onClose={() => setIsPhotoOpen(false)}
+                />
                 <div>
                   <p className="text-lg font-semibold text-gray-900">{employee.fullName}</p>
                   <p className="text-sm text-gray-600">{employee.position.title}</p>
@@ -134,6 +130,12 @@ export function EmployeeCard({
                   <div className="flex items-center gap-2 text-gray-600">
                     <Building2 className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
                     {detail.department.name}
+                  </div>
+                )}
+                {detail?.activityArea && (
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Briefcase className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+                    {detail.activityArea}
                   </div>
                 )}
                 {detail?.hireDate && (

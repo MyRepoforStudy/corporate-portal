@@ -37,6 +37,7 @@ export default async function ProfilePage() {
                 phone: employee.phone,
                 photoUrl: employee.photoUrl,
                 bio: employee.bio,
+                activityArea: employee.activityArea,
                 department: employee.department.name,
                 position: employee.position.title,
                 workplace: employee.workplace

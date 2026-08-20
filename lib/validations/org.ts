@@ -44,6 +44,13 @@ export const employeeSchema = z.object({
     .transform((v) => (v ? new Date(v) : undefined)),
   departmentId: z.string().cuid("Выберите отдел"),
   positionId: z.string().cuid("Выберите должность"),
+  activityArea: z
+    .string()
+    .trim()
+    .max(200)
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : undefined)),
 });
 
 export const vacationSchema = z.object({

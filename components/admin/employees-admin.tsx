@@ -18,6 +18,7 @@ const emptyForm = {
   hireDate: "",
   departmentId: "",
   positionId: "",
+  activityArea: "",
 };
 
 function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations; onSaved: () => void }) {
@@ -255,6 +256,7 @@ export function EmployeesAdmin() {
       hireDate: employee.hireDate ? toDateInputValue(new Date(employee.hireDate)) : "",
       departmentId: employee.departmentId,
       positionId: employee.positionId,
+      activityArea: employee.activityArea ?? "",
     });
   }
 
@@ -386,6 +388,13 @@ export function EmployeesAdmin() {
             </option>
           ))}
         </select>
+        <input
+          type="text"
+          placeholder="Род деятельности / направление (необязательно)"
+          value={form.activityArea}
+          onChange={(e) => setForm({ ...form, activityArea: e.target.value })}
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm sm:col-span-2"
+        />
 
         {error && <p className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{error}</p>}
 

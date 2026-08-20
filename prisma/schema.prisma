@@ -111,6 +111,9 @@ model Employee {
   birthDate DateTime?
   hireDate  DateTime?
   bio      String?
+  // Free-text "field of activity / direction" - distinct from the formal
+  // Position title, self-described by the employee (e.g. "Backend-разработка").
+  activityArea String?
 
   vacationDaysTotal Int @default(28)
   vacationDaysUsed  Int @default(0)

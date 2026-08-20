@@ -18,6 +18,7 @@ interface EmployeeProfile {
   phone: string | null;
   photoUrl: string | null;
   bio: string | null;
+  activityArea: string | null;
   department: string;
   position: string;
   workplace: { building: string | null; floor: number; room: string; deskNumber: string } | null;
@@ -43,6 +44,7 @@ export function ProfileForm({
     email: employee?.email ?? account.email,
     photoUrl: employee?.photoUrl ?? "",
     bio: employee?.bio ?? "",
+    activityArea: employee?.activityArea ?? "",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -173,10 +175,17 @@ export function ProfileForm({
             />
             <input
               type="text"
-              placeholder="Телефон"
+              placeholder="Мобильный телефон"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            />
+            <input
+              type="text"
+              placeholder="Род деятельности / направление"
+              value={form.activityArea}
+              onChange={(e) => setForm({ ...form, activityArea: e.target.value })}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm sm:col-span-2"
             />
 
             <div className="sm:col-span-2">

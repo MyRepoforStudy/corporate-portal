@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, Users } from "lucide-react";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/lib/org-tree";
 import { EmployeeCard } from "@/components/org-structure/employee-card";
 import { VacancyCard } from "@/components/org-structure/vacancy-card";
+import { ClickablePhoto } from "@/components/ui/photo-lightbox";
 import type { Dictionary, Locale } from "@/lib/i18n";
 
 const ROOT_ID = "__root__";
@@ -38,16 +40,45 @@ function CountBadge({ node }: { node: DepartmentNode }) {
   );
 }
 
-function HeadAvatar({ node, size }: { node: DepartmentNode; size: number }) {
+function HeadAvatar({
+  node,
+  size,
+  clickable = false,
+}: {
+  node: DepartmentNode;
+  size: number;
+  /** Only safe when not nested inside another clickable element (e.g. DeptCard's own button). */
+  clickable?: boolean;
+}) {
   const head = resolveHead(node);
-  const className = `shrink-0 rounded-full border border-gray-200 object-cover`;
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const initial = (head?.fullName ?? node.name).charAt(0);
+
+  if (clickable) {
+    return (
+      <ClickablePhoto
+        src={head?.photoUrl ?? null}
+        size={size}
+        fallbackText={initial}
+        style={{ fontSize: size * 0.4 }}
+        isOpen={isPhotoOpen}
+        onOpen={() => setIsPhotoOpen(true)}
+        onClose={() => setIsPhotoOpen(false)}
+      />
+    );
+  }
+
   if (head?.photoUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={head.photoUrl} alt="" className={className} style={{ width: size, height: size }} />
+      <img
+        src={head.photoUrl}
+        alt=""
+        className="shrink-0 rounded-full border border-gray-200 object-cover"
+        style={{ width: size, height: size }}
+      />
     );
   }
-  const initial = (head?.fullName ?? node.name).charAt(0);
   return (
     <div
       className="flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 font-medium text-gray-500"
@@ -83,7 +114,7 @@ function CurrentDeptBar({ node, dict }: { node: DepartmentNode; dict: Dictionary
   const head = resolveHead(node);
   return (
     <div className="chart-node-enter flex w-full items-center gap-4 rounded-lg border border-gray-200 border-l-4 border-l-brand-600 bg-white px-5 py-4 text-left">
-      <HeadAvatar node={node} size={44} />
+      <HeadAvatar node={node} size={52} clickable />
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-gray-900">{node.name}</p>
         {head && (
@@ -115,7 +146,7 @@ function DeptCard({
       className="chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 border-t-[3px] border-t-brand-600 bg-white px-3 py-2.5 text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <HeadAvatar node={node} size={32} />
+      <HeadAvatar node={node} size={36} />
       <div className="min-w-0 w-full">
         <p className="text-xs font-medium leading-snug text-gray-900">{node.name}</p>
         {head && <p className="truncate text-[11px] text-gray-500">{head.fullName}</p>}

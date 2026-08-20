@@ -25,6 +25,13 @@ export const profileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
+  activityArea: z
+    .string()
+    .trim()
+    .max(200)
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : undefined)),
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;
