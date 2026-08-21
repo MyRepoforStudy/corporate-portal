@@ -1,11 +1,19 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { FileText, X } from "lucide-react";
+import { FileText, Pin, X } from "lucide-react";
 import type { News } from "@prisma/client";
 import { useCrudList } from "@/lib/hooks/use-crud-list";
 
-const emptyForm = { title: "", content: "", imageUrl: "", documentUrl: "", documentName: "", isPublished: true };
+const emptyForm = {
+  title: "",
+  content: "",
+  imageUrl: "",
+  documentUrl: "",
+  documentName: "",
+  isPublished: true,
+  isPinned: false,
+};
 
 export function NewsAdmin() {
   const { items, isLoading, create, update, remove } = useCrudList<News>("/api/news");
@@ -88,6 +96,7 @@ export function NewsAdmin() {
       documentUrl: item.documentUrl ?? "",
       documentName: item.documentName ?? "",
       isPublished: item.isPublished,
+      isPinned: item.isPinned,
     });
   }
 
@@ -193,14 +202,24 @@ export function NewsAdmin() {
           </div>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={form.isPublished}
-            onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-          />
-          Опубликовано
-        </label>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.isPublished}
+              onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+            />
+            Опубликовано
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.isPinned}
+              onChange={(e) => setForm({ ...form, isPinned: e.target.checked })}
+            />
+            Закрепить на главной
+          </label>
+        </div>
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <div className="flex gap-2">
           <button
@@ -239,12 +258,11 @@ export function NewsAdmin() {
                     />
                   )}
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="flex items-center gap-1.5 font-medium text-gray-900">
+                      {item.isPinned && <Pin className="h-3.5 w-3.5 shrink-0 text-brand-600" aria-hidden="true" />}
                       {item.title}
                       {!item.isPublished && (
-                        <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">
-                          черновик
-                        </span>
+                        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">черновик</span>
                       )}
                     </p>
                     <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{item.content}</p>

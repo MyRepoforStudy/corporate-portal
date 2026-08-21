@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Newspaper, Paperclip, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Newspaper, Paperclip, Pin, X } from "lucide-react";
 import type { News } from "@prisma/client";
 import type { Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
@@ -11,6 +11,17 @@ const LIST_COUNT = 4;
 
 function isRecent(date: Date | string) {
   return Date.now() - new Date(date).getTime() < RECENT_THRESHOLD_MS;
+}
+
+function PinBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={`flex shrink-0 items-center gap-1 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-medium text-white shadow-sm ${className ?? ""}`}
+    >
+      <Pin className="h-2.5 w-2.5" aria-hidden="true" />
+      Закреплено
+    </span>
+  );
 }
 
 function NewBadge({ label, className }: { label: string; className?: string }) {
@@ -59,10 +70,15 @@ function FeaturedCard({
     return (
       <article
         onClick={onOpen}
-        className="group flex min-h-[280px] cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm"
+        className={`group flex min-h-[280px] cursor-pointer flex-col overflow-hidden rounded-lg border p-4 transition hover:shadow-sm ${
+          item.isPinned
+            ? "border-brand-200 bg-brand-50/50 hover:border-brand-300"
+            : "border-gray-200 bg-white hover:border-brand-300"
+        }`}
       >
         <div className="mb-1 flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
+            {item.isPinned && <PinBadge />}
             {showBadge && <NewBadge label={newBadge} />}
             <h3 className="truncate text-lg font-semibold text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
               {item.title}
@@ -85,7 +101,10 @@ function FeaturedCard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={item.imageUrl} alt="" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-        {showBadge && <NewBadge label={newBadge} className="absolute left-3 top-3" />}
+        <div className="absolute left-3 top-3 flex gap-1.5">
+          {item.isPinned && <PinBadge />}
+          {showBadge && <NewBadge label={newBadge} />}
+        </div>
         <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
           <h3 className="text-lg font-semibold text-white transition group-hover:text-brand-200 sm:text-xl">
             {item.title}
@@ -129,6 +148,7 @@ function ListRow({
       )}
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
+          {item.isPinned && <Pin className="h-3 w-3 shrink-0 text-brand-600" aria-hidden="true" />}
           {showBadge && (
             <span className="shrink-0 rounded-full bg-brand-600 px-1.5 py-0.5 text-[9px] font-medium text-white">
               {newBadge}
@@ -171,7 +191,10 @@ function SecondaryCard({
         </div>
       )}
       <div className="p-3">
-        {showBadge && <NewBadge label={newBadge} className="mb-1.5 inline-block" />}
+        <div className="mb-1.5 flex items-center gap-1.5">
+          {item.isPinned && <PinBadge />}
+          {showBadge && <NewBadge label={newBadge} />}
+        </div>
         <h4 className="line-clamp-2 text-sm font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
           {item.title}
         </h4>

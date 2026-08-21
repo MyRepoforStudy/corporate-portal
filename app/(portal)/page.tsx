@@ -33,7 +33,7 @@ export default async function HomePage() {
   ] = await Promise.all([
       prisma.news.findMany({
         where: { isPublished: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
         take: 9,
       }),
       prisma.booking.findFirst({

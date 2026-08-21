@@ -147,6 +147,7 @@ model News {
   documentUrl  String?
   documentName String?
   isPublished Boolean @default(true)
+  isPinned    Boolean @default(false)
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
@@ -154,7 +155,7 @@ model News {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([isPublished, createdAt])
+  @@index([isPublished, isPinned, createdAt])
 }
 
 model ResourceLink {

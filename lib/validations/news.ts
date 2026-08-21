@@ -25,6 +25,7 @@ export const newsSchema = z.object({
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
   isPublished: z.boolean().default(true),
+  isPinned: z.boolean().default(false),
 });
 
 export type NewsInput = z.infer<typeof newsSchema>;
