@@ -27,12 +27,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Most of /admin is open to HR too (departments, positions, employees,
-  // vacations, rooms, content); roles/audit-log/import stay Admin-only since
-  // they're the sensitive rows in the permission matrix. This is UI/route
-  // gating for convenience - the real defense is requireAdmin()/
-  // requireHrOrAdmin() inside each API handler, which stays authoritative.
-  const ADMIN_ONLY_SEGMENTS = ["users", "audit-log", "import", "org-sync", "vacancies"];
+  // HR's admin access is limited to the overview, news, departments,
+  // positions, employees, rooms, and import; roles/audit-log/resource-links/
+  // bookings stay Admin-only since they're the sensitive rows in the
+  // permission matrix. This is UI/route gating for convenience - the real
+  // defense is requireAdmin()/requireHrOrAdmin() inside each API handler,
+  // which stays authoritative.
+  const ADMIN_ONLY_SEGMENTS = ["users", "audit-log", "resource-links", "bookings"];
   const isAdminArea = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
   const isAdminOnlyArea = ADMIN_ONLY_SEGMENTS.some(
     (segment) => pathname.startsWith(`/admin/${segment}`) || pathname.startsWith(`/api/admin/${segment}`)

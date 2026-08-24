@@ -4,6 +4,10 @@ export interface LdapUser {
   ldapUid: string;
   email: string;
   displayName: string;
+  /** Full AD distinguished name - used to derive a department path (its OU chain) for auto-provisioning. */
+  dn: string;
+  title?: string;
+  phone?: string;
 }
 
 /**
@@ -101,7 +105,7 @@ export async function authenticateWithLdap(
     const { searchEntries, searchReferences } = await searchClient.search(baseDn, {
       scope: "sub",
       filter,
-      attributes: ["dn", "mail", "displayName", "cn", "sAMAccountName"],
+      attributes: ["dn", "mail", "displayName", "cn", "sAMAccountName", "title", "telephoneNumber"],
       paged: true,
     });
     console.log(
@@ -134,8 +138,11 @@ export async function authenticateWithLdap(
   const ldapUid = attr(entry, "sAMAccountName") ?? username;
   const email = attr(entry, "mail") ?? `${ldapUid}@bank.local`;
   const displayName = attr(entry, "displayName") ?? attr(entry, "cn") ?? ldapUid;
+  const dn = typeof entry.dn === "string" ? entry.dn : String(entry.dn);
+  const title = attr(entry, "title");
+  const phone = attr(entry, "telephoneNumber");
 
-  return { ldapUid, email, displayName };
+  return { ldapUid, email, displayName, dn, title, phone };
 }
 
 /**
@@ -154,5 +161,6 @@ export async function authenticateWithDevMock(
     ldapUid: username,
     email: `${username}@bank.local`,
     displayName: username,
+    dn: `CN=${username},OU=Dev,DC=bank,DC=local`,
   };
 }

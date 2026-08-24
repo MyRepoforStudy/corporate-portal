@@ -2,6 +2,7 @@ import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { authenticateWithDevMock, authenticateWithLdap } from "@/lib/ldap";
+import { provisionEmployeeFromLdap } from "@/lib/employee-provisioning";
 
 const isDevMode =
   process.env.NODE_ENV !== "production" && process.env.AUTH_DEV_MODE === "true";
@@ -52,15 +53,25 @@ export const authOptions: AuthOptions = {
         // are separate tables (Employee predates login-based accounts). Link
         // them by email on first login so /api/profile has something to
         // resolve - only when unlinked, so it never overrides an existing link.
+        // If nobody matches, auto-provision a new Employee from the AD data
+        // so first-time logins show up in the org directory without HR
+        // having to add them by hand. Best-effort: a provisioning failure
+        // must never block login.
         if (!user.employeeId) {
-          const matchingEmployee = await prisma.employee.findFirst({
-            where: { email: { equals: ldapUser.email, mode: "insensitive" } },
-          });
-          if (matchingEmployee) {
+          try {
+            const matchingEmployee = await prisma.employee.findFirst({
+              where: { email: { equals: ldapUser.email, mode: "insensitive" } },
+            });
+            const employeeId = matchingEmployee
+              ? matchingEmployee.id
+              : await provisionEmployeeFromLdap(ldapUser);
+
             await prisma.user.update({
               where: { id: user.id },
-              data: { employeeId: matchingEmployee.id },
+              data: { employeeId },
             });
+          } catch (err) {
+            console.error("[auth] failed to link/provision employee record:", err);
           }
         }
 

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, handleApiError, ApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, handleApiError, ApiError } from "@/lib/rbac";
 import { parseCsv } from "@/lib/csv";
 import { logAudit } from "@/lib/audit";
 
@@ -33,7 +33,7 @@ const rowSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const formData = await request.formData();
     const file = formData.get("file");
     if (!(file instanceof File)) {
