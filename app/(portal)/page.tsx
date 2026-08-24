@@ -6,8 +6,6 @@ import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
 import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
-import { HomeStats } from "@/components/home/home-stats";
-import { RecognitionsWidget } from "@/components/home/recognitions-widget";
 import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel";
 import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
@@ -27,8 +25,6 @@ export default async function HomePage() {
     employeesWithBirthdays,
     upcomingHolidays,
     recentHires,
-    recognitions,
-    currentUser,
     teamSpotlights,
   ] = await Promise.all([
       prisma.news.findMany({
@@ -60,15 +56,6 @@ export default async function HomePage() {
         orderBy: { hireDate: "desc" },
         take: 3,
       }),
-      prisma.recognition.findMany({
-        include: {
-          fromEmployee: { select: { id: true, fullName: true, photoUrl: true } },
-          toEmployee: { select: { id: true, fullName: true, photoUrl: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      }),
-      prisma.user.findUnique({ where: { id: userId }, select: { employeeId: true } }),
       prisma.teamSpotlight.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
     ]);
 
@@ -77,15 +64,6 @@ export default async function HomePage() {
   return (
     <div className="space-y-6">
       <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
-
-      <HomeStats
-        nearestBooking={nearestBooking}
-        birthdaysCount={upcomingBirthdays.length}
-        newHiresCount={recentHires.length}
-        recognitionsCount={recognitions.length}
-        locale={locale}
-        dict={dict.home.stats}
-      />
 
       <TeamSpotlightCarousel spotlights={teamSpotlights} dict={dict.home.teamSpotlight} />
 
@@ -103,12 +81,6 @@ export default async function HomePage() {
               dict={dict.home.birthdays}
             />
             <NewHiresWidget employees={recentHires} dict={dict.home.newHires} />
-            <RecognitionsWidget
-              recognitions={recognitions}
-              locale={locale}
-              dict={dict.home.recognitions}
-              canGive={!!currentUser?.employeeId}
-            />
             <HolidaysWidget
               holidays={upcomingHolidays}
               locale={locale}
