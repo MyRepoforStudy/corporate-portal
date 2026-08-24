@@ -43,34 +43,34 @@ function NewsRow({
   return (
     <article
       onClick={onOpen}
-      className={`group flex cursor-pointer items-center gap-3 border-b border-gray-100 px-2 py-3 transition last:border-0 hover:bg-gray-50 ${
+      className={`group flex cursor-pointer items-center gap-4 border-b border-gray-100 px-3 py-5 transition last:border-0 hover:bg-gray-50 ${
         item.isPinned ? "bg-brand-50/40" : ""
       }`}
     >
       {item.imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.imageUrl} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />
+        <img src={item.imageUrl} alt="" className="h-20 w-20 shrink-0 rounded-md object-cover" />
       ) : (
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-gray-100">
-          <Newspaper className="h-5 w-5 text-gray-300" aria-hidden="true" />
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-md bg-gray-100">
+          <Newspaper className="h-7 w-7 text-gray-300" aria-hidden="true" />
         </div>
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
-            {item.isPinned && <Pin className="h-3.5 w-3.5 shrink-0 text-brand-600" aria-hidden="true" />}
+            {item.isPinned && <Pin className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />}
             {showBadge && (
               <span className="shrink-0 rounded-full bg-brand-600 px-1.5 py-0.5 text-[9px] font-medium text-white">
                 {newBadge}
               </span>
             )}
-            <h3 className="truncate font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
+            <h3 className="truncate text-base font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
               {item.title}
             </h3>
           </div>
           <span className="shrink-0 text-xs text-gray-500">{formatDateLong(item.createdAt, locale, true)}</span>
         </div>
-        <p className="line-clamp-1 text-sm text-gray-600">{item.content}</p>
+        <p className="mt-1 line-clamp-2 text-sm text-gray-600">{item.content}</p>
       </div>
     </article>
   );
