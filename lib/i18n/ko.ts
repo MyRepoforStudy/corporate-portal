@@ -43,7 +43,6 @@ export const ko: Dictionary = {
     news: "공지사항",
     noNews: "등록된 소식이 없습니다.",
     newBadge: "신규",
-    moreNews: "다른 소식",
     upcoming: "다가오는 일정",
     birthdays: {
       title: "이번 주 생일",
