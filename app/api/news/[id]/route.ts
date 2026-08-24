@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin, handleApiError } from "@/lib/rbac";
 import { newsSchema } from "@/lib/validations/news";
 import { logAudit } from "@/lib/audit";
+import { notifyPinnedNews } from "@/lib/notifications";
 
 export async function PUT(
   request: NextRequest,
@@ -12,6 +13,7 @@ export async function PUT(
     const session = await requireAdmin();
     const body = await request.json();
     const data = newsSchema.parse(body);
+    const existing = await prisma.news.findUnique({ where: { id: params.id }, select: { isPinned: true } });
     const news = await prisma.news.update({ where: { id: params.id }, data });
     await logAudit({
       actorId: session.user.id,
@@ -20,6 +22,9 @@ export async function PUT(
       entityId: news.id,
       summary: `Изменена новость «${news.title}»`,
     });
+    if (news.isPublished && news.isPinned && !existing?.isPinned) {
+      await notifyPinnedNews(news, session.user.id);
+    }
     return NextResponse.json(news);
   } catch (error) {
     return handleApiError(error);

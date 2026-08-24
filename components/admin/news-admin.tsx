@@ -220,6 +220,11 @@ export function NewsAdmin() {
             Закрепить на главной
           </label>
         </div>
+        {form.isPinned && (
+          <p className="text-xs text-gray-500">
+            При закреплении опубликованной новости всем пользователям портала уйдёт email-уведомление.
+          </p>
+        )}
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <div className="flex gap-2">
           <button

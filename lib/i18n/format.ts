@@ -92,6 +92,40 @@ const MONTH_LONG: Record<Locale, string[]> = {
   ],
 };
 
+// Nominative case (calendar headers: "Сентябрь 2026") - distinct from
+// MONTH_LONG above, which is genitive for use inline after a day number
+// ("5 сентября").
+const MONTH_NOMINATIVE: Record<Locale, string[]> = {
+  ru: [
+    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+  ],
+  kk: [
+    "Қаңтар", "Ақпан", "Наурыз", "Сәуір", "Мамыр", "Маусым",
+    "Шілде", "Тамыз", "Қыркүйек", "Қазан", "Қараша", "Желтоқсан",
+  ],
+  ko: [
+    "1월", "2월", "3월", "4월", "5월", "6월",
+    "7월", "8월", "9월", "10월", "11월", "12월",
+  ],
+};
+
+// Monday-first, matching the calendar grid's column order.
+const WEEKDAY_SHORT: Record<Locale, string[]> = {
+  ru: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+  kk: ["Дс", "Сс", "Ср", "Бс", "Жм", "Сб", "Жс"],
+  ko: ["월", "화", "수", "목", "금", "토", "일"],
+};
+
+export function formatMonthYear(year: number, month: number, locale: Locale): string {
+  const name = MONTH_NOMINATIVE[locale][month];
+  return locale === "ko" ? `${year}년 ${name}` : `${name} ${year}`;
+}
+
+export function getWeekdayShortNames(locale: Locale): string[] {
+  return WEEKDAY_SHORT[locale];
+}
+
 export function formatDateLong(date: Date | string, locale: Locale, withYear = false): string {
   const d = typeof date === "string" ? new Date(date) : date;
   const day = d.getDate();

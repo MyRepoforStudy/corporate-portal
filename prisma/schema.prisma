@@ -127,6 +127,8 @@ model Employee {
   user      User?
   workplace Workplace?
 
+  vacations Vacation[]
+
   headOfDepartments Department[] @relation("DepartmentHead")
 
   createdAt DateTime @default(now())
@@ -177,6 +179,24 @@ model Holiday {
   updatedAt DateTime @updatedAt
 
   @@index([date])
+}
+
+// A logged date range an employee is away - purely informational for the
+// company calendar. Deliberately not linked to Employee.vacationDaysUsed
+// (the HR-managed remaining-balance counter on the profile page), which
+// uses its own manual accounting rules and would risk drifting out of sync.
+model Vacation {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  startDate  DateTime
+  endDate    DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([employeeId])
+  @@index([startDate])
+  @@index([endDate])
 }
 
 model AuditLog {

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin, handleApiError } from "@/lib/rbac";
 import { newsSchema } from "@/lib/validations/news";
 import { logAudit } from "@/lib/audit";
+import { notifyPinnedNews } from "@/lib/notifications";
 
 export async function GET() {
   try {
@@ -29,6 +30,9 @@ export async function POST(request: NextRequest) {
       entityId: news.id,
       summary: `Создана новость «${news.title}»`,
     });
+    if (news.isPublished && news.isPinned) {
+      await notifyPinnedNews(news, session.user.id);
+    }
     return NextResponse.json(news, { status: 201 });
   } catch (error) {
     return handleApiError(error);
