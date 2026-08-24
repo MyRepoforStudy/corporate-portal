@@ -1,6 +1,13 @@
 import type { Dictionary } from "./ru";
 
 export const ko: Dictionary = {
+  common: {
+    close: "닫기",
+    openPhoto: "사진 열기",
+    document: "문서",
+    switchToLightTheme: "라이트 테마로 전환",
+    switchToDarkTheme: "다크 테마로 전환",
+  },
   nav: {
     home: "홈",
     orgStructure: "조직도",
@@ -79,6 +86,8 @@ export const ko: Dictionary = {
       notAssigned: "배정된 좌석이 없습니다",
       floor: "층",
       desk: "좌석",
+      close: "닫기",
+      openPhoto: "사진 열기",
     },
   },
   bookings: {
@@ -119,6 +128,7 @@ export const ko: Dictionary = {
     participants: {
       label: "참석자",
       searchPlaceholder: "직원 검색...",
+      removeLabel: "{name} 제거",
     },
     editAction: "수정",
     cancelAction: "취소",
@@ -155,5 +165,37 @@ export const ko: Dictionary = {
     title: "알림",
     empty: "아직 알림이 없습니다",
     markAllRead: "모두 읽음으로 표시",
+  },
+  profile: {
+    pageTitle: "마이 페이지",
+    fullName: "성명",
+    login: "아이디",
+    role: "역할",
+    roles: {
+      ADMIN: "관리자",
+      HR: "HR",
+      EMPLOYEE: "직원",
+    },
+    bookingAccess: "회의실 예약",
+    available: "가능",
+    unavailable: "불가능",
+    department: "부서",
+    position: "직급",
+    workplace: "근무지",
+    floor: "층",
+    vacationRemaining: "남은 연차",
+    vacationOf: "총 {total}일 중 (사용 {used}일)",
+    editTitle: "프로필 수정",
+    emailPlaceholder: "Email",
+    phonePlaceholder: "휴대전화",
+    activityAreaPlaceholder: "직무 분야 / 담당 업무",
+    photoLabel: "사진",
+    uploading: "업로드 중...",
+    bioLabel: "자기소개",
+    save: "저장",
+    saveSuccess: "변경 사항이 저장되었습니다",
+    uploadPhotoError: "사진을 업로드하지 못했습니다",
+    saveError: "변경 사항을 저장하지 못했습니다",
+    notLinked: "프로필이 조직도의 직원 정보와 연결되어 있지 않습니다. HR에 문의하세요.",
   },
 };

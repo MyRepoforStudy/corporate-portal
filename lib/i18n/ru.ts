@@ -1,4 +1,11 @@
 export const ru = {
+  common: {
+    close: "Закрыть",
+    openPhoto: "Открыть фото",
+    document: "Документ",
+    switchToLightTheme: "Включить светлую тему",
+    switchToDarkTheme: "Включить тёмную тему",
+  },
   nav: {
     home: "Главная",
     orgStructure: "Оргструктура",
@@ -77,6 +84,8 @@ export const ru = {
       notAssigned: "Рабочее место не назначено",
       floor: "этаж",
       desk: "место",
+      close: "Закрыть",
+      openPhoto: "Открыть фото",
     },
   },
   bookings: {
@@ -117,6 +126,7 @@ export const ru = {
     participants: {
       label: "Участники",
       searchPlaceholder: "Поиск сотрудника...",
+      removeLabel: "Убрать {name}",
     },
     editAction: "Изменить",
     cancelAction: "Отменить",
@@ -153,6 +163,38 @@ export const ru = {
     title: "Уведомления",
     empty: "Уведомлений пока нет",
     markAllRead: "Прочитать все",
+  },
+  profile: {
+    pageTitle: "Личный кабинет",
+    fullName: "ФИО",
+    login: "Логин",
+    role: "Роль",
+    roles: {
+      ADMIN: "Администратор",
+      HR: "HR",
+      EMPLOYEE: "Сотрудник",
+    },
+    bookingAccess: "Бронирование переговорных",
+    available: "Доступно",
+    unavailable: "Недоступно",
+    department: "Отдел",
+    position: "Должность",
+    workplace: "Рабочее место",
+    floor: "этаж",
+    vacationRemaining: "Остаток отпуска",
+    vacationOf: "из {total} дней (использовано {used})",
+    editTitle: "Редактировать профиль",
+    emailPlaceholder: "Email",
+    phonePlaceholder: "Мобильный телефон",
+    activityAreaPlaceholder: "Род деятельности / направление",
+    photoLabel: "Фото",
+    uploading: "Загрузка...",
+    bioLabel: "О себе",
+    save: "Сохранить",
+    saveSuccess: "Изменения сохранены",
+    uploadPhotoError: "Не удалось загрузить фото",
+    saveError: "Не удалось сохранить изменения",
+    notLinked: "Профиль не привязан к записи сотрудника в оргструктуре. Обратитесь в HR.",
   },
 };
 

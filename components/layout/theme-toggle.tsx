@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
 import { setTheme } from "@/lib/theme-actions";
 import type { Theme } from "@/lib/theme";
+import type { Dictionary } from "@/lib/i18n";
 
-export function ThemeToggle({ theme }: { theme: Theme }) {
+export function ThemeToggle({ theme, dict }: { theme: Theme; dict: Dictionary["common"] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -23,7 +24,7 @@ export function ThemeToggle({ theme }: { theme: Theme }) {
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему"}
+      aria-label={theme === "dark" ? dict.switchToLightTheme : dict.switchToDarkTheme}
       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
     >
       {theme === "dark" ? (

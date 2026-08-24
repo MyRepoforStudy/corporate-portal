@@ -28,7 +28,7 @@ export default async function LoginPage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="BNK Commercial Bank" className="h-7 w-auto" />
           <div className="flex items-center gap-2">
-            <ThemeToggle theme={theme} />
+            <ThemeToggle theme={theme} dict={dict.common} />
             <LanguageSwitcher locale={locale} />
           </div>
         </div>

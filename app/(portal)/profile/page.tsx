@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ProfileForm } from "@/components/profile/profile-form";
+import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +18,13 @@ export default async function ProfilePage() {
   });
 
   const { employee, ...account } = user;
+  const dict = getDictionary(getLocale());
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Личный кабинет</h1>
+      <h1 className="text-xl font-semibold text-gray-900">{dict.profile.pageTitle}</h1>
       <ProfileForm
+        dict={dict.profile}
         account={{
           displayName: account.displayName,
           email: account.email,

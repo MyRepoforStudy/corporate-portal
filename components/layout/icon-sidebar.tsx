@@ -24,9 +24,7 @@ function NavRow({
   external?: boolean;
 }) {
   const className = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
-    active
-      ? "bg-brand-600 font-medium text-white"
-      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+    active ? "bg-brand-600 font-medium text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
   }`;
   const content = (
     <>
@@ -70,7 +68,7 @@ export function IconSidebar({
   ];
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-white py-4 dark:bg-gray-900 sm:flex">
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-gray-200 bg-white py-4 sm:flex">
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
         {links.map((link) => (
           <NavRow key={link.href} {...link} active={isActive(pathname, link.href)} />
@@ -78,7 +76,7 @@ export function IconSidebar({
 
         {resourceLinks.length > 0 && (
           <>
-            <div className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+            <div className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-gray-400">
               {dict.nav.resourceLinks}
             </div>
             {resourceLinks.map((link) => (
@@ -89,7 +87,7 @@ export function IconSidebar({
       </div>
 
       {isAdmin && (
-        <div className="shrink-0 border-t border-gray-200 px-3 pt-3 dark:border-gray-800">
+        <div className="shrink-0 border-t border-gray-200 px-3 pt-3">
           <NavRow href="/admin" label={dict.nav.admin} icon={ShieldCheck} active={isActive(pathname, "/admin")} />
         </div>
       )}

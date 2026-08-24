@@ -60,6 +60,8 @@ export function EmployeeCard({
           isOpen={isPhotoOpen}
           onOpen={() => setIsPhotoOpen(true)}
           onClose={() => setIsPhotoOpen(false)}
+          openLabel={dict.openPhoto}
+          closeLabel={dict.close}
         />
         <div className="min-w-0">
           <p className="truncate font-medium text-gray-900">{employee.fullName}</p>
@@ -99,7 +101,7 @@ export function EmployeeCard({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                aria-label="Закрыть"
+                aria-label={dict.close}
                 className="shrink-0 text-gray-400 hover:text-gray-600"
               >
                 <X className="h-5 w-5" aria-hidden="true" />

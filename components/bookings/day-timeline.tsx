@@ -65,7 +65,7 @@ export function DayTimeline({
                 <div className="absolute right-1 top-1 hidden gap-1 group-hover:flex">
                   <button
                     onClick={() => onEdit(booking)}
-                    className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-gray-700 dark:text-gray-200 hover:bg-white"
+                    className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-gray-700 hover:bg-white"
                   >
                     {editLabel}
                   </button>

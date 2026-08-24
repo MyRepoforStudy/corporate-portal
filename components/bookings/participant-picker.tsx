@@ -89,7 +89,11 @@ export function ParticipantPicker({
               className="flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs text-brand-800 dark:bg-brand-900/40 dark:text-brand-200"
             >
               {user.displayName}
-              <button type="button" onClick={() => removeUser(user.id)} aria-label={`Убрать ${user.displayName}`}>
+              <button
+                type="button"
+                onClick={() => removeUser(user.id)}
+                aria-label={dict.removeLabel.replace("{name}", user.displayName)}
+              >
                 <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </span>

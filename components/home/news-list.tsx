@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Newspaper, Paperclip, Pin, X } from "lucide-react";
 import type { News } from "@prisma/client";
-import type { Locale } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
 
 const RECENT_THRESHOLD_MS = 48 * 60 * 60 * 1000;
@@ -12,7 +12,7 @@ function isRecent(date: Date | string) {
   return Date.now() - new Date(date).getTime() < RECENT_THRESHOLD_MS;
 }
 
-function DocumentLink({ item }: { item: News }) {
+function DocumentLink({ item, documentFallback }: { item: News; documentFallback: string }) {
   if (!item.documentUrl) return null;
   return (
     <a
@@ -22,7 +22,7 @@ function DocumentLink({ item }: { item: News }) {
       className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs text-gray-600 hover:border-brand-300 hover:text-brand-700 dark:hover:text-brand-300"
     >
       <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      <span className="max-w-[240px] truncate">{item.documentName ?? "Документ"}</span>
+      <span className="max-w-[240px] truncate">{item.documentName ?? documentFallback}</span>
     </a>
   );
 }
@@ -76,7 +76,17 @@ function NewsRow({
   );
 }
 
-function NewsModal({ item, locale, onClose }: { item: News; locale: Locale; onClose: () => void }) {
+function NewsModal({
+  item,
+  locale,
+  onClose,
+  common,
+}: {
+  item: News;
+  locale: Locale;
+  onClose: () => void;
+  common: Dictionary["common"];
+}) {
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
       <div
@@ -93,7 +103,7 @@ function NewsModal({ item, locale, onClose }: { item: News; locale: Locale; onCl
             <button
               type="button"
               onClick={onClose}
-              aria-label="Закрыть"
+              aria-label={common.close}
               className="shrink-0 text-gray-400 hover:text-gray-600"
             >
               <X className="h-5 w-5" aria-hidden="true" />
@@ -101,7 +111,7 @@ function NewsModal({ item, locale, onClose }: { item: News; locale: Locale; onCl
           </div>
           <p className="mb-4 text-xs text-gray-500">{formatDateLong(item.createdAt, locale, true)}</p>
           <p className="whitespace-pre-line text-sm text-gray-700">{item.content}</p>
-          <DocumentLink item={item} />
+          <DocumentLink item={item} documentFallback={common.document} />
         </div>
       </div>
     </div>
@@ -113,11 +123,13 @@ export function NewsList({
   locale,
   emptyText,
   newBadge,
+  common,
 }: {
   news: News[];
   locale: Locale;
   emptyText: string;
   newBadge: string;
+  common: Dictionary["common"];
 }) {
   const [openItem, setOpenItem] = useState<News | null>(null);
 
@@ -133,7 +145,7 @@ export function NewsList({
         ))}
       </div>
 
-      {openItem && <NewsModal item={openItem} locale={locale} onClose={() => setOpenItem(null)} />}
+      {openItem && <NewsModal item={openItem} locale={locale} onClose={() => setOpenItem(null)} common={common} />}
     </>
   );
 }

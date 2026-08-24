@@ -44,11 +44,13 @@ function HeadAvatar({
   node,
   size,
   clickable = false,
+  photoLabels,
 }: {
   node: DepartmentNode;
   size: number;
   /** Only safe when not nested inside another clickable element (e.g. DeptCard's own button). */
   clickable?: boolean;
+  photoLabels?: { open: string; close: string };
 }) {
   const head = resolveHead(node);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
@@ -64,6 +66,8 @@ function HeadAvatar({
         isOpen={isPhotoOpen}
         onOpen={() => setIsPhotoOpen(true)}
         onClose={() => setIsPhotoOpen(false)}
+        openLabel={photoLabels?.open}
+        closeLabel={photoLabels?.close}
       />
     );
   }
@@ -114,7 +118,12 @@ function CurrentDeptBar({ node, dict }: { node: DepartmentNode; dict: Dictionary
   const head = resolveHead(node);
   return (
     <div className="chart-node-enter flex w-full items-center gap-4 rounded-lg border border-gray-200 border-l-4 border-l-brand-600 bg-white px-5 py-4 text-left">
-      <HeadAvatar node={node} size={52} clickable />
+      <HeadAvatar
+        node={node}
+        size={52}
+        clickable
+        photoLabels={{ open: dict.employeeModal.openPhoto, close: dict.employeeModal.close }}
+      />
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-gray-900">{node.name}</p>
         {head && (
@@ -163,7 +172,7 @@ function TeamPill({ node, onClick }: { node: DepartmentNode; onClick: () => void
       type="button"
       onClick={onClick}
       title={node.name}
-      className="flex w-full items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:bg-gray-800 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+      className="flex w-full items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
     >
       <span className="truncate">{node.name}</span>
       {employeeTotal > 0 && <span className="shrink-0 text-gray-400">{employeeTotal}</span>}

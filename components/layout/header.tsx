@@ -31,7 +31,7 @@ export function Header({
         </div>
         <div className="flex items-center gap-3">
           <NotificationsBell dict={dict.notifications} />
-          <ThemeToggle theme={theme} />
+          <ThemeToggle theme={theme} dict={dict.common} />
           <LanguageSwitcher locale={locale} />
           <span className="hidden text-sm text-gray-500 sm:inline">{session.user.name}</span>
           <SignOutButton label={dict.nav.signOut} />

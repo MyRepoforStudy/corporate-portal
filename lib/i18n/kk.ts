@@ -1,6 +1,13 @@
 import type { Dictionary } from "./ru";
 
 export const kk: Dictionary = {
+  common: {
+    close: "Жабу",
+    openPhoto: "Фотоны ашу",
+    document: "Құжат",
+    switchToLightTheme: "Ашық тақырыпты қосу",
+    switchToDarkTheme: "Күңгірт тақырыпты қосу",
+  },
   nav: {
     home: "Басты бет",
     orgStructure: "Құрылым",
@@ -79,6 +86,8 @@ export const kk: Dictionary = {
       notAssigned: "Жұмыс орны тағайындалмаған",
       floor: "қабат",
       desk: "орын",
+      close: "Жабу",
+      openPhoto: "Фотоны ашу",
     },
   },
   bookings: {
@@ -119,6 +128,7 @@ export const kk: Dictionary = {
     participants: {
       label: "Қатысушылар",
       searchPlaceholder: "Қызметкерді іздеу...",
+      removeLabel: "{name} алып тастау",
     },
     editAction: "Өзгерту",
     cancelAction: "Бас тарту",
@@ -155,5 +165,37 @@ export const kk: Dictionary = {
     title: "Хабарландырулар",
     empty: "Әзірге хабарландырулар жоқ",
     markAllRead: "Барлығын оқылды деп белгілеу",
+  },
+  profile: {
+    pageTitle: "Жеке кабинет",
+    fullName: "Аты-жөні",
+    login: "Логин",
+    role: "Рөлі",
+    roles: {
+      ADMIN: "Әкімші",
+      HR: "HR",
+      EMPLOYEE: "Қызметкер",
+    },
+    bookingAccess: "Кеңес бөлмесін брондау",
+    available: "Қолжетімді",
+    unavailable: "Қолжетімсіз",
+    department: "Бөлім",
+    position: "Лауазым",
+    workplace: "Жұмыс орны",
+    floor: "қабат",
+    vacationRemaining: "Демалыс қалдығы",
+    vacationOf: "{total} күннен (пайдаланылған {used})",
+    editTitle: "Профильді өзгерту",
+    emailPlaceholder: "Email",
+    phonePlaceholder: "Ұялы телефон",
+    activityAreaPlaceholder: "Қызмет саласы / бағыты",
+    photoLabel: "Фото",
+    uploading: "Жүктелуде...",
+    bioLabel: "Өзі туралы",
+    save: "Сақтау",
+    saveSuccess: "Өзгерістер сақталды",
+    uploadPhotoError: "Фотоны жүктеу мүмкін болмады",
+    saveError: "Өзгерістерді сақтау мүмкін болмады",
+    notLinked: "Профиль оргструктурадағы қызметкер жазбасына байланыстырылмаған. HR-ға хабарласыңыз.",
   },
 };

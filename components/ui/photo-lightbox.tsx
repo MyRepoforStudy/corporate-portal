@@ -2,7 +2,15 @@
 
 import { X } from "lucide-react";
 
-export function PhotoLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+export function PhotoLightbox({
+  src,
+  onClose,
+  closeLabel = "Закрыть",
+}: {
+  src: string;
+  onClose: () => void;
+  closeLabel?: string;
+}) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
@@ -11,7 +19,7 @@ export function PhotoLightbox({ src, onClose }: { src: string; onClose: () => vo
       <button
         type="button"
         onClick={onClose}
-        aria-label="Закрыть"
+        aria-label={closeLabel}
         className="absolute right-4 top-4 text-white/80 hover:text-white"
       >
         <X className="h-6 w-6" aria-hidden="true" />
@@ -39,6 +47,8 @@ export function ClickablePhoto({
   isOpen,
   onOpen,
   onClose,
+  openLabel = "Открыть фото",
+  closeLabel = "Закрыть",
 }: {
   src: string | null;
   size: number;
@@ -48,6 +58,8 @@ export function ClickablePhoto({
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
+  openLabel?: string;
+  closeLabel?: string;
 }) {
   const style = { width: size, height: size, ...extraStyle };
 
@@ -67,7 +79,7 @@ export function ClickablePhoto({
       <div
         role="button"
         tabIndex={0}
-        aria-label="Открыть фото"
+        aria-label={openLabel}
         onClick={(e) => {
           e.stopPropagation();
           onOpen();
@@ -90,7 +102,7 @@ export function ClickablePhoto({
           className="pointer-events-none h-full w-full select-none rounded-full border border-gray-200 object-cover"
         />
       </div>
-      {isOpen && <PhotoLightbox src={src} onClose={onClose} />}
+      {isOpen && <PhotoLightbox src={src} onClose={onClose} closeLabel={closeLabel} />}
     </>
   );
 }

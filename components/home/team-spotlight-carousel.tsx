@@ -26,7 +26,7 @@ export function TeamSpotlightCarousel({
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-gray-200">
-      <div className="relative h-[200px] bg-gray-900 sm:h-[260px]">
+      <div className="relative h-[200px] bg-black sm:h-[260px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={current.imageUrl}

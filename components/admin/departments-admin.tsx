@@ -174,7 +174,7 @@ export function DepartmentsAdmin() {
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-800">{labels.get(dept.id)}</span>
                 {!dept.isPublished && (
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800">
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">
                     скрыт
                   </span>
                 )}
