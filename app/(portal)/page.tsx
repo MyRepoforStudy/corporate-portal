@@ -75,7 +75,7 @@ export default async function HomePage() {
 
       <TeamSpotlightCarousel spotlights={teamSpotlights} dict={dict.home.teamSpotlight} />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_260px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div>
           <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.news}</h2>
           <NewsList

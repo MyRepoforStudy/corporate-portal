@@ -92,28 +92,40 @@ export function NewHiresWidget({
                     {employee.position.title} · {employee.department.name}
                   </p>
                 </div>
+              </button>
+            );
+          })}
+
+          {(() => {
+            const current = employees[index];
+            const isRecent =
+              !!current.hireDate && (Date.now() - new Date(current.hireDate).getTime()) / 86_400_000 <= 30;
+            if (employees.length <= 1 && !isRecent) return null;
+            return (
+              <div className="mt-3 flex items-center justify-between gap-2">
+                {employees.length > 1 ? (
+                  <div className="flex gap-1">
+                    {employees.map((employee, i) => (
+                      <button
+                        key={employee.id}
+                        type="button"
+                        onClick={() => setIndex(i)}
+                        aria-label={employee.fullName}
+                        className={`h-1.5 w-1.5 rounded-full transition ${i === index ? "bg-brand-600" : "bg-gray-200"}`}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <span />
+                )}
                 {isRecent && (
                   <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-950 dark:text-green-300">
                     {dict.badge}
                   </span>
                 )}
-              </button>
+              </div>
             );
-          })}
-
-          {employees.length > 1 && (
-            <div className="mt-3 flex gap-1">
-              {employees.map((employee, i) => (
-                <button
-                  key={employee.id}
-                  type="button"
-                  onClick={() => setIndex(i)}
-                  aria-label={employee.fullName}
-                  className={`h-1.5 w-1.5 rounded-full transition ${i === index ? "bg-brand-600" : "bg-gray-200"}`}
-                />
-              ))}
-            </div>
-          )}
+          })()}
         </>
       )}
 
