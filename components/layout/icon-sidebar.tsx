@@ -23,7 +23,7 @@ function NavRow({
   active: boolean;
   external?: boolean;
 }) {
-  const className = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+  const className = `flex items-center gap-3 rounded-none px-3 py-2.5 text-sm transition ${
     active ? "bg-brand-600 font-medium text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
   }`;
   const content = (
