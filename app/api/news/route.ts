@@ -1,13 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, handleApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, handleApiError } from "@/lib/rbac";
 import { newsSchema } from "@/lib/validations/news";
 import { logAudit } from "@/lib/audit";
 import { notifyPinnedNews } from "@/lib/notifications";
 
 export async function GET() {
   try {
-    await requireAdmin();
+    await requireHrOrAdmin();
     const news = await prisma.news.findMany({ orderBy: { createdAt: "desc" } });
     return NextResponse.json(news);
   } catch (error) {
@@ -17,7 +17,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const body = await request.json();
     const data = newsSchema.parse(body);
     const news = await prisma.news.create({

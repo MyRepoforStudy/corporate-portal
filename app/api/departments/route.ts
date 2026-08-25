@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, requireSession, handleApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, requireSession, handleApiError } from "@/lib/rbac";
 import { departmentSchema } from "@/lib/validations/org";
 import { logAudit } from "@/lib/audit";
 
@@ -22,7 +22,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const body = await request.json();
     const data = departmentSchema.parse(body);
     const department = await prisma.department.create({ data });

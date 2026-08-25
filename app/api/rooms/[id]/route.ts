@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, handleApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, handleApiError } from "@/lib/rbac";
 import { roomSchema } from "@/lib/validations/booking";
 import { logAudit } from "@/lib/audit";
 
@@ -9,7 +9,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const body = await request.json();
     const data = roomSchema.parse(body);
     const room = await prisma.room.update({ where: { id: params.id }, data });
@@ -31,7 +31,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const room = await prisma.room.delete({ where: { id: params.id } });
     await logAudit({
       actorId: session.user.id,

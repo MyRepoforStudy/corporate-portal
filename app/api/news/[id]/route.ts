@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, handleApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, handleApiError } from "@/lib/rbac";
 import { newsSchema } from "@/lib/validations/news";
 import { logAudit } from "@/lib/audit";
 import { notifyPinnedNews } from "@/lib/notifications";
@@ -10,7 +10,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const body = await request.json();
     const data = newsSchema.parse(body);
     const existing = await prisma.news.findUnique({ where: { id: params.id }, select: { isPinned: true } });
@@ -36,7 +36,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const news = await prisma.news.delete({ where: { id: params.id } });
     await logAudit({
       actorId: session.user.id,

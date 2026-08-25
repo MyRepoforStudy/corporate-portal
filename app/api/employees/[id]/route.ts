@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin, requireHrOrAdmin, requireSession, handleApiError, ApiError } from "@/lib/rbac";
+import { requireHrOrAdmin, requireSession, handleApiError, ApiError } from "@/lib/rbac";
 import { employeeSchema } from "@/lib/validations/org";
 import { logAudit } from "@/lib/audit";
 
@@ -60,7 +60,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await requireAdmin();
+    const session = await requireHrOrAdmin();
     const employee = await prisma.employee.delete({ where: { id: params.id } });
     await logAudit({
       actorId: session.user.id,
