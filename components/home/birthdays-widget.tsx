@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { Cake } from "lucide-react";
 import type { UpcomingBirthday } from "@/lib/birthdays";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
+import { useToast } from "@/components/ui/toast-provider";
+import { BirthdayCongratulateModal } from "@/components/home/birthday-congratulate-modal";
 
 export function BirthdaysWidget({
   birthdays,
@@ -12,6 +17,9 @@ export function BirthdaysWidget({
   locale: Locale;
   dict: Dictionary["home"]["birthdays"];
 }) {
+  const showToast = useToast();
+  const [target, setTarget] = useState<UpcomingBirthday | null>(null);
+
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
       <div className="mb-3 flex items-center gap-2">
@@ -42,15 +50,29 @@ export function BirthdaysWidget({
                   {b.positionTitle} · {formatDateLong(b.nextOccurrence, locale)}
                 </p>
               </div>
-              <a
-                href={`mailto:${b.email}`}
+              <button
+                type="button"
+                onClick={() => setTarget(b)}
                 className="shrink-0 rounded-md border border-gray-200 px-2.5 py-1 text-xs text-brand-700 hover:border-brand-300 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-brand-900/40"
               >
                 {dict.congratulate}
-              </a>
+              </button>
             </li>
           ))}
         </ul>
+      )}
+
+      {target && (
+        <BirthdayCongratulateModal
+          toEmployeeId={target.id}
+          toName={target.fullName}
+          dict={dict.modal}
+          onClose={() => setTarget(null)}
+          onSent={() => {
+            setTarget(null);
+            showToast(dict.modal.sentSuccess, "success");
+          }}
+        />
       )}
     </div>
   );

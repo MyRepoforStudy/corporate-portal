@@ -48,6 +48,18 @@ export const kk: Dictionary = {
       title: "Осы аптадағы туған күндер",
       empty: "Осы аптада туған күн жоқ.",
       congratulate: "Құттықтау",
+      modal: {
+        title: "Туған күнмен құттықтау",
+        messageLabel: "Хабарлама (міндетті емес)",
+        messagePlaceholder: "Тілектеріңіз...",
+        anonymousLabel: "Анонимды түрде жіберу",
+        cancel: "Бас тарту",
+        send: "Жіберу",
+        sending: "Жіберілуде...",
+        sentSuccess: "Құттықтау жіберілді",
+        sendFailed: "Құттықтауды жіберу мүмкін болмады",
+        close: "Жабу",
+      },
     },
     newHires: {
       title: "Командаға қош келдіңіз!",

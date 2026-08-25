@@ -48,6 +48,18 @@ export const ko: Dictionary = {
       title: "이번 주 생일",
       empty: "이번 주 생일인 직원이 없습니다.",
       congratulate: "축하하기",
+      modal: {
+        title: "생일 축하 메시지 보내기",
+        messageLabel: "메시지 (선택 사항)",
+        messagePlaceholder: "축하 메시지를 입력하세요...",
+        anonymousLabel: "익명으로 보내기",
+        cancel: "취소",
+        send: "보내기",
+        sending: "전송 중...",
+        sentSuccess: "축하 메시지를 보냈습니다",
+        sendFailed: "축하 메시지를 보내지 못했습니다",
+        close: "닫기",
+      },
     },
     newHires: {
       title: "새 동료를 환영합니다!",

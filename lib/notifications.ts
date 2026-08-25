@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 
-export type NotificationType = "BOOKING_CREATED" | "BOOKING_UPDATED" | "BOOKING_CANCELLED" | "NEWS_PINNED";
+export type NotificationType =
+  | "BOOKING_CREATED"
+  | "BOOKING_UPDATED"
+  | "BOOKING_CANCELLED"
+  | "NEWS_PINNED"
+  | "BIRTHDAY_GREETING";
 
 /**
  * Creates the in-app notification (always) and best-effort emails it (only

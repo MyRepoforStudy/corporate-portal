@@ -46,6 +46,18 @@ export const ru = {
       title: "Дни рождения на неделе",
       empty: "На этой неделе дней рождения нет.",
       congratulate: "Поздравить",
+      modal: {
+        title: "Поздравить с днём рождения",
+        messageLabel: "Сообщение (необязательно)",
+        messagePlaceholder: "Ваши пожелания...",
+        anonymousLabel: "Отправить анонимно",
+        cancel: "Отмена",
+        send: "Отправить",
+        sending: "Отправка...",
+        sentSuccess: "Поздравление отправлено",
+        sendFailed: "Не удалось отправить поздравление",
+        close: "Закрыть",
+      },
     },
     newHires: {
       title: "Приветствуем в команде!",
