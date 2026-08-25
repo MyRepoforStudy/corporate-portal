@@ -6,7 +6,12 @@ import { formatTime } from "@/lib/booking-time";
 import type { BookingWithRelations } from "@/types/booking";
 
 function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(date).toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Almaty",
+  });
 }
 
 export function BookingsAdmin() {

@@ -96,7 +96,11 @@ export function BookingFormModal({
 
     const body = await res.json().catch(() => null);
     if (body?.skipped?.length > 0) {
-      setSkippedDates(body.skipped.map((s: { date: string }) => new Date(s.date).toLocaleDateString("ru-RU")));
+      setSkippedDates(
+        body.skipped.map((s: { date: string }) =>
+          new Date(s.date).toLocaleDateString("ru-RU", { timeZone: "Asia/Almaty" })
+        )
+      );
       return;
     }
 

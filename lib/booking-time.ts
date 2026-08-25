@@ -50,9 +50,18 @@ export function startOfWeek(date: Date): Date {
   return addDays(d, -day);
 }
 
+// Explicit timeZone is required here: this runs both in the browser (already
+// Kazakhstan-local) and on the server for emails/notifications (the Docker
+// container's clock is UTC) - without it, the same booking shows a
+// different time depending on where the code happens to execute.
 export function formatTime(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return d.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Almaty",
+  });
 }
 
 export function formatDayLabel(date: Date, locale: Locale = "ru"): string {

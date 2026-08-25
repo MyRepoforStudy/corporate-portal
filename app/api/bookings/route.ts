@@ -46,7 +46,12 @@ function bookingEmailHtml(booking: {
   room: { name: string };
   organizer: { displayName: string };
 }, intro: string) {
-  const date = booking.startTime.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+  const date = booking.startTime.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Almaty",
+  });
   const time = `${formatTime(booking.startTime)}–${formatTime(booking.endTime)}`;
   const row = (label: string, value: string) =>
     `<tr><td style="padding:4px 12px 4px 0;color:#6b7280;white-space:nowrap;">${label}</td><td style="padding:4px 0;color:#111827;">${value}</td></tr>`;
@@ -78,7 +83,7 @@ async function notifyBookingCreated(booking: {
   organizer: { id: string; email: string; displayName: string };
   participants: { id: string; email: string }[];
 }) {
-  const when = `${booking.startTime.toLocaleDateString("ru-RU")}, ${formatTime(booking.startTime)}`;
+  const when = `${booking.startTime.toLocaleDateString("ru-RU", { timeZone: "Asia/Almaty" })}, ${formatTime(booking.startTime)}`;
   await notifyUser({
     userId: booking.organizer.id,
     email: booking.organizer.email,

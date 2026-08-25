@@ -48,7 +48,7 @@ export async function PUT(
       throw error;
     }
 
-    const when = booking.startTime.toLocaleString("ru-RU");
+    const when = booking.startTime.toLocaleString("ru-RU", { timeZone: "Asia/Almaty" });
     await Promise.all(
       booking.participants
         .filter((p) => p.id !== session.user.id)
@@ -123,7 +123,7 @@ export async function DELETE(
     }
 
     for (const b of cancelled) {
-      const when = b.startTime.toLocaleString("ru-RU");
+      const when = b.startTime.toLocaleString("ru-RU", { timeZone: "Asia/Almaty" });
       const recipients = new Map<string, { email: string }>();
       if (b.organizerId !== session.user.id) recipients.set(b.organizerId, { email: b.organizer.email });
       for (const p of b.participants) {
