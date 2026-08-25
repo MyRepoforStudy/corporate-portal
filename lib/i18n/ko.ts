@@ -7,6 +7,8 @@ export const ko: Dictionary = {
     document: "문서",
     switchToLightTheme: "라이트 테마로 전환",
     switchToDarkTheme: "다크 테마로 전환",
+    prev: "이전",
+    next: "다음",
   },
   nav: {
     home: "홈",

@@ -43,7 +43,15 @@ export default async function HomePage() {
       }),
       prisma.employee.findMany({
         where: { birthDate: { not: null } },
-        select: { id: true, fullName: true, birthDate: true, photoUrl: true, email: true, position: { select: { title: true } } },
+        select: {
+          id: true,
+          fullName: true,
+          birthDate: true,
+          photoUrl: true,
+          email: true,
+          phone: true,
+          position: { select: { title: true } },
+        },
       }),
       prisma.holiday.findMany({
         where: { date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
@@ -85,8 +93,16 @@ export default async function HomePage() {
               birthdays={upcomingBirthdays}
               locale={locale}
               dict={dict.home.birthdays}
+              employeeModalDict={dict.orgStructure.employeeModal}
+              common={dict.common}
             />
-            <NewHiresWidget employees={recentHires} dict={dict.home.newHires} />
+            <NewHiresWidget
+              employees={recentHires}
+              locale={locale}
+              dict={dict.home.newHires}
+              employeeModalDict={dict.orgStructure.employeeModal}
+              common={dict.common}
+            />
             <HolidaysWidget
               holidays={upcomingHolidays}
               locale={locale}

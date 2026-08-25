@@ -5,6 +5,8 @@ export const ru = {
     document: "Документ",
     switchToLightTheme: "Включить светлую тему",
     switchToDarkTheme: "Включить тёмную тему",
+    prev: "Назад",
+    next: "Вперёд",
   },
   nav: {
     home: "Главная",

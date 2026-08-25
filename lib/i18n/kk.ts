@@ -7,6 +7,8 @@ export const kk: Dictionary = {
     document: "Құжат",
     switchToLightTheme: "Ашық тақырыпты қосу",
     switchToDarkTheme: "Күңгірт тақырыпты қосу",
+    prev: "Артқа",
+    next: "Алға",
   },
   nav: {
     home: "Басты бет",

@@ -3,6 +3,7 @@ export interface UpcomingBirthday {
   fullName: string;
   photoUrl: string | null;
   email: string;
+  phone: string | null;
   positionTitle: string;
   nextOccurrence: Date;
 }
@@ -13,6 +14,7 @@ interface EmployeeForBirthday {
   birthDate: Date | null;
   photoUrl: string | null;
   email: string;
+  phone: string | null;
   position: { title: string };
 }
 
@@ -39,6 +41,7 @@ export function getUpcomingBirthdays(employees: EmployeeForBirthday[], daysAhead
         fullName: employee.fullName,
         photoUrl: employee.photoUrl,
         email: employee.email,
+        phone: employee.phone,
         positionTitle: employee.position.title,
         nextOccurrence,
       });
