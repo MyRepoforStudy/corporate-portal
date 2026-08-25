@@ -68,7 +68,7 @@ export function ResourceLinksAdmin() {
           placeholder="Название (например, Wiki)"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -76,7 +76,7 @@ export function ResourceLinksAdmin() {
           placeholder="https://wiki.bank.local"
           value={form.url}
           onChange={(e) => setForm({ ...form, url: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -84,7 +84,7 @@ export function ResourceLinksAdmin() {
           placeholder="Краткое описание (необязательно)"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         />
         <input
           type="number"
@@ -92,7 +92,7 @@ export function ResourceLinksAdmin() {
           placeholder="Порядок сортировки"
           value={form.order}
           onChange={(e) => setForm({ ...form, order: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         />
 
         {error && <p className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{error}</p>}

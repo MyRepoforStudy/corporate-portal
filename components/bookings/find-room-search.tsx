@@ -61,7 +61,7 @@ export function FindRoomSearch({
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -70,7 +70,7 @@ export function FindRoomSearch({
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -79,7 +79,7 @@ export function FindRoomSearch({
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
           </div>
           <div className="col-span-2">
@@ -90,7 +90,7 @@ export function FindRoomSearch({
               value={capacity}
               onChange={(e) => setCapacity(e.target.value)}
               placeholder={dict.minCapacityPlaceholder}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
           </div>
         </div>

@@ -100,7 +100,7 @@ export function DepartmentsAdmin() {
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             required
           />
         </div>
@@ -109,7 +109,7 @@ export function DepartmentsAdmin() {
           <select
             value={form.parentId}
             onChange={(e) => setForm({ ...form, parentId: e.target.value })}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           >
             <option value="">— нет (верхний уровень) —</option>
             {sorted
@@ -134,7 +134,7 @@ export function DepartmentsAdmin() {
             min={0}
             value={form.order}
             onChange={(e) => setForm({ ...form, order: e.target.value })}
-            className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-20 rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           />
         </div>
         <label className="flex items-center gap-2 pb-2 text-sm text-gray-700">

@@ -170,7 +170,7 @@ export function ProfileForm({
               placeholder={dict.emailPlaceholder}
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
               required
             />
             <input
@@ -178,14 +178,14 @@ export function ProfileForm({
               placeholder={dict.phonePlaceholder}
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
             <input
               type="text"
               placeholder={dict.activityAreaPlaceholder}
               value={form.activityArea}
               onChange={(e) => setForm({ ...form, activityArea: e.target.value })}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm sm:col-span-2"
+              className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm sm:col-span-2"
             />
 
             <div className="sm:col-span-2">
@@ -216,7 +216,7 @@ export function ProfileForm({
                 value={form.bio}
                 onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 rows={3}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
               />
             </div>
 

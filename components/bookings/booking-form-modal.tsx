@@ -134,7 +134,7 @@ export function BookingFormModal({
               <select
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
               >
                 {rooms.map((room) => (
                   <option key={room.id} value={room.id}>
@@ -150,7 +150,7 @@ export function BookingFormModal({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                 required
               />
             </div>
@@ -164,7 +164,7 @@ export function BookingFormModal({
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                   required
                 />
               </div>
@@ -176,7 +176,7 @@ export function BookingFormModal({
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                   required
                 />
               </div>
@@ -191,7 +191,7 @@ export function BookingFormModal({
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder={dict.modal.topicPlaceholder}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                 required
               />
             </div>
@@ -215,7 +215,7 @@ export function BookingFormModal({
                 <select
                   value={repeatFrequency}
                   onChange={(e) => setRepeatFrequency(e.target.value as "" | "DAILY" | "WEEKLY")}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                 >
                   <option value="">{dict.modal.recurrence.none}</option>
                   <option value="DAILY">{dict.modal.recurrence.daily}</option>
@@ -231,7 +231,7 @@ export function BookingFormModal({
                       value={repeatUntil}
                       onChange={(e) => setRepeatUntil(e.target.value)}
                       min={date}
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
                       required
                     />
                   </div>

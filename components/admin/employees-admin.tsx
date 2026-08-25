@@ -69,7 +69,7 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
           max={365}
           value={used}
           onChange={(e) => setUsed(e.target.value)}
-          className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
+          className="w-14 rounded-md border border-gray-300 bg-white text-gray-900 px-1.5 py-1 text-center"
           title="Использовано дней"
         />
         <span>/</span>
@@ -79,7 +79,7 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
           max={365}
           value={total}
           onChange={(e) => setTotal(e.target.value)}
-          className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
+          className="w-14 rounded-md border border-gray-300 bg-white text-gray-900 px-1.5 py-1 text-center"
           title="Норма дней"
         />
       </div>
@@ -88,7 +88,7 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
           type="date"
           value={start}
           onChange={(e) => setStart(e.target.value)}
-          className="w-[124px] rounded-md border border-gray-300 px-1.5 py-1"
+          className="w-[124px] rounded-md border border-gray-300 bg-white text-gray-900 px-1.5 py-1"
           title="Начало текущего отпуска"
         />
         <span>–</span>
@@ -96,7 +96,7 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
           type="date"
           value={end}
           onChange={(e) => setEnd(e.target.value)}
-          className="w-[124px] rounded-md border border-gray-300 px-1.5 py-1"
+          className="w-[124px] rounded-md border border-gray-300 bg-white text-gray-900 px-1.5 py-1"
           title="Конец текущего отпуска"
         />
       </div>
@@ -324,7 +324,7 @@ export function EmployeesAdmin() {
           placeholder="ФИО"
           value={form.fullName}
           onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -332,7 +332,7 @@ export function EmployeesAdmin() {
           placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -340,7 +340,7 @@ export function EmployeesAdmin() {
           placeholder="Телефон"
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         />
         <div>
           <label className="mb-1 block text-xs text-gray-500">Дата рождения (необязательно)</label>
@@ -348,7 +348,7 @@ export function EmployeesAdmin() {
             type="date"
             value={form.birthDate}
             onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -357,7 +357,7 @@ export function EmployeesAdmin() {
             type="date"
             value={form.hireDate}
             onChange={(e) => setForm({ ...form, hireDate: e.target.value })}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           />
         </div>
 
@@ -398,7 +398,7 @@ export function EmployeesAdmin() {
         <select
           value={form.departmentId}
           onChange={(e) => setForm({ ...form, departmentId: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         >
           <option value="">Отдел...</option>
@@ -411,7 +411,7 @@ export function EmployeesAdmin() {
         <select
           value={form.positionId}
           onChange={(e) => setForm({ ...form, positionId: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         >
           <option value="">Должность...</option>
@@ -426,7 +426,7 @@ export function EmployeesAdmin() {
           placeholder="Род деятельности / направление (необязательно)"
           value={form.activityArea}
           onChange={(e) => setForm({ ...form, activityArea: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm sm:col-span-2"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm sm:col-span-2"
         />
 
         {error && <p className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{error}</p>}
@@ -458,7 +458,7 @@ export function EmployeesAdmin() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Поиск по имени, email, отделу или должности..."
-          className="w-full rounded-md border border-gray-300 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-md border border-gray-300 bg-white text-gray-900 py-2 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
@@ -469,7 +469,7 @@ export function EmployeesAdmin() {
           <select
             value={bulkDepartmentId}
             onChange={(e) => setBulkDepartmentId(e.target.value)}
-            className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-2.5 py-1.5 text-sm"
           >
             <option value="">Отдел — не менять</option>
             {departments.map((d) => (
@@ -482,7 +482,7 @@ export function EmployeesAdmin() {
           <select
             value={bulkPositionId}
             onChange={(e) => setBulkPositionId(e.target.value)}
-            className="rounded-md border border-gray-300 px-2.5 py-1.5 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-2.5 py-1.5 text-sm"
           >
             <option value="">Должность — не менять</option>
             {positions.map((p) => (

@@ -105,7 +105,7 @@ export function BookingBoard({
           <select
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           >
             {rooms.map((room) => (
               <option key={room.id} value={room.id}>

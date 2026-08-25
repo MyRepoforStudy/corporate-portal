@@ -66,7 +66,7 @@ export function RoomsAdmin() {
           placeholder="Название"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -75,7 +75,7 @@ export function RoomsAdmin() {
           placeholder="Вместимость"
           value={form.capacity}
           onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -83,7 +83,7 @@ export function RoomsAdmin() {
           placeholder="Этаж"
           value={form.floor}
           onChange={(e) => setForm({ ...form, floor: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <input
@@ -91,7 +91,7 @@ export function RoomsAdmin() {
           placeholder="Оборудование через запятую"
           value={form.equipment}
           onChange={(e) => setForm({ ...form, equipment: e.target.value })}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         />
         <label className="flex items-center gap-2 text-sm text-gray-700">
           <input

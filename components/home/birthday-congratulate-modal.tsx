@@ -67,7 +67,7 @@ export function BirthdayCongratulateModal({
               onChange={(e) => setMessage(e.target.value)}
               placeholder={dict.messagePlaceholder}
               rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             />
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-700">

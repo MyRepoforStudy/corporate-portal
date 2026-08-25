@@ -64,12 +64,12 @@ export function BookingsAdmin() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Поиск по теме или организатору..."
-          className="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-64 rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         />
         <select
           value={roomFilter}
           onChange={(e) => setRoomFilter(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
         >
           <option value="">Все переговорные</option>
           {rooms.map((room) => (

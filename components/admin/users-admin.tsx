@@ -94,7 +94,7 @@ export function UsersAdmin() {
                 <select
                   value={user.role}
                   onChange={(e) => handleRoleChange(user.id, e.target.value as Role)}
-                  className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                  className="rounded-md border border-gray-300 bg-white text-gray-900 px-2 py-1.5 text-sm"
                 >
                   <option value="EMPLOYEE">Сотрудник</option>
                   <option value="HR">HR</option>

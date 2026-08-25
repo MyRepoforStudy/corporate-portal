@@ -48,7 +48,7 @@ export function PositionsAdmin() {
             type="text"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             required
           />
         </div>
@@ -60,7 +60,7 @@ export function PositionsAdmin() {
             max={1000}
             value={form.rank}
             onChange={(e) => setForm({ ...form, rank: e.target.value })}
-            className="w-24 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-24 rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           />
         </div>
         <button

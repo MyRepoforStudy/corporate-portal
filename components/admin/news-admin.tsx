@@ -123,7 +123,7 @@ export function NewsAdmin() {
           placeholder="Заголовок"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <textarea
@@ -131,7 +131,7 @@ export function NewsAdmin() {
           value={form.content}
           onChange={(e) => setForm({ ...form, content: e.target.value })}
           rows={4}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
 

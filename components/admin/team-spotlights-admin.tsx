@@ -108,7 +108,7 @@ export function TeamSpotlightsAdmin() {
               type="text"
               value={form.caption}
               onChange={(e) => setForm({ ...form, caption: e.target.value })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
               required
             />
           </div>
@@ -119,7 +119,7 @@ export function TeamSpotlightsAdmin() {
               min={0}
               value={form.order}
               onChange={(e) => setForm({ ...form, order: e.target.value })}
-              className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-20 rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
             />
           </div>
         </div>

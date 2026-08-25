@@ -40,7 +40,7 @@ export function AuditLogFilters({
         <select
           value={searchParams.get("action") ?? ""}
           onChange={(e) => updateParam("action", e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         >
           <option value="">Все действия</option>
           {ACTION_OPTIONS.map((opt) => (
@@ -56,7 +56,7 @@ export function AuditLogFilters({
         <select
           value={searchParams.get("entityType") ?? ""}
           onChange={(e) => updateParam("entityType", e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         >
           <option value="">Все разделы</option>
           {entityTypes.map((type) => (
@@ -72,7 +72,7 @@ export function AuditLogFilters({
         <select
           value={searchParams.get("actorId") ?? ""}
           onChange={(e) => updateParam("actorId", e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         >
           <option value="">Все пользователи</option>
           {actors.map((actor) => (
@@ -89,7 +89,7 @@ export function AuditLogFilters({
           type="date"
           value={searchParams.get("from") ?? ""}
           onChange={(e) => updateParam("from", e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
@@ -99,7 +99,7 @@ export function AuditLogFilters({
           type="date"
           value={searchParams.get("to") ?? ""}
           onChange={(e) => updateParam("to", e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
