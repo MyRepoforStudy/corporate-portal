@@ -118,6 +118,12 @@ model Employee {
   vacationDaysTotal Int @default(28)
   vacationDaysUsed  Int @default(0)
 
+  // Current/upcoming vacation window - drives the "on vacation" badge shown
+  // on the employee's org-structure card. Just one active range at a time,
+  // set by HR; not a history log.
+  vacationStart DateTime?
+  vacationEnd   DateTime?
+
   departmentId String
   department   Department @relation(fields: [departmentId], references: [id])
 
@@ -126,8 +132,6 @@ model Employee {
 
   user      User?
   workplace Workplace?
-
-  vacations Vacation[]
 
   headOfDepartments Department[] @relation("DepartmentHead")
 
@@ -179,24 +183,6 @@ model Holiday {
   updatedAt DateTime @updatedAt
 
   @@index([date])
-}
-
-// A logged date range an employee is away - purely informational for the
-// company calendar. Deliberately not linked to Employee.vacationDaysUsed
-// (the HR-managed remaining-balance counter on the profile page), which
-// uses its own manual accounting rules and would risk drifting out of sync.
-model Vacation {
-  id         String   @id @default(cuid())
-  employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  startDate  DateTime
-  endDate    DateTime
-
-  createdAt DateTime @default(now())
-
-  @@index([employeeId])
-  @@index([startDate])
-  @@index([endDate])
 }
 
 model AuditLog {

@@ -22,11 +22,20 @@ const emptyForm = {
 };
 
 function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations; onSaved: () => void }) {
+  const initialStart = employee.vacationStart ? toDateInputValue(new Date(employee.vacationStart)) : "";
+  const initialEnd = employee.vacationEnd ? toDateInputValue(new Date(employee.vacationEnd)) : "";
+
   const [total, setTotal] = useState(String(employee.vacationDaysTotal));
   const [used, setUsed] = useState(String(employee.vacationDaysUsed));
+  const [start, setStart] = useState(initialStart);
+  const [end, setEnd] = useState(initialEnd);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isDirty = Number(total) !== employee.vacationDaysTotal || Number(used) !== employee.vacationDaysUsed;
+  const isDirty =
+    Number(total) !== employee.vacationDaysTotal ||
+    Number(used) !== employee.vacationDaysUsed ||
+    start !== initialStart ||
+    end !== initialEnd;
 
   async function handleSave() {
     setIsSaving(true);
@@ -34,7 +43,12 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
     const res = await fetch(`/api/employees/${employee.id}/vacation`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ vacationDaysTotal: Number(total), vacationDaysUsed: Number(used) }),
+      body: JSON.stringify({
+        vacationDaysTotal: Number(total),
+        vacationDaysUsed: Number(used),
+        vacationStart: start || null,
+        vacationEnd: end || null,
+      }),
     });
     setIsSaving(false);
     if (!res.ok) {
@@ -46,27 +60,46 @@ function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations
   }
 
   return (
-    <div className="flex shrink-0 items-center gap-1.5 text-xs text-gray-600">
-      <span>Отпуск:</span>
-      <input
-        type="number"
-        min={0}
-        max={365}
-        value={used}
-        onChange={(e) => setUsed(e.target.value)}
-        className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
-        title="Использовано дней"
-      />
-      <span>/</span>
-      <input
-        type="number"
-        min={0}
-        max={365}
-        value={total}
-        onChange={(e) => setTotal(e.target.value)}
-        className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
-        title="Норма дней"
-      />
+    <div className="flex shrink-0 flex-col items-end gap-1 text-xs text-gray-600">
+      <div className="flex items-center gap-1.5">
+        <span>Отпуск:</span>
+        <input
+          type="number"
+          min={0}
+          max={365}
+          value={used}
+          onChange={(e) => setUsed(e.target.value)}
+          className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
+          title="Использовано дней"
+        />
+        <span>/</span>
+        <input
+          type="number"
+          min={0}
+          max={365}
+          value={total}
+          onChange={(e) => setTotal(e.target.value)}
+          className="w-14 rounded-md border border-gray-300 px-1.5 py-1 text-center"
+          title="Норма дней"
+        />
+      </div>
+      <div className="flex items-center gap-1.5">
+        <input
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          className="w-[124px] rounded-md border border-gray-300 px-1.5 py-1"
+          title="Начало текущего отпуска"
+        />
+        <span>–</span>
+        <input
+          type="date"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+          className="w-[124px] rounded-md border border-gray-300 px-1.5 py-1"
+          title="Конец текущего отпуска"
+        />
+      </div>
       {isDirty && (
         <button
           onClick={handleSave}

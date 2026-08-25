@@ -56,6 +56,8 @@ export const employeeSchema = z.object({
 export const vacationSchema = z.object({
   vacationDaysTotal: z.coerce.number().int("Должно быть целым числом").min(0).max(365),
   vacationDaysUsed: z.coerce.number().int("Должно быть целым числом").min(0).max(365),
+  vacationStart: z.coerce.date().nullable().optional(),
+  vacationEnd: z.coerce.date().nullable().optional(),
 });
 
 export type DepartmentInput = z.infer<typeof departmentSchema>;

@@ -66,7 +66,6 @@ export const config = {
     "/",
     "/org-structure/:path*",
     "/bookings/:path*",
-    "/calendar/:path*",
     "/profile/:path*",
     "/admin/:path*",
     "/api/:path*",

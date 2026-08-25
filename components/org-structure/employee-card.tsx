@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Mail, Phone, Building2, Briefcase, CalendarDays, MapPin } from "lucide-react";
+import { X, Mail, Phone, Building2, Briefcase, CalendarDays, MapPin, Palmtree } from "lucide-react";
 import type { Department, Employee, Position, Workplace } from "@prisma/client";
 import type { EmployeeWithPosition } from "@/lib/org-tree";
 import type { Dictionary, Locale } from "@/lib/i18n";
@@ -9,6 +9,14 @@ import { formatDateLong } from "@/lib/i18n/format";
 import { ClickablePhoto } from "@/components/ui/photo-lightbox";
 
 type EmployeeDetail = Employee & { department: Department; position: Position; workplace: Workplace | null };
+
+function isCurrentlyOnVacation(start: Date | string | null | undefined, end: Date | string | null | undefined): boolean {
+  if (!end) return false;
+  const now = new Date();
+  if (now > new Date(end)) return false;
+  if (start && now < new Date(start)) return false;
+  return true;
+}
 
 export function EmployeeCard({
   employee,
@@ -33,6 +41,8 @@ export function EmployeeCard({
       .then(setDetail)
       .finally(() => setIsLoading(false));
   }
+
+  const onVacation = isCurrentlyOnVacation(employee.vacationStart, employee.vacationEnd);
 
   const workplaceText = detail?.workplace
     ? [
@@ -66,6 +76,12 @@ export function EmployeeCard({
         <div className="min-w-0">
           <p className="truncate font-medium text-gray-900">{employee.fullName}</p>
           <p className="text-gray-600">{employee.position.title}</p>
+          {onVacation && (
+            <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+              <Palmtree className="h-2.5 w-2.5" aria-hidden="true" />
+              {dict.onVacation}
+            </span>
+          )}
           <div className="mt-1 space-y-0.5 text-gray-500">
             <p className="truncate">{employee.email}</p>
             {employee.phone && <p>{employee.phone}</p>}
@@ -116,6 +132,12 @@ export function EmployeeCard({
               </div>
             ) : (
               <dl className="space-y-2.5 text-sm">
+                {detail?.vacationEnd && onVacation && (
+                  <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                    <Palmtree className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    {dict.onVacationUntil.replace("{date}", formatDateLong(detail.vacationEnd, locale, true))}
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-gray-600">
                   <Mail className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
                   <a href={`mailto:${employee.email}`} className="hover:text-brand-700 dark:hover:text-brand-300">

@@ -7,6 +7,7 @@ import { HeroBanner } from "@/components/home/hero-banner";
 import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
 import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel";
+import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
@@ -22,6 +23,7 @@ export default async function HomePage() {
     news,
     nearestBooking,
     employeesWithBirthdays,
+    upcomingHolidays,
     recentHires,
     teamSpotlights,
   ] = await Promise.all([
@@ -42,6 +44,11 @@ export default async function HomePage() {
       prisma.employee.findMany({
         where: { birthDate: { not: null } },
         select: { id: true, fullName: true, birthDate: true, photoUrl: true, email: true, position: { select: { title: true } } },
+      }),
+      prisma.holiday.findMany({
+        where: { date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+        orderBy: { date: "asc" },
+        take: 3,
       }),
       prisma.employee.findMany({
         where: { hireDate: { not: null } },
@@ -80,6 +87,11 @@ export default async function HomePage() {
               dict={dict.home.birthdays}
             />
             <NewHiresWidget employees={recentHires} dict={dict.home.newHires} />
+            <HolidaysWidget
+              holidays={upcomingHolidays}
+              locale={locale}
+              title={dict.home.holidays.title}
+            />
             <NearestBookingWidget
               booking={nearestBooking}
               locale={locale}
