@@ -51,11 +51,11 @@ function NavRow({
 
 export function IconSidebar({
   dict,
-  isAdmin,
+  canAccessAdmin,
   resourceLinks,
 }: {
   dict: Dictionary;
-  isAdmin: boolean;
+  canAccessAdmin: boolean;
   resourceLinks: ResourceLink[];
 }) {
   const pathname = usePathname();
@@ -86,7 +86,7 @@ export function IconSidebar({
         )}
       </div>
 
-      {isAdmin && (
+      {canAccessAdmin && (
         <div className="shrink-0 border-t border-gray-200 px-3 pt-3">
           <NavRow href="/admin" label={dict.nav.admin} icon={ShieldCheck} active={isActive(pathname, "/admin")} />
         </div>

@@ -30,7 +30,11 @@ export default async function PortalLayout({
       <div className="min-h-screen">
         <Header session={session} dict={dict} locale={locale} theme={theme} />
         <div className="mx-auto flex max-w-[1600px]">
-          <IconSidebar dict={dict} isAdmin={session.user.role === "ADMIN"} resourceLinks={resourceLinks} />
+          <IconSidebar
+            dict={dict}
+            canAccessAdmin={session.user.role === "ADMIN" || session.user.role === "HR"}
+            resourceLinks={resourceLinks}
+          />
           <main className="min-w-0 flex-1 px-6 py-6 lg:px-10">{children}</main>
         </div>
       </div>
