@@ -212,6 +212,22 @@ export const ru = {
     saveError: "Не удалось сохранить изменения",
     notLinked: "Профиль не привязан к записи сотрудника в оргструктуре. Обратитесь в HR.",
   },
+  newsBoard: {
+    allFilter: "Все",
+    noCategory: "Без категории",
+    pinnedBadge: "Закреплено",
+    viewsAriaLabel: "Просмотры",
+    likesAriaLabel: "Нравится",
+    commentsAriaLabel: "Комментарии",
+    commentsTitle: "Комментарии",
+    commentPlaceholder: "Написать комментарий...",
+    commentSubmit: "Отправить",
+    commentSubmitting: "Отправка...",
+    commentEmpty: "Пока нет комментариев.",
+    commentDeleteConfirm: "Удалить комментарий?",
+    commentDeleteFailed: "Не удалось удалить комментарий",
+    commentPostFailed: "Не удалось отправить комментарий",
+  },
 };
 
 export type Dictionary = typeof ru;

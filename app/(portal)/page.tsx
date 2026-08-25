@@ -21,6 +21,7 @@ export default async function HomePage() {
 
   const [
     news,
+    newsCategories,
     nearestBooking,
     employeesWithBirthdays,
     upcomingHolidays,
@@ -30,8 +31,14 @@ export default async function HomePage() {
       prisma.news.findMany({
         where: { isPublished: true },
         orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-        take: 9,
+        take: 30,
+        include: {
+          category: true,
+          _count: { select: { likes: true, comments: true } },
+          likes: { where: { userId }, select: { id: true } },
+        },
       }),
+      prisma.newsCategory.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }] }),
       prisma.booking.findFirst({
         where: {
           status: "CONFIRMED",
@@ -80,10 +87,12 @@ export default async function HomePage() {
           <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.news}</h2>
           <NewsList
             news={news}
+            categories={newsCategories}
             locale={locale}
             emptyText={dict.home.noNews}
             newBadge={dict.home.newBadge}
             common={dict.common}
+            dict={dict.newsBoard}
           />
         </div>
         <div>

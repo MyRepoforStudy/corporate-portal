@@ -34,6 +34,8 @@ model User {
   bookingsParticipating Booking[] @relation("BookingParticipants")
   notifications         Notification[]
   news                  News[]
+  newsLikes             NewsLike[]
+  newsComments          NewsComment[]
   auditLogs             AuditLog[]
 
   lastLoginAt DateTime?
@@ -151,14 +153,62 @@ model News {
   documentName String?
   isPublished Boolean @default(true)
   isPinned    Boolean @default(false)
+  views       Int     @default(0)
+
+  categoryId String?
+  category   NewsCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
+
+  likes    NewsLike[]
+  comments NewsComment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([isPublished, isPinned, createdAt])
+  @@index([categoryId])
+}
+
+model NewsCategory {
+  id    String @id @default(cuid())
+  name  String @unique
+  order Int    @default(0)
+
+  news News[]
+
+  createdAt DateTime @default(now())
+}
+
+// Deliberately onDelete: Cascade (unlike the rest of the schema's default
+// Restrict) - a like/comment has no meaning without its News post, and
+// without cascading, deleting an old news post would be blocked until its
+// engagement rows were cleaned up by hand.
+model NewsLike {
+  id     String @id @default(cuid())
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([newsId, userId])
+  @@index([newsId])
+}
+
+model NewsComment {
+  id       String @id @default(cuid())
+  newsId   String
+  news     News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+  content  String
+
+  createdAt DateTime @default(now())
+
+  @@index([newsId])
 }
 
 model ResourceLink {

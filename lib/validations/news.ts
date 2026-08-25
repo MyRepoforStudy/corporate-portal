@@ -26,6 +26,14 @@ export const newsSchema = z.object({
     .transform((v) => (v ? v : undefined)),
   isPublished: z.boolean().default(true),
   isPinned: z.boolean().default(false),
+  categoryId: z
+    .string()
+    .trim()
+    .cuid()
+    .nullable()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null)),
 });
 
 export type NewsInput = z.infer<typeof newsSchema>;

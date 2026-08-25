@@ -1,15 +1,47 @@
 "use client";
 
-import { useState } from "react";
-import { Newspaper, Paperclip, Pin, X } from "lucide-react";
-import type { News } from "@prisma/client";
+import { useEffect, useRef, useState } from "react";
+import { Eye, Heart, MessageCircle, Newspaper, Paperclip, Pin, X } from "lucide-react";
+import type { News, NewsCategory } from "@prisma/client";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
 
 const RECENT_THRESHOLD_MS = 48 * 60 * 60 * 1000;
 
+type NewsWithMeta = News & {
+  category: NewsCategory | null;
+  _count: { likes: number; comments: number };
+  likes: { id: string }[];
+};
+
+interface CommentItem {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: { id: string; displayName: string };
+}
+
 function isRecent(date: Date | string) {
   return Date.now() - new Date(date).getTime() < RECENT_THRESHOLD_MS;
+}
+
+function NewBadge({ label, className }: { label: string; className?: string }) {
+  return (
+    <span
+      className={`rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white shadow-sm ${className ?? ""}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function PinBadge({ label }: { label: string }) {
+  return (
+    <span className="flex shrink-0 items-center gap-1 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-medium text-white shadow-sm">
+      <Pin className="h-2.5 w-2.5" aria-hidden="true" />
+      {label}
+    </span>
+  );
 }
 
 function DocumentLink({ item, documentFallback }: { item: News; documentFallback: string }) {
@@ -27,66 +59,154 @@ function DocumentLink({ item, documentFallback }: { item: News; documentFallback
   );
 }
 
-function NewsRow({
+function NewsCard({
   item,
   locale,
   newBadge,
+  dict,
   onOpen,
+  onToggleLike,
 }: {
-  item: News;
+  item: NewsWithMeta;
   locale: Locale;
   newBadge: string;
+  dict: Dictionary["newsBoard"];
   onOpen: () => void;
+  onToggleLike: () => void;
 }) {
   const showBadge = isRecent(item.createdAt);
+  const likedByMe = item.likes.length > 0;
 
   return (
     <article
       onClick={onOpen}
-      className={`group flex cursor-pointer items-center gap-4 border-b border-gray-100 px-3 py-5 transition last:border-0 hover:bg-gray-50 ${
-        item.isPinned ? "bg-brand-50/40" : ""
-      }`}
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand-300 hover:shadow-sm"
     >
       {item.imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.imageUrl} alt="" className="h-20 w-20 shrink-0 rounded-md object-cover" />
+        <img src={item.imageUrl} alt="" className="h-36 w-full object-cover" />
       ) : (
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-md bg-gray-100">
-          <Newspaper className="h-7 w-7 text-gray-300" aria-hidden="true" />
+        <div className="flex h-36 w-full items-center justify-center bg-gray-100">
+          <Newspaper className="h-8 w-8 text-gray-300" aria-hidden="true" />
         </div>
       )}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5">
-            {item.isPinned && <Pin className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />}
-            {showBadge && (
-              <span className="shrink-0 rounded-full bg-brand-600 px-1.5 py-0.5 text-[9px] font-medium text-white">
-                {newBadge}
-              </span>
-            )}
-            <h3 className="truncate text-base font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
-              {item.title}
-            </h3>
-          </div>
-          <span className="shrink-0 text-xs text-gray-500">{formatDateLong(item.createdAt, locale, true)}</span>
+      <div className="flex flex-1 flex-col p-3">
+        <div className="mb-1 flex flex-wrap items-center gap-1.5">
+          {item.isPinned && <PinBadge label={dict.pinnedBadge} />}
+          {showBadge && <NewBadge label={newBadge} />}
+          {item.category && (
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              {item.category.name}
+            </span>
+          )}
         </div>
-        <p className="mt-1 line-clamp-2 text-sm text-gray-600">{item.content}</p>
+        <h3 className="line-clamp-2 text-sm font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
+          {item.title}
+        </h3>
+        <p className="mt-1 line-clamp-2 flex-1 text-xs text-gray-600">{item.content}</p>
+        <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+          <span>{formatDateLong(item.createdAt, locale, true)}</span>
+          <div className="flex items-center gap-2.5">
+            <span className="flex items-center gap-1" aria-label={dict.viewsAriaLabel} title={dict.viewsAriaLabel}>
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+              {item.views}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleLike();
+              }}
+              aria-label={dict.likesAriaLabel}
+              className={`flex items-center gap-1 transition ${
+                likedByMe ? "text-brand-600" : "hover:text-brand-600"
+              }`}
+            >
+              <Heart className={`h-3.5 w-3.5 ${likedByMe ? "fill-current" : ""}`} aria-hidden="true" />
+              {item._count.likes}
+            </button>
+            <span
+              className="flex items-center gap-1"
+              aria-label={dict.commentsAriaLabel}
+              title={dict.commentsAriaLabel}
+            >
+              <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
+              {item._count.comments}
+            </span>
+          </div>
+        </div>
       </div>
     </article>
   );
 }
 
-function NewsModal({
+function NewsDetailModal({
   item,
   locale,
-  onClose,
+  dict,
   common,
+  onClose,
+  onToggleLike,
+  onCommentCountChange,
 }: {
-  item: News;
+  item: NewsWithMeta;
   locale: Locale;
-  onClose: () => void;
+  dict: Dictionary["newsBoard"];
   common: Dictionary["common"];
+  onClose: () => void;
+  onToggleLike: () => void;
+  onCommentCountChange: (delta: number) => void;
 }) {
+  const [comments, setComments] = useState<CommentItem[] | null>(null);
+  const [commentText, setCommentText] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const viewedRef = useRef(false);
+  const likedByMe = item.likes.length > 0;
+
+  useEffect(() => {
+    if (!viewedRef.current) {
+      viewedRef.current = true;
+      fetch(`/api/news/${item.id}/view`, { method: "POST" }).catch(() => {});
+    }
+    fetch(`/api/news/${item.id}/comments`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setComments)
+      .catch(() => setComments([]));
+  }, [item.id]);
+
+  async function handleAddComment(event: React.FormEvent) {
+    event.preventDefault();
+    if (!commentText.trim()) return;
+    setIsPosting(true);
+    setError(null);
+    const res = await fetch(`/api/news/${item.id}/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: commentText }),
+    });
+    setIsPosting(false);
+    if (!res.ok) {
+      setError(dict.commentPostFailed);
+      return;
+    }
+    const created: CommentItem = await res.json();
+    setComments((prev) => [...(prev ?? []), created]);
+    setCommentText("");
+    onCommentCountChange(1);
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    if (!confirm(dict.commentDeleteConfirm)) return;
+    const res = await fetch(`/api/news/${item.id}/comments/${commentId}`, { method: "DELETE" });
+    if (!res.ok) {
+      setError(dict.commentDeleteFailed);
+      return;
+    }
+    setComments((prev) => (prev ?? []).filter((c) => c.id !== commentId));
+    onCommentCountChange(-1);
+  }
+
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
       <div
@@ -109,9 +229,91 @@ function NewsModal({
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <p className="mb-4 text-xs text-gray-500">{formatDateLong(item.createdAt, locale, true)}</p>
+          <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            <span>{formatDateLong(item.createdAt, locale, true)}</span>
+            {item.category && (
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                {item.category.name}
+              </span>
+            )}
+          </div>
           <p className="whitespace-pre-line text-sm text-gray-700">{item.content}</p>
           <DocumentLink item={item} documentFallback={common.document} />
+
+          <div className="mt-4 flex items-center gap-4 border-y border-gray-100 py-3 text-sm text-gray-600">
+            <span className="flex items-center gap-1.5" aria-label={dict.viewsAriaLabel}>
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              {item.views}
+            </span>
+            <button
+              type="button"
+              onClick={onToggleLike}
+              aria-label={dict.likesAriaLabel}
+              className={`flex items-center gap-1.5 transition ${
+                likedByMe ? "text-brand-600" : "hover:text-brand-600"
+              }`}
+            >
+              <Heart className={`h-4 w-4 ${likedByMe ? "fill-current" : ""}`} aria-hidden="true" />
+              {item._count.likes}
+            </button>
+            <span className="flex items-center gap-1.5" aria-label={dict.commentsAriaLabel}>
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              {item._count.comments}
+            </span>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="mb-2 text-sm font-medium text-gray-900">{dict.commentsTitle}</h3>
+            {comments === null ? (
+              <div className="space-y-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="h-8 animate-pulse rounded bg-gray-100" />
+                ))}
+              </div>
+            ) : comments.length === 0 ? (
+              <p className="text-sm text-gray-500">{dict.commentEmpty}</p>
+            ) : (
+              <ul className="space-y-3">
+                {comments.map((c) => (
+                  <li key={c.id} className="rounded-md bg-gray-50 p-2.5 text-sm">
+                    <div className="mb-0.5 flex items-center justify-between gap-2">
+                      <span className="font-medium text-gray-900">{c.author.displayName}</span>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="text-xs text-gray-500">{formatDateLong(c.createdAt, locale, true)}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteComment(c.id)}
+                          aria-label={common.close}
+                          className="text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                        >
+                          <X className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="whitespace-pre-line text-gray-700">{c.content}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <form onSubmit={handleAddComment} className="mt-3 flex gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder={dict.commentPlaceholder}
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              />
+              <button
+                type="submit"
+                disabled={isPosting || !commentText.trim()}
+                className="shrink-0 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+              >
+                {isPosting ? dict.commentSubmitting : dict.commentSubmit}
+              </button>
+            </form>
+            {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          </div>
         </div>
       </div>
     </div>
@@ -120,32 +322,142 @@ function NewsModal({
 
 export function NewsList({
   news,
+  categories,
   locale,
   emptyText,
   newBadge,
   common,
+  dict,
 }: {
-  news: News[];
+  news: NewsWithMeta[];
+  categories: NewsCategory[];
   locale: Locale;
   emptyText: string;
   newBadge: string;
   common: Dictionary["common"];
+  dict: Dictionary["newsBoard"];
 }) {
-  const [openItem, setOpenItem] = useState<News | null>(null);
+  const [newsState, setNewsState] = useState(news);
+  const [openItemId, setOpenItemId] = useState<string | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
   if (news.length === 0) {
     return <p className="text-sm text-gray-500">{emptyText}</p>;
   }
 
+  const filtered = activeCategoryId
+    ? newsState.filter((item) => item.categoryId === activeCategoryId)
+    : newsState;
+  const openItem = openItemId ? newsState.find((item) => item.id === openItemId) ?? null : null;
+
+  async function handleToggleLike(id: string) {
+    const target = newsState.find((item) => item.id === id);
+    if (!target) return;
+    const wasLiked = target.likes.length > 0;
+
+    setNewsState((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              likes: wasLiked ? [] : [{ id: "optimistic" }],
+              _count: { ...item._count, likes: item._count.likes + (wasLiked ? -1 : 1) },
+            }
+          : item
+      )
+    );
+
+    const res = await fetch(`/api/news/${id}/like`, { method: "POST" });
+    if (!res.ok) {
+      // revert on failure
+      setNewsState((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                likes: wasLiked ? [{ id: "optimistic" }] : [],
+                _count: { ...item._count, likes: item._count.likes + (wasLiked ? 1 : -1) },
+              }
+            : item
+        )
+      );
+      return;
+    }
+    const body = await res.json();
+    setNewsState((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, likes: body.liked ? [{ id: "server" }] : [], _count: { ...item._count, likes: body.count } }
+          : item
+      )
+    );
+  }
+
+  function handleCommentCountChange(id: string, delta: number) {
+    setNewsState((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, _count: { ...item._count, comments: item._count.comments + delta } } : item
+      )
+    );
+  }
+
   return (
     <>
-      <div className="rounded-lg border border-gray-200 bg-white">
-        {news.map((item) => (
-          <NewsRow key={item.id} item={item} locale={locale} newBadge={newBadge} onOpen={() => setOpenItem(item)} />
+      {categories.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => setActiveCategoryId(null)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+              activeCategoryId === null
+                ? "bg-brand-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {dict.allFilter}
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategoryId(cat.id)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                activeCategoryId === cat.id
+                  ? "bg-brand-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((item) => (
+          <NewsCard
+            key={item.id}
+            item={item}
+            locale={locale}
+            newBadge={newBadge}
+            dict={dict}
+            onOpen={() => setOpenItemId(item.id)}
+            onToggleLike={() => handleToggleLike(item.id)}
+          />
         ))}
       </div>
 
-      {openItem && <NewsModal item={openItem} locale={locale} onClose={() => setOpenItem(null)} common={common} />}
+      {openItem && (
+        <NewsDetailModal
+          item={openItem}
+          locale={locale}
+          dict={dict}
+          common={common}
+          onClose={() => setOpenItemId(null)}
+          onToggleLike={() => handleToggleLike(openItem.id)}
+          onCommentCountChange={(delta) => handleCommentCountChange(openItem.id, delta)}
+        />
+      )}
     </>
   );
 }
