@@ -1,11 +1,13 @@
-import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { Building2, CalendarClock, User } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getDictionary } from "@/lib/i18n";
-import { EmployeeCard } from "@/components/org-structure/employee-card";
-import { CompassChecklist } from "@/components/compass/compass-checklist";
+import { OnboardingInteractive } from "@/components/compass/onboarding-interactive";
+import { TeamSection } from "@/components/compass/team-section";
+import { TipsGrid } from "@/components/compass/tips-grid";
+import { ResourceSection } from "@/components/compass/resource-section";
+import { HelpSection, type HelpContact } from "@/components/compass/help-section";
+import { FaqSection } from "@/components/compass/faq-section";
 
 export const dynamic = "force-dynamic";
 
@@ -21,89 +23,97 @@ export default async function CompassPage() {
     },
   });
 
-  const [department, tips] = await Promise.all([
-    user.employee
+  const employee = user.employee;
+
+  const [department, colleagues, hrDepartment, itDepartment, resourceLinks, tips] = await Promise.all([
+    employee
       ? prisma.department.findUnique({
-          where: { id: user.employee.departmentId },
+          where: { id: employee.departmentId },
           include: { headEmployee: { include: { position: true } } },
         })
       : Promise.resolve(null),
+    employee
+      ? prisma.employee.findMany({
+          where: { departmentId: employee.departmentId, id: { not: employee.id } },
+          include: { position: true },
+          orderBy: [{ position: { rank: "desc" } }, { fullName: "asc" }],
+          take: 6,
+        })
+      : Promise.resolve([]),
+    prisma.department.findFirst({
+      where: { name: { contains: "HR", mode: "insensitive" } },
+      include: { headEmployee: { include: { position: true } } },
+    }),
+    prisma.department.findFirst({
+      where: { name: { contains: "IT", mode: "insensitive" } },
+      include: { headEmployee: { include: { position: true } } },
+    }),
+    prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] }),
     prisma.compassTip.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
   ]);
 
-  const head = department?.headEmployee ?? null;
-
-  const checklistItems = [
-    { id: "profile", label: dict.compass.checklistProfile, href: "/profile" },
-    { id: "org-structure", label: dict.compass.checklistOrgStructure, href: "/org-structure" },
-    { id: "booking", label: dict.compass.checklistBooking, href: "/bookings" },
-    { id: "links", label: dict.compass.checklistLinks, href: "/" },
-  ];
-
-  const quickLinks = [
-    { href: "/org-structure", label: dict.compass.quickLinkOrgStructure, icon: Building2 },
-    { href: "/bookings", label: dict.compass.quickLinkBooking, icon: CalendarClock },
-    { href: "/profile", label: dict.compass.quickLinkProfile, icon: User },
-  ];
+  const managerContact: HelpContact = {
+    label: dict.compass.helpManagerLabel,
+    employee: department?.headEmployee ?? null,
+    fallbackText: dict.compass.helpManagerFallback,
+  };
+  const hrContact: HelpContact = {
+    label: dict.compass.helpHrLabel,
+    employee: hrDepartment?.headEmployee ?? null,
+    fallbackText: dict.compass.helpHrFallback,
+  };
+  const itContact: HelpContact = {
+    label: dict.compass.helpItLabel,
+    employee: itDepartment?.headEmployee ?? null,
+    fallbackText: dict.compass.helpItFallback,
+  };
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{dict.compass.title}</h1>
-        <p className="text-sm text-gray-500">{dict.compass.subtitle}</p>
-      </div>
-
-      <CompassChecklist userId={session!.user.id} items={checklistItems} title={dict.compass.checklistTitle} />
-
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 font-medium text-gray-900">{dict.compass.departmentTitle}</h2>
-        {department ? (
-          <div className="space-y-3">
-            <p className="text-sm text-gray-600">{department.name}</p>
-            {head && <EmployeeCard employee={head} locale={locale} dict={dict.orgStructure.employeeModal} />}
-            <Link
-              href={`/org-structure/${department.id}`}
-              className="inline-block text-sm text-brand-700 hover:underline dark:text-brand-300"
-            >
-              {dict.compass.openInOrgStructure}
-            </Link>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500">{dict.compass.notLinked}</p>
-        )}
-      </div>
-
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 font-medium text-gray-900">{dict.compass.quickLinksTitle}</h2>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          {quickLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 dark:hover:bg-brand-900/30"
-            >
-              <link.icon className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-              {link.label}
-            </Link>
-          ))}
+    <div className="max-w-4xl space-y-6">
+      {employee ? (
+        <OnboardingInteractive
+          userId={session!.user.id}
+          fullName={employee.fullName}
+          positionTitle={employee.position.title}
+          departmentName={employee.department.name}
+          hireDate={employee.hireDate}
+          photoUrl={employee.photoUrl}
+          locale={locale}
+          dict={dict.compass}
+          common={dict.common}
+        />
+      ) : (
+        <div className="rounded-lg border border-gray-200 bg-white p-5">
+          <h1 className="text-lg font-semibold text-gray-900">{dict.compass.title.replace("{name}", user.displayName)}</h1>
+          <p className="mt-2 text-sm text-gray-500">{dict.compass.notLinked}</p>
         </div>
-      </div>
+      )}
 
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 font-medium text-gray-900">{dict.compass.tipsTitle}</h2>
-        {tips.length === 0 ? (
-          <p className="text-sm text-gray-500">{dict.compass.tipsEmpty}</p>
-        ) : (
-          <div className="space-y-3">
-            {tips.map((tip) => (
-              <div key={tip.id}>
-                <p className="text-sm font-medium text-gray-900">{tip.title}</p>
-                <p className="whitespace-pre-line text-sm text-gray-600">{tip.content}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <TeamSection
+        colleagues={colleagues}
+        locale={locale}
+        dict={dict.orgStructure.employeeModal}
+        title={dict.compass.teamTitle}
+        emptyText={dict.compass.teamEmpty}
+      />
+
+      <TipsGrid tips={tips} title={dict.compass.tipsTitle} emptyText={dict.compass.tipsEmpty} />
+
+      <ResourceSection
+        resources={resourceLinks}
+        title={dict.compass.resourcesTitle}
+        emptyText={dict.compass.resourcesEmpty}
+        openLabel={dict.compass.openButton}
+      />
+
+      <HelpSection
+        contacts={[hrContact, itContact, managerContact]}
+        title={dict.compass.helpTitle}
+        subtitle={dict.compass.helpSubtitle}
+        contactLabel={dict.compass.contactButton}
+      />
+
+      <FaqSection items={dict.compass.faq} title={dict.compass.faqTitle} />
     </div>
   );
 }
