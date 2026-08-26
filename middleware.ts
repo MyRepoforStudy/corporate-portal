@@ -64,6 +64,7 @@ export const config = {
   // far more robust than maintaining a growing exclusion regex.
   matcher: [
     "/",
+    "/compass/:path*",
     "/org-structure/:path*",
     "/bookings/:path*",
     "/profile/:path*",

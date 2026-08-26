@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 const ADMIN_LINKS = [
   { href: "/admin", label: "Обзор", adminOnly: false },
   { href: "/admin/news", label: "Новости", adminOnly: false },
+  { href: "/admin/compass", label: "Компас новичка", adminOnly: false },
   { href: "/admin/departments", label: "Отделы", adminOnly: false },
   { href: "/admin/positions", label: "Должности", adminOnly: false },
   { href: "/admin/employees", label: "Сотрудники", adminOnly: false },

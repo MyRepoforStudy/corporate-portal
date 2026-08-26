@@ -224,6 +224,21 @@ model ResourceLink {
   @@index([order])
 }
 
+// Admin/HR-managed onboarding tips shown on the "Компас новичка" page -
+// lets HR fill in real company-specific facts (dress code, first-day
+// logistics, etc.) without the app inventing anything.
+model CompassTip {
+  id      String @id @default(cuid())
+  title   String
+  content String
+  order   Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
 model Holiday {
   id    String   @id @default(cuid())
   title String

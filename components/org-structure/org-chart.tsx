@@ -12,6 +12,7 @@ import {
 } from "@/lib/org-tree";
 import { EmployeeCard } from "@/components/org-structure/employee-card";
 import { VacancyCard } from "@/components/org-structure/vacancy-card";
+import { OrgStructureSearch } from "@/components/org-structure/org-structure-search";
 import { ClickablePhoto } from "@/components/ui/photo-lightbox";
 import type { Dictionary, Locale } from "@/lib/i18n";
 
@@ -220,6 +221,8 @@ export function OrgChart({
 
   return (
     <div className="space-y-6">
+      <OrgStructureSearch onSelect={goTo} dict={dict} />
+
       <nav className="flex flex-wrap items-center gap-1 text-sm">
         {path.map((node, i) => (
           <span key={node.id} className="flex items-center gap-1">

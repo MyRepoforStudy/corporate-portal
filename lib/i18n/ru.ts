@@ -10,6 +10,7 @@ export const ru = {
   },
   nav: {
     home: "Главная",
+    compass: "Компас новичка",
     orgStructure: "Оргструктура",
     bookings: "Бронирование",
     profile: "Личный кабинет",
@@ -78,7 +79,9 @@ export const ru = {
   orgStructure: {
     title: "Оргструктура",
     subtitle: "Департаменты, отделы и сотрудники компании",
+    searchPlaceholder: "Поиск по имени или отделу...",
     searching: "Поиск...",
+    noResults: "Ничего не найдено.",
     chartSelectDepartment: "Выберите отдел на диаграмме, чтобы увидеть сотрудников.",
     headLabel: "Руководитель",
     vacanciesTitle: "Открытые вакансии",
@@ -218,6 +221,24 @@ export const ru = {
     commentDeleteConfirm: "Удалить комментарий?",
     commentDeleteFailed: "Не удалось удалить комментарий",
     commentPostFailed: "Не удалось отправить комментарий",
+  },
+  compass: {
+    title: "Компас новичка",
+    subtitle: "Первые шаги в компании и полезные контакты",
+    checklistTitle: "Первые шаги",
+    checklistProfile: "Заполните профиль",
+    checklistOrgStructure: "Изучите оргструктуру",
+    checklistBooking: "Забронируйте первую встречу",
+    checklistLinks: "Посмотрите полезные ссылки в меню слева",
+    departmentTitle: "Ваш отдел",
+    notLinked: "Профиль не привязан к записи сотрудника в оргструктуре. Обратитесь в HR.",
+    openInOrgStructure: "Открыть в оргструктуре →",
+    quickLinksTitle: "Быстрые ссылки",
+    quickLinkOrgStructure: "Оргструктура",
+    quickLinkBooking: "Бронирование переговорных",
+    quickLinkProfile: "Личный кабинет",
+    tipsTitle: "Советы от HR",
+    tipsEmpty: "Советы пока не добавлены.",
   },
 };
 

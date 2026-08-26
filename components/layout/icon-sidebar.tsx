@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User, Building2, CalendarClock, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
+import { Home, User, Building2, CalendarClock, Compass, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
 import type { ResourceLink } from "@prisma/client";
 import type { Dictionary } from "@/lib/i18n";
 
@@ -62,6 +62,7 @@ export function IconSidebar({
 
   const links = [
     { href: "/", label: dict.nav.home, icon: Home },
+    { href: "/compass", label: dict.nav.compass, icon: Compass },
     { href: "/org-structure", label: dict.nav.orgStructure, icon: Building2 },
     { href: "/bookings", label: dict.nav.bookings, icon: CalendarClock },
     { href: "/profile", label: dict.nav.profile, icon: User },
