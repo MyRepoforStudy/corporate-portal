@@ -103,7 +103,7 @@ export function GlobalSearch({ dict }: { dict: Dictionary["search"] }) {
                     <button
                       key={employee.id}
                       type="button"
-                      onClick={() => goTo(`/org-structure?q=${encodeURIComponent(employee.fullName)}`)}
+                      onClick={() => goTo(`/org-structure/${employee.department.id}`)}
                       className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
                     >
                       <User className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
@@ -125,7 +125,7 @@ export function GlobalSearch({ dict }: { dict: Dictionary["search"] }) {
                     <button
                       key={department.id}
                       type="button"
-                      onClick={() => goTo(`/org-structure?department=${department.id}`)}
+                      onClick={() => goTo(`/org-structure/${department.id}`)}
                       className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
                     >
                       <Building2 className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />

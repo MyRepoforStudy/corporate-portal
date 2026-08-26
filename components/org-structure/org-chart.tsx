@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronRight, Users } from "lucide-react";
+import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
 import {
   countEmployees,
   countVacancies,
@@ -54,15 +54,12 @@ function HeadAvatar({
 }) {
   const head = resolveHead(node);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
-  const initial = (head?.fullName ?? node.name).charAt(0);
 
   if (clickable) {
     return (
       <ClickablePhoto
         src={head?.photoUrl ?? null}
         size={size}
-        fallbackText={initial}
-        style={{ fontSize: size * 0.4 }}
         isOpen={isPhotoOpen}
         onOpen={() => setIsPhotoOpen(true)}
         onClose={() => setIsPhotoOpen(false)}
@@ -85,10 +82,10 @@ function HeadAvatar({
   }
   return (
     <div
-      className="flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 font-medium text-gray-500"
-      style={{ width: size, height: size, fontSize: size * 0.4 }}
+      className="flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-gray-400"
+      style={{ width: size, height: size }}
     >
-      {initial}
+      <User style={{ width: size * 0.5, height: size * 0.5 }} aria-hidden="true" />
     </div>
   );
 }
@@ -194,7 +191,7 @@ export function OrgChart({
   const router = useRouter();
 
   function goTo(id: string | null) {
-    router.push(id ? `/org-structure/chart/${id}` : "/org-structure/chart");
+    router.push(id ? `/org-structure/${id}` : "/org-structure");
   }
 
   // With a single real top-level department, that department IS the top of

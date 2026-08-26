@@ -80,18 +80,9 @@ export const kk: Dictionary = {
   orgStructure: {
     title: "Ұйымдық құрылым",
     subtitle: "Компанияның департаменттері, бөлімдері және қызметкерлері",
-    tabStructure: "Құрылым",
-    tabChart: "Диаграмма",
-    searchPlaceholder: "Аты немесе бөлім бойынша іздеу...",
     searching: "Ізделуде...",
-    noResults: "Ештеңе табылмады.",
-    empty: "Ұйымдық құрылым әлі толтырылмаған.",
-    selectDepartment: "Сол жақтан бөлімді таңдаңыз.",
     chartSelectDepartment: "Қызметкерлерді көру үшін диаграммадан бөлімді таңдаңыз.",
     headLabel: "Басшы",
-    noEmployeesInDept: "Бұл бөлімде әзірге қызметкерлер жоқ.",
-    collapse: "Жию",
-    expand: "Жаю",
     vacanciesTitle: "Ашық вакансиялар",
     vacancyLabel: "Вакансия",
     employeeModal: {

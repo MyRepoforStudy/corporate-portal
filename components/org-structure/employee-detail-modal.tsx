@@ -89,8 +89,6 @@ export function EmployeeDetailModal({
             <ClickablePhoto
               src={photoUrl}
               size={96}
-              fallbackText={fullName.charAt(0)}
-              className="text-2xl"
               isOpen={isPhotoOpen}
               onOpen={() => setIsPhotoOpen(true)}
               onClose={() => setIsPhotoOpen(false)}

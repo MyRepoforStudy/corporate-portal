@@ -78,18 +78,9 @@ export const ru = {
   orgStructure: {
     title: "Оргструктура",
     subtitle: "Департаменты, отделы и сотрудники компании",
-    tabStructure: "Структура",
-    tabChart: "Диаграмма",
-    searchPlaceholder: "Поиск по имени или отделу...",
     searching: "Поиск...",
-    noResults: "Ничего не найдено.",
-    empty: "Оргструктура пока не заполнена.",
-    selectDepartment: "Выберите отдел слева.",
     chartSelectDepartment: "Выберите отдел на диаграмме, чтобы увидеть сотрудников.",
     headLabel: "Руководитель",
-    noEmployeesInDept: "В этом отделе пока нет сотрудников.",
-    collapse: "Свернуть",
-    expand: "Развернуть",
     vacanciesTitle: "Открытые вакансии",
     vacancyLabel: "Вакансия",
     employeeModal: {

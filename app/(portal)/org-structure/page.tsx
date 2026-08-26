@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { buildDepartmentTree } from "@/lib/org-tree";
-import { OrgStructureExplorer } from "@/components/org-structure/org-structure-explorer";
+import { OrgChart } from "@/components/org-structure/org-chart";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ export default async function OrgStructurePage() {
         <h1 className="text-xl font-semibold text-gray-900">{dict.orgStructure.title}</h1>
         <p className="text-sm text-gray-500">{dict.orgStructure.subtitle}</p>
       </div>
-      <OrgStructureExplorer tree={tree} locale={locale} dict={dict.orgStructure} />
+      <OrgChart tree={tree} currentId={null} locale={locale} dict={dict.orgStructure} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { User, X } from "lucide-react";
 
 export function PhotoLightbox({
   src,
@@ -41,7 +41,6 @@ export function PhotoLightbox({
 export function ClickablePhoto({
   src,
   size,
-  fallbackText,
   className,
   style: extraStyle,
   isOpen,
@@ -52,7 +51,6 @@ export function ClickablePhoto({
 }: {
   src: string | null;
   size: number;
-  fallbackText: string;
   className?: string;
   style?: React.CSSProperties;
   isOpen: boolean;
@@ -66,10 +64,10 @@ export function ClickablePhoto({
   if (!src) {
     return (
       <div
-        className={`flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 font-medium text-gray-500 ${className ?? ""}`}
+        className={`flex shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-gray-400 ${className ?? ""}`}
         style={style}
       >
-        {fallbackText}
+        <User style={{ width: size * 0.5, height: size * 0.5 }} aria-hidden="true" />
       </div>
     );
   }

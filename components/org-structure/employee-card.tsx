@@ -31,8 +31,6 @@ export function EmployeeCard({
         <ClickablePhoto
           src={employee.photoUrl}
           size={80}
-          fallbackText={employee.fullName.charAt(0)}
-          className="text-lg"
           isOpen={isPhotoOpen}
           onOpen={() => setIsPhotoOpen(true)}
           onClose={() => setIsPhotoOpen(false)}
