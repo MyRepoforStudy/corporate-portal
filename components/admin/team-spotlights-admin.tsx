@@ -99,6 +99,11 @@ export function TeamSpotlightsAdmin() {
             />
             {isUploading && <span className="text-xs text-gray-500">Загрузка...</span>}
           </div>
+          <p className="mt-1 text-xs text-gray-400">
+            Рекомендуемое соотношение сторон — 21:9 (например, 2100×900), тогда фото займёт всю
+            панель без пустых полей по бокам. Другие пропорции тоже подойдут — лишнее место
+            заполнится размытым фоном.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-end gap-3">

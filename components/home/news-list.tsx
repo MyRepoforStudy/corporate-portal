@@ -80,7 +80,7 @@ function NewsCard({
   return (
     <article
       onClick={onOpen}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand-300 hover:shadow-sm"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-brand-300 hover:shadow-sm"
     >
       {item.imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
