@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
   // permission matrix. This is UI/route gating for convenience - the real
   // defense is requireAdmin()/requireHrOrAdmin() inside each API handler,
   // which stays authoritative.
-  const ADMIN_ONLY_SEGMENTS = ["users", "audit-log", "resource-links", "bookings", "team-spotlights"];
+  const ADMIN_ONLY_SEGMENTS = ["users", "audit-log", "resource-links", "bookings", "team-spotlights", "it-requests"];
   const isAdminArea = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
   const isAdminOnlyArea = ADMIN_ONLY_SEGMENTS.some(
     (segment) => pathname.startsWith(`/admin/${segment}`) || pathname.startsWith(`/api/admin/${segment}`)
@@ -68,6 +68,9 @@ export const config = {
     "/org-structure/:path*",
     "/bookings/:path*",
     "/profile/:path*",
+    "/documents/:path*",
+    "/hr/:path*",
+    "/it-services/:path*",
     "/admin/:path*",
     "/api/:path*",
   ],

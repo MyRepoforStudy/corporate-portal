@@ -22,13 +22,26 @@ export default async function PortalLayout({
   const locale = getLocale();
   const dict = getDictionary(locale);
   const theme = getTheme();
-  const resourceLinks = await prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] });
+  const [resourceLinks, user] = await Promise.all([
+    prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { employee: { include: { department: true } } },
+    }),
+  ]);
 
   return (
     <ToastProvider>
       <SideDecoration />
       <div className="min-h-screen">
-        <Header session={session} dict={dict} locale={locale} theme={theme} />
+        <Header
+          session={session}
+          dict={dict}
+          locale={locale}
+          theme={theme}
+          photoUrl={user?.employee?.photoUrl ?? null}
+          departmentName={user?.employee?.department.name ?? null}
+        />
         <div className="mx-auto flex max-w-[1600px]">
           <IconSidebar
             dict={dict}

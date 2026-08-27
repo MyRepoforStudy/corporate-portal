@@ -7,6 +7,7 @@ const ADMIN_LINKS = [
   { href: "/admin", label: "Обзор", adminOnly: false },
   { href: "/admin/news", label: "Новости", adminOnly: false },
   { href: "/admin/compass", label: "Компас новичка", adminOnly: false },
+  { href: "/admin/documents", label: "Документы", adminOnly: false },
   { href: "/admin/departments", label: "Отделы", adminOnly: false },
   { href: "/admin/positions", label: "Должности", adminOnly: false },
   { href: "/admin/employees", label: "Сотрудники", adminOnly: false },
@@ -15,6 +16,7 @@ const ADMIN_LINKS = [
   { href: "/admin/team-spotlights", label: "Команда в деле", adminOnly: true },
   { href: "/admin/resource-links", label: "Ресурсы", adminOnly: true },
   { href: "/admin/bookings", label: "Бронирования", adminOnly: true },
+  { href: "/admin/it-requests", label: "IT-заявки", adminOnly: true },
   { href: "/admin/users", label: "Пользователи", adminOnly: true },
   { href: "/admin/audit-log", label: "Журнал", adminOnly: true },
 ];

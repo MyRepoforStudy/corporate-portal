@@ -25,7 +25,7 @@ export default async function CompassPage() {
 
   const employee = user.employee;
 
-  const [department, colleagues, hrDepartment, itDepartment, resourceLinks, tips] = await Promise.all([
+  const [department, colleagues, hrDepartment, itDepartment, resourceLinks, tips, tasks, faqItems] = await Promise.all([
     employee
       ? prisma.department.findUnique({
           where: { id: employee.departmentId },
@@ -50,6 +50,8 @@ export default async function CompassPage() {
     }),
     prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] }),
     prisma.compassTip.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
+    prisma.onboardingTask.findMany({ orderBy: [{ stageId: "asc" }, { order: "asc" }] }),
+    prisma.faqItem.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
   ]);
 
   const managerContact: HelpContact = {
@@ -78,6 +80,7 @@ export default async function CompassPage() {
           departmentName={employee.department.name}
           hireDate={employee.hireDate}
           photoUrl={employee.photoUrl}
+          tasks={tasks}
           locale={locale}
           dict={dict.compass}
           common={dict.common}
@@ -113,7 +116,7 @@ export default async function CompassPage() {
         contactLabel={dict.compass.contactButton}
       />
 
-      <FaqSection items={dict.compass.faq} title={dict.compass.faqTitle} />
+      <FaqSection items={faqItems} title={dict.compass.faqTitle} emptyText={dict.compass.faqEmpty} />
     </div>
   );
 }

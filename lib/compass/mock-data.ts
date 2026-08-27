@@ -1,9 +1,10 @@
-// Onboarding stages/tasks have no backend concept yet - this is the mock
-// scaffold the "Компас новичка" page renders against. `endDay` drives
-// computeStageStatuses() (lib/compass/stage-status.ts): a stage is
-// "completed" once that many days have passed since the employee's real
-// hireDate. Task completion is tracked client-side (see
-// components/compass/onboarding-interactive.tsx), not here.
+// The 5 onboarding stages are a fixed structural timeline, not admin
+// content - `endDay` drives computeStageStatuses() (lib/compass/stage-status.ts):
+// a stage is "completed" once that many days have passed since the
+// employee's real hireDate. The tasks shown within each stage, and their
+// completion state, are real data now (OnboardingTask in the DB, admin-managed
+// via /admin/compass; completion is tracked client-side per user, see
+// components/compass/onboarding-interactive.tsx).
 
 export type StageTitleKey = "beforeStart" | "firstDay" | "firstWeek" | "firstMonth" | "ninetyDays";
 
@@ -19,33 +20,4 @@ export const ONBOARDING_STAGES: OnboardingStageMeta[] = [
   { id: "first-week", titleKey: "firstWeek", endDay: 7 },
   { id: "first-month", titleKey: "firstMonth", endDay: 30 },
   { id: "ninety-days", titleKey: "ninetyDays", endDay: 90 },
-];
-
-export type TaskTitleKey =
-  | "pass"
-  | "laptop"
-  | "email"
-  | "meetTeam"
-  | "induction"
-  | "systems"
-  | "firstOneOnOne"
-  | "trainingCourses"
-  | "probationCheckin";
-
-export interface OnboardingTaskMeta {
-  id: string;
-  titleKey: TaskTitleKey;
-  stageId: string;
-}
-
-export const ONBOARDING_TASKS: OnboardingTaskMeta[] = [
-  { id: "pass", titleKey: "pass", stageId: "before-start" },
-  { id: "laptop", titleKey: "laptop", stageId: "first-day" },
-  { id: "email", titleKey: "email", stageId: "first-day" },
-  { id: "meet-team", titleKey: "meetTeam", stageId: "first-day" },
-  { id: "induction", titleKey: "induction", stageId: "first-week" },
-  { id: "systems", titleKey: "systems", stageId: "first-week" },
-  { id: "one-on-one", titleKey: "firstOneOnOne", stageId: "first-month" },
-  { id: "training", titleKey: "trainingCourses", stageId: "first-month" },
-  { id: "probation-checkin", titleKey: "probationCheckin", stageId: "ninety-days" },
 ];

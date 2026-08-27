@@ -6,7 +6,9 @@ export type NotificationType =
   | "BOOKING_UPDATED"
   | "BOOKING_CANCELLED"
   | "NEWS_PINNED"
-  | "BIRTHDAY_GREETING";
+  | "BIRTHDAY_GREETING"
+  | "IT_REQUEST_SUBMITTED"
+  | "IT_REQUEST_RESOLVED";
 
 /**
  * Creates the in-app notification (always) and best-effort emails it (only

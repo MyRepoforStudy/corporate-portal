@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { CompassTip } from "@prisma/client";
+import type { FaqItem } from "@prisma/client";
 import { useCrudList } from "@/lib/hooks/use-crud-list";
 
-const emptyForm = { title: "", content: "", order: "0" };
+const emptyForm = { question: "", answer: "", order: "0" };
 
-export function CompassTipsAdmin() {
-  const { items, isLoading, create, update, remove } =
-    useCrudList<CompassTip>("/api/compass-tips");
+export function FaqItemsAdmin() {
+  const { items, isLoading, create, update, remove } = useCrudList<FaqItem>("/api/faq-items");
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -17,8 +16,8 @@ export function CompassTipsAdmin() {
     event.preventDefault();
     setError(null);
     const payload = {
-      title: form.title,
-      content: form.content,
+      question: form.question,
+      answer: form.answer,
       order: Number(form.order),
     };
     const result = editingId ? await update(editingId, payload) : await create(payload);
@@ -30,12 +29,12 @@ export function CompassTipsAdmin() {
     setEditingId(null);
   }
 
-  function startEdit(tip: CompassTip) {
-    setEditingId(tip.id);
+  function startEdit(item: FaqItem) {
+    setEditingId(item.id);
     setForm({
-      title: tip.title,
-      content: tip.content,
-      order: String(tip.order),
+      question: item.question,
+      answer: item.answer,
+      order: String(item.order),
     });
   }
 
@@ -45,7 +44,7 @@ export function CompassTipsAdmin() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Удалить совет?")) return;
+    if (!confirm("Удалить вопрос?")) return;
     const result = await remove(id);
     if (result) setError(result);
   }
@@ -53,26 +52,25 @@ export function CompassTipsAdmin() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Полезно знать</h2>
+        <h2 className="text-lg font-semibold text-gray-900">FAQ для новичков</h2>
         <p className="text-sm text-gray-500">
-          Советы и факты для новых сотрудников (дресс-код, первые дни, полезные контакты и т.п.) —
-          отображаются на странице «Компас новичка» у всех сотрудников.
+          Частые вопросы и ответы — показываются аккордеоном в «Компасе новичка».
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <input
           type="text"
-          placeholder="Заголовок (например, Дресс-код)"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          placeholder="Вопрос"
+          value={form.question}
+          onChange={(e) => setForm({ ...form, question: e.target.value })}
           className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
         />
         <textarea
-          placeholder="Текст совета"
-          value={form.content}
-          onChange={(e) => setForm({ ...form, content: e.target.value })}
+          placeholder="Ответ"
+          value={form.answer}
+          onChange={(e) => setForm({ ...form, answer: e.target.value })}
           rows={3}
           className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           required
@@ -93,7 +91,7 @@ export function CompassTipsAdmin() {
             type="submit"
             className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
           >
-            {editingId ? "Сохранить" : "Добавить совет"}
+            {editingId ? "Сохранить" : "Добавить вопрос"}
           </button>
           {editingId && (
             <button
@@ -111,17 +109,17 @@ export function CompassTipsAdmin() {
         <p className="text-sm text-gray-500">Загрузка...</p>
       ) : (
         <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
-          {items.map((tip) => (
-            <div key={tip.id} className="flex items-start justify-between gap-3 px-4 py-2.5">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-start justify-between gap-3 px-4 py-2.5">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900">{tip.title}</p>
-                <p className="whitespace-pre-line text-xs text-gray-500">{tip.content}</p>
+                <p className="text-sm font-medium text-gray-900">{item.question}</p>
+                <p className="whitespace-pre-line text-xs text-gray-500">{item.answer}</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                <button onClick={() => startEdit(tip)} className="text-sm text-brand-700 hover:underline dark:text-brand-300">
+                <button onClick={() => startEdit(item)} className="text-sm text-brand-700 hover:underline dark:text-brand-300">
                   Изменить
                 </button>
-                <button onClick={() => handleDelete(tip.id)} className="text-sm text-red-600 dark:text-red-400 hover:underline">
+                <button onClick={() => handleDelete(item.id)} className="text-sm text-red-600 dark:text-red-400 hover:underline">
                   Удалить
                 </button>
               </div>

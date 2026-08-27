@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Cake, PartyPopper, UserPlus } from "lucide-react";
 import { NewsList } from "@/components/home/news-list";
 import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
@@ -8,7 +9,10 @@ import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
 import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel";
 import { HolidaysWidget } from "@/components/home/holidays-widget";
+import { TodayCalendarWidget } from "@/components/home/today-calendar-widget";
+import { CongratsWidget } from "@/components/home/congrats-widget";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
+import { countUpcomingWorkAnniversaries } from "@/lib/work-anniversaries";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +23,17 @@ export default async function HomePage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
 
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfTomorrow = new Date(startOfToday);
+  startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+  const dayOfWeek = (now.getDay() + 6) % 7; // Monday = 0
+  const startOfWeek = new Date(startOfToday);
+  startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 7);
+
   const [
     news,
     newsCategories,
@@ -27,6 +42,9 @@ export default async function HomePage() {
     upcomingHolidays,
     recentHires,
     teamSpotlights,
+    todayBookings,
+    newHiresThisWeek,
+    employeesWithHireDate,
   ] = await Promise.all([
       prisma.news.findMany({
         where: { isPublished: true },
@@ -72,9 +90,18 @@ export default async function HomePage() {
         take: 3,
       }),
       prisma.teamSpotlight.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
+      prisma.booking.findMany({
+        where: { status: "CONFIRMED", startTime: { gte: startOfToday, lt: startOfTomorrow } },
+        orderBy: { startTime: "asc" },
+        include: { room: true },
+      }),
+      prisma.employee.count({ where: { hireDate: { gte: startOfWeek, lt: endOfWeek } } }),
+      prisma.employee.findMany({ where: { hireDate: { not: null } }, select: { id: true, hireDate: true } }),
     ]);
 
   const upcomingBirthdays = getUpcomingBirthdays(employeesWithBirthdays);
+  const todayHoliday = upcomingHolidays.find((h) => h.date.getTime() === startOfToday.getTime()) ?? null;
+  const workAnniversariesThisWeek = countUpcomingWorkAnniversaries(employeesWithHireDate);
 
   return (
     <div className="space-y-6">
@@ -98,6 +125,21 @@ export default async function HomePage() {
         <div>
           <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.upcoming}</h2>
           <div className="space-y-4">
+            <TodayCalendarWidget
+              bookings={todayBookings}
+              holiday={todayHoliday}
+              locale={locale}
+              title={dict.home.todayCalendar.title}
+              emptyText={dict.home.todayCalendar.empty}
+            />
+            <CongratsWidget
+              title={dict.home.congrats.title}
+              tiles={[
+                { icon: Cake, count: upcomingBirthdays.length, label: dict.home.congrats.birthdays },
+                { icon: UserPlus, count: newHiresThisWeek, label: dict.home.congrats.newHires },
+                { icon: PartyPopper, count: workAnniversariesThisWeek, label: dict.home.congrats.anniversaries },
+              ]}
+            />
             <BirthdaysWidget
               birthdays={upcomingBirthdays}
               locale={locale}

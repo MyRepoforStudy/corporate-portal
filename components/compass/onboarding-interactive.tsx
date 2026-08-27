@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ONBOARDING_STAGES, ONBOARDING_TASKS } from "@/lib/compass/mock-data";
+import type { OnboardingTask } from "@prisma/client";
+import { ONBOARDING_STAGES } from "@/lib/compass/mock-data";
 import { computeStageStatuses, getActiveStageId } from "@/lib/compass/stage-status";
 import { WelcomeHero } from "@/components/compass/welcome-hero";
 import { OnboardingRoadmap } from "@/components/compass/onboarding-roadmap";
@@ -16,6 +17,7 @@ export function OnboardingInteractive({
   departmentName,
   hireDate,
   photoUrl,
+  tasks,
   locale,
   dict,
   common,
@@ -26,6 +28,7 @@ export function OnboardingInteractive({
   departmentName: string;
   hireDate: Date | null;
   photoUrl: string | null;
+  tasks: OnboardingTask[];
   locale: Locale;
   dict: Dictionary["compass"];
   common: Dictionary["common"];
@@ -63,15 +66,16 @@ export function OnboardingInteractive({
     status: statuses[stage.id],
   }));
 
-  const visibleTasks = ONBOARDING_TASKS.filter((task) => task.stageId === activeStageId).map((task) => ({
-    id: task.id,
-    title: dict.tasks[task.titleKey],
-    completed: !!completed[task.id],
-  }));
+  const visibleTasks = tasks
+    .filter((task) => task.stageId === activeStageId)
+    .map((task) => ({
+      id: task.id,
+      title: task.title,
+      completed: !!completed[task.id],
+    }));
 
-  const doneCount = ONBOARDING_TASKS.filter((task) => completed[task.id]).length;
-  const progressPercent =
-    ONBOARDING_TASKS.length > 0 ? Math.round((doneCount / ONBOARDING_TASKS.length) * 100) : 0;
+  const doneCount = tasks.filter((task) => completed[task.id]).length;
+  const progressPercent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
 
   return (
     <>
@@ -105,7 +109,7 @@ export function OnboardingInteractive({
       />
       <ProgressCard
         done={doneCount}
-        total={ONBOARDING_TASKS.length}
+        total={tasks.length}
         title={dict.progressCardTitle}
         motivation={dict.progressMotivation}
         doneOfTotalTemplate={dict.progressDoneOfTotal}

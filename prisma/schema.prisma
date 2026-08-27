@@ -18,6 +18,11 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum ItRequestStatus {
+  OPEN
+  RESOLVED
+}
+
 model User {
   id          String    @id @default(cuid())
   ldapUid     String    @unique
@@ -37,6 +42,7 @@ model User {
   newsLikes             NewsLike[]
   newsComments          NewsComment[]
   auditLogs             AuditLog[]
+  itRequests            ItRequest[]
 
   lastLoginAt DateTime?
   createdAt   DateTime  @default(now())
@@ -237,6 +243,72 @@ model CompassTip {
   updatedAt DateTime @updatedAt
 
   @@index([order])
+}
+
+// Admin/HR-managed onboarding checklist shown on "Компас новичка" -
+// stageId is a plain string (not a Prisma enum) because its allowed values
+// are already fixed in code (lib/compass/mock-data.ts -> ONBOARDING_STAGES)
+// and validated via zod; a DB enum would just make future stage changes
+// harder to migrate for no real safety gain.
+model OnboardingTask {
+  id      String @id @default(cuid())
+  title   String
+  stageId String
+  order   Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([stageId, order])
+}
+
+// Admin/HR-managed FAQ shown on "Компас новичка".
+model FaqItem {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  order    Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Admin/HR-managed document library ("Документы") - a real uploaded file
+// (unlike ResourceLink, which is just an external URL), served through the
+// same public/uploads pipeline as News document attachments.
+model Document {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  fileUrl     String
+  fileName    String
+  order       Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Self-service IT support request ("IT-сервисы"). Notifies every ADMIN user
+// (not a heuristically-matched "IT department") since that's the one
+// reliable recipient this schema can guarantee.
+model ItRequest {
+  id          String          @id @default(cuid())
+  subject     String
+  description String
+  status      ItRequestStatus @default(OPEN)
+
+  requesterId String
+  requester   User   @relation(fields: [requesterId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([requesterId])
+  @@index([status])
 }
 
 model Holiday {
