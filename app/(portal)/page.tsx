@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Cake, PartyPopper, UserPlus } from "lucide-react";
+import { Building2, Cake, CalendarClock, Compass, FileText, HeartHandshake, LifeBuoy, PartyPopper, UserPlus } from "lucide-react";
 import { NewsList } from "@/components/home/news-list";
 import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
@@ -11,6 +11,9 @@ import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel
 import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { TodayCalendarWidget } from "@/components/home/today-calendar-widget";
 import { CongratsWidget } from "@/components/home/congrats-widget";
+import { AnnouncementsPanel } from "@/components/home/announcements-panel";
+import { QuickLinksGrid } from "@/components/home/quick-links-grid";
+import { MyBnkCard } from "@/components/home/my-bnk-card";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
 import { countUpcomingWorkAnniversaries } from "@/lib/work-anniversaries";
 import { getLocale, getDictionary } from "@/lib/i18n";
@@ -45,6 +48,8 @@ export default async function HomePage() {
     todayBookings,
     newHiresThisWeek,
     employeesWithHireDate,
+    pinnedAnnouncements,
+    currentUser,
   ] = await Promise.all([
       prisma.news.findMany({
         where: { isPublished: true },
@@ -97,21 +102,54 @@ export default async function HomePage() {
       }),
       prisma.employee.count({ where: { hireDate: { gte: startOfWeek, lt: endOfWeek } } }),
       prisma.employee.findMany({ where: { hireDate: { not: null } }, select: { id: true, hireDate: true } }),
+      prisma.news.findMany({
+        where: { isPublished: true, isPinned: true },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { id: true, title: true, createdAt: true },
+      }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        include: { employee: { include: { department: true, position: true } } },
+      }),
     ]);
 
   const upcomingBirthdays = getUpcomingBirthdays(employeesWithBirthdays);
   const todayHoliday = upcomingHolidays.find((h) => h.date.getTime() === startOfToday.getTime()) ?? null;
   const workAnniversariesThisWeek = countUpcomingWorkAnniversaries(employeesWithHireDate);
+  const employee = currentUser?.employee ?? null;
+
+  const quickLinks = [
+    { href: "/org-structure", label: dict.home.quickLinks.orgStructure, icon: Building2 },
+    { href: "/documents", label: dict.home.quickLinks.documents, icon: FileText },
+    { href: "/bookings", label: dict.home.quickLinks.booking, icon: CalendarClock },
+    { href: "/it-services", label: dict.home.quickLinks.itServices, icon: LifeBuoy },
+    { href: "/hr", label: dict.home.quickLinks.hr, icon: HeartHandshake },
+    { href: "/compass", label: dict.home.quickLinks.compass, icon: Compass },
+  ];
 
   return (
     <div className="space-y-6">
-      <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+        <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
+        <div className="space-y-4">
+          <AnnouncementsPanel
+            announcements={pinnedAnnouncements}
+            locale={locale}
+            title={dict.home.announcements.title}
+            emptyText={dict.home.announcements.empty}
+            allLabel={dict.home.announcements.all}
+          />
+        </div>
+      </div>
+
+      <QuickLinksGrid title={dict.home.quickLinks.title} links={quickLinks} />
 
       <TeamSpotlightCarousel spotlights={teamSpotlights} dict={dict.home.teamSpotlight} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div>
-          <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.news}</h2>
+          <h2 id="news" className="mb-3 scroll-mt-6 text-lg font-semibold text-gray-900">{dict.home.news}</h2>
           <NewsList
             news={news}
             categories={newsCategories}
@@ -125,6 +163,20 @@ export default async function HomePage() {
         <div>
           <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.upcoming}</h2>
           <div className="space-y-4">
+            {employee && (
+              <MyBnkCard
+                fullName={employee.fullName}
+                positionTitle={employee.position?.title ?? null}
+                departmentName={employee.department?.name ?? null}
+                photoUrl={employee.photoUrl}
+                vacationStart={employee.vacationStart}
+                locale={locale}
+                title={dict.home.myBnk.title}
+                vacationNextLabel={dict.home.myBnk.vacationNextLabel}
+                vacationEmpty={dict.home.myBnk.vacationEmpty}
+                profileLink={dict.home.myBnk.profileLink}
+              />
+            )}
             <TodayCalendarWidget
               bookings={todayBookings}
               holiday={todayHoliday}

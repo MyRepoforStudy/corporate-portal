@@ -85,7 +85,7 @@ export function GlobalSearch({ dict }: { dict: Dictionary["search"] }) {
           if (e.key === "Escape") setIsOpen(false);
         }}
         placeholder={dict.placeholder}
-        className="w-full rounded-md border border-gray-300 bg-white text-gray-900 py-1.5 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        className="w-full rounded-full border border-gray-300 bg-white text-gray-900 py-1.5 pl-9 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
       />
 
       {isOpen && hasQuery && (

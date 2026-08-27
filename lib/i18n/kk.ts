@@ -90,6 +90,26 @@ export const kk: Dictionary = {
       newHires: "Жаңа қызметкерлер",
       anniversaries: "Жұмыс мерейтойлары",
     },
+    announcements: {
+      title: "Назар аударыңыз",
+      empty: "Маңызды хабарландырулар әлі жоқ.",
+      all: "Барлық жаңалықтар →",
+    },
+    quickLinks: {
+      title: "Жиі қолданылатын",
+      orgStructure: "Ұйымдық құрылым",
+      documents: "Құжаттар",
+      booking: "Кеңес бөлмелері",
+      itServices: "IT-өтінім",
+      hr: "HR-ға хабарласу",
+      compass: "Жаңашы компасы",
+    },
+    myBnk: {
+      title: "Менің BNK",
+      vacationNextLabel: "Жақын демалыс",
+      vacationEmpty: "Демалыс жоспарланбаған",
+      profileLink: "Менің профилім",
+    },
   },
   orgStructure: {
     title: "Ұйымдық құрылым",

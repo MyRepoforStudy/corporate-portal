@@ -90,6 +90,26 @@ export const ko: Dictionary = {
       newHires: "신규 입사자",
       anniversaries: "근속 기념일",
     },
+    announcements: {
+      title: "알림",
+      empty: "아직 중요 공지가 없습니다.",
+      all: "전체 소식 보기 →",
+    },
+    quickLinks: {
+      title: "자주 사용하는 메뉴",
+      orgStructure: "조직도",
+      documents: "문서함",
+      booking: "회의실",
+      itServices: "IT 요청",
+      hr: "HR 문의",
+      compass: "신입사원 나침반",
+    },
+    myBnk: {
+      title: "마이 BNK",
+      vacationNextLabel: "다가오는 휴가",
+      vacationEmpty: "예정된 휴가가 없습니다",
+      profileLink: "마이 페이지",
+    },
   },
   orgStructure: {
     title: "조직도",

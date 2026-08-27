@@ -88,6 +88,26 @@ export const ru = {
       newHires: "Новые сотрудники",
       anniversaries: "Юбилеи работы",
     },
+    announcements: {
+      title: "Внимание",
+      empty: "Важных объявлений пока нет.",
+      all: "Все новости →",
+    },
+    quickLinks: {
+      title: "Часто используемое",
+      orgStructure: "Оргструктура",
+      documents: "Документы",
+      booking: "Переговорные",
+      itServices: "IT-заявка",
+      hr: "Обратиться в HR",
+      compass: "Компас новичка",
+    },
+    myBnk: {
+      title: "Мой BNK",
+      vacationNextLabel: "Ближайший отпуск",
+      vacationEmpty: "Отпуск не запланирован",
+      profileLink: "Мой профиль",
+    },
   },
   orgStructure: {
     title: "Оргструктура",

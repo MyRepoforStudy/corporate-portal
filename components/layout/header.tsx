@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Session } from "next-auth";
-import { SignOutButton } from "@/components/layout/sign-out-button";
+import { ProfileMenu } from "@/components/layout/profile-menu";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { GlobalSearch } from "@/components/layout/global-search";
@@ -37,21 +37,13 @@ export function Header({
           <NotificationsBell dict={dict.notifications} />
           <ThemeToggle theme={theme} dict={dict.common} />
           <LanguageSwitcher locale={locale} />
-          <div className="hidden items-center gap-2 sm:flex">
-            {photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={photoUrl} alt="" className="h-8 w-8 rounded-full border border-gray-200 object-cover" />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-500">
-                {(session.user.name ?? "?").charAt(0)}
-              </div>
-            )}
-            <div className="leading-tight">
-              <p className="text-sm text-gray-700">{session.user.name}</p>
-              {departmentName && <p className="text-xs text-gray-400">{departmentName}</p>}
-            </div>
-          </div>
-          <SignOutButton label={dict.nav.signOut} />
+          <ProfileMenu
+            name={session.user.name ?? ""}
+            departmentName={departmentName}
+            photoUrl={photoUrl}
+            profileLabel={dict.nav.profile}
+            signOutLabel={dict.nav.signOut}
+          />
         </div>
       </div>
     </header>
