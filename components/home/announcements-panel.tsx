@@ -36,12 +36,9 @@ export function AnnouncementsPanel({
         <ul className="space-y-2">
           {announcements.map((item) => (
             <li key={item.id}>
-              <Link
-                href="#news"
-                className="flex items-start justify-between gap-3 text-sm text-brand-900 hover:underline dark:text-brand-100"
-              >
-                <span className="min-w-0 truncate">{item.title}</span>
-                <span className="shrink-0 text-xs text-brand-600/80 dark:text-brand-400/80">
+              <Link href="#news" className="block text-sm text-brand-900 hover:underline dark:text-brand-100">
+                <span className="line-clamp-2">{item.title}</span>
+                <span className="mt-0.5 block text-xs text-brand-600/80 dark:text-brand-400/80">
                   {formatDateLong(item.createdAt, locale, true)}
                 </span>
               </Link>

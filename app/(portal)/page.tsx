@@ -121,13 +121,20 @@ export default async function HomePage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
         <div className="space-y-4">
-          <AnnouncementsPanel
-            announcements={announcements}
-            locale={locale}
-            title={dict.home.announcements.title}
-            emptyText={dict.home.announcements.empty}
-            allLabel={dict.home.announcements.all}
-          />
+          {employee && (
+            <MyBnkCard
+              fullName={employee.fullName}
+              positionTitle={employee.position?.title ?? null}
+              departmentName={employee.department?.name ?? null}
+              photoUrl={employee.photoUrl}
+              vacationStart={employee.vacationStart}
+              locale={locale}
+              title={dict.home.myBnk.title}
+              vacationNextLabel={dict.home.myBnk.vacationNextLabel}
+              vacationEmpty={dict.home.myBnk.vacationEmpty}
+              profileLink={dict.home.myBnk.profileLink}
+            />
+          )}
         </div>
       </div>
 
@@ -149,20 +156,13 @@ export default async function HomePage() {
         <div>
           <h2 className="mb-3 text-lg font-semibold text-gray-900">{dict.home.upcoming}</h2>
           <div className="space-y-4">
-            {employee && (
-              <MyBnkCard
-                fullName={employee.fullName}
-                positionTitle={employee.position?.title ?? null}
-                departmentName={employee.department?.name ?? null}
-                photoUrl={employee.photoUrl}
-                vacationStart={employee.vacationStart}
-                locale={locale}
-                title={dict.home.myBnk.title}
-                vacationNextLabel={dict.home.myBnk.vacationNextLabel}
-                vacationEmpty={dict.home.myBnk.vacationEmpty}
-                profileLink={dict.home.myBnk.profileLink}
-              />
-            )}
+            <AnnouncementsPanel
+              announcements={announcements}
+              locale={locale}
+              title={dict.home.announcements.title}
+              emptyText={dict.home.announcements.empty}
+              allLabel={dict.home.announcements.all}
+            />
             <TodayCalendarWidget
               bookings={todayBookings}
               holiday={todayHoliday}
