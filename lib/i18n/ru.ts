@@ -90,11 +90,11 @@ export const ru = {
       title: "Внимание",
       empty: "Важных объявлений пока нет.",
       all: "Все новости →",
+      showMore: "Показать ещё",
+      showLess: "Свернуть",
     },
     myBnk: {
       title: "Мой BNK",
-      vacationNextLabel: "Ближайший отпуск",
-      vacationEmpty: "Отпуск не запланирован",
       profileLink: "Мой профиль",
     },
   },

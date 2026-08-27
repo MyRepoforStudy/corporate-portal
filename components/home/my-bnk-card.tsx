@@ -1,33 +1,20 @@
 import Link from "next/link";
-import { Palmtree } from "lucide-react";
-import type { Locale } from "@/lib/i18n";
-import { formatDateLong } from "@/lib/i18n/format";
 
 export function MyBnkCard({
   fullName,
   positionTitle,
   departmentName,
   photoUrl,
-  vacationStart,
-  locale,
   title,
-  vacationNextLabel,
-  vacationEmpty,
   profileLink,
 }: {
   fullName: string;
   positionTitle: string | null;
   departmentName: string | null;
   photoUrl: string | null;
-  vacationStart: Date | null;
-  locale: Locale;
   title: string;
-  vacationNextLabel: string;
-  vacationEmpty: string;
   profileLink: string;
 }) {
-  const hasUpcomingVacation = !!vacationStart && vacationStart.getTime() > Date.now();
-
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -50,16 +37,6 @@ export function MyBnkCard({
           {positionTitle && <p className="truncate text-xs text-gray-500">{positionTitle}</p>}
           {departmentName && <p className="truncate text-xs text-gray-400">{departmentName}</p>}
         </div>
-      </div>
-      <div className="mt-3 flex items-center gap-2 border-t border-gray-100 pt-3 text-sm text-gray-600">
-        <Palmtree className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-        {hasUpcomingVacation ? (
-          <span>
-            {vacationNextLabel}: {formatDateLong(vacationStart!, locale, true)}
-          </span>
-        ) : (
-          <span className="text-gray-400">{vacationEmpty}</span>
-        )}
       </div>
     </div>
   );

@@ -92,11 +92,11 @@ export const ko: Dictionary = {
       title: "알림",
       empty: "아직 중요 공지가 없습니다.",
       all: "전체 소식 보기 →",
+      showMore: "더 보기",
+      showLess: "접기",
     },
     myBnk: {
       title: "마이 BNK",
-      vacationNextLabel: "다가오는 휴가",
-      vacationEmpty: "예정된 휴가가 없습니다",
       profileLink: "마이 페이지",
     },
   },

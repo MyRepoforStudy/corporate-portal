@@ -103,7 +103,7 @@ export default async function HomePage() {
       prisma.employee.findMany({ where: { hireDate: { not: null } }, select: { id: true, hireDate: true } }),
       prisma.announcement.findMany({
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
-        take: 5,
+        take: 10,
       }),
       prisma.user.findUnique({
         where: { id: userId },
@@ -127,11 +127,7 @@ export default async function HomePage() {
               positionTitle={employee.position?.title ?? null}
               departmentName={employee.department?.name ?? null}
               photoUrl={employee.photoUrl}
-              vacationStart={employee.vacationStart}
-              locale={locale}
               title={dict.home.myBnk.title}
-              vacationNextLabel={dict.home.myBnk.vacationNextLabel}
-              vacationEmpty={dict.home.myBnk.vacationEmpty}
               profileLink={dict.home.myBnk.profileLink}
             />
           )}
@@ -162,6 +158,9 @@ export default async function HomePage() {
               title={dict.home.announcements.title}
               emptyText={dict.home.announcements.empty}
               allLabel={dict.home.announcements.all}
+              showMoreLabel={dict.home.announcements.showMore}
+              showLessLabel={dict.home.announcements.showLess}
+              closeLabel={dict.common.close}
             />
             <TodayCalendarWidget
               bookings={todayBookings}

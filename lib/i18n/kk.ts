@@ -92,11 +92,11 @@ export const kk: Dictionary = {
       title: "Назар аударыңыз",
       empty: "Маңызды хабарландырулар әлі жоқ.",
       all: "Барлық жаңалықтар →",
+      showMore: "Тағы көрсету",
+      showLess: "Жию",
     },
     myBnk: {
       title: "Менің BNK",
-      vacationNextLabel: "Жақын демалыс",
-      vacationEmpty: "Демалыс жоспарланбаған",
       profileLink: "Менің профилім",
     },
   },
