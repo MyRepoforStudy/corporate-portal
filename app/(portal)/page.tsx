@@ -1,20 +1,17 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Cake, PartyPopper, UserPlus } from "lucide-react";
+import { Cake, UserPlus } from "lucide-react";
 import { NewsList } from "@/components/home/news-list";
 import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
 import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
-import { FeaturedNewsCarousel } from "@/components/home/featured-news-carousel";
 import { HolidaysWidget } from "@/components/home/holidays-widget";
-import { TodayCalendarWidget } from "@/components/home/today-calendar-widget";
 import { CongratsWidget } from "@/components/home/congrats-widget";
 import { AnnouncementsPanel } from "@/components/home/announcements-panel";
 import { MyBnkCard } from "@/components/home/my-bnk-card";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
-import { countUpcomingWorkAnniversaries } from "@/lib/work-anniversaries";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -28,8 +25,6 @@ export default async function HomePage() {
   const now = new Date();
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
-  const startOfTomorrow = new Date(startOfToday);
-  startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
   const dayOfWeek = (now.getDay() + 6) % 7; // Monday = 0
   const startOfWeek = new Date(startOfToday);
   startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
@@ -43,9 +38,7 @@ export default async function HomePage() {
     employeesWithBirthdays,
     upcomingHolidays,
     recentHires,
-    todayBookings,
     newHiresThisWeek,
-    employeesWithHireDate,
     announcements,
     currentUser,
   ] = await Promise.all([
@@ -92,13 +85,7 @@ export default async function HomePage() {
         orderBy: { hireDate: "desc" },
         take: 3,
       }),
-      prisma.booking.findMany({
-        where: { status: "CONFIRMED", startTime: { gte: startOfToday, lt: startOfTomorrow } },
-        orderBy: { startTime: "asc" },
-        include: { room: true },
-      }),
       prisma.employee.count({ where: { hireDate: { gte: startOfWeek, lt: endOfWeek } } }),
-      prisma.employee.findMany({ where: { hireDate: { not: null } }, select: { id: true, hireDate: true } }),
       prisma.announcement.findMany({
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
         take: 10,
@@ -110,10 +97,7 @@ export default async function HomePage() {
     ]);
 
   const upcomingBirthdays = getUpcomingBirthdays(employeesWithBirthdays);
-  const todayHoliday = upcomingHolidays.find((h) => h.date.getTime() === startOfToday.getTime()) ?? null;
-  const workAnniversariesThisWeek = countUpcomingWorkAnniversaries(employeesWithHireDate);
   const employee = currentUser?.employee ?? null;
-  const featuredNews = news.filter((item) => item.imageUrl).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -132,8 +116,6 @@ export default async function HomePage() {
           )}
         </div>
       </div>
-
-      <FeaturedNewsCarousel items={featuredNews} dict={dict.home.featuredNews} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div>
@@ -161,19 +143,11 @@ export default async function HomePage() {
               showLessLabel={dict.home.announcements.showLess}
               closeLabel={dict.common.close}
             />
-            <TodayCalendarWidget
-              bookings={todayBookings}
-              holiday={todayHoliday}
-              locale={locale}
-              title={dict.home.todayCalendar.title}
-              emptyText={dict.home.todayCalendar.empty}
-            />
             <CongratsWidget
               title={dict.home.congrats.title}
               tiles={[
                 { icon: Cake, count: upcomingBirthdays.length, label: dict.home.congrats.birthdays },
                 { icon: UserPlus, count: newHiresThisWeek, label: dict.home.congrats.newHires },
-                { icon: PartyPopper, count: workAnniversariesThisWeek, label: dict.home.congrats.anniversaries },
               ]}
             />
             <BirthdaysWidget

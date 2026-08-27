@@ -37,11 +37,6 @@ export const ru = {
   },
   home: {
     tagline: "Новости банка, оргструктура и бронирование переговорных — в одном месте",
-    featuredNews: {
-      prev: "Предыдущая новость",
-      next: "Следующая новость",
-      slide: "Слайд",
-    },
     news: "Новости",
     noNews: "Новостей пока нет.",
     newBadge: "Новое",
@@ -76,15 +71,10 @@ export const ru = {
       empty: "У вас нет предстоящих броней.",
       cta: "Перейти к бронированию →",
     },
-    todayCalendar: {
-      title: "Календарь на сегодня",
-      empty: "На сегодня событий нет.",
-    },
     congrats: {
       title: "Поздравляем!",
       birthdays: "Дни рождения",
       newHires: "Новые сотрудники",
-      anniversaries: "Юбилеи работы",
     },
     announcements: {
       title: "Внимание",

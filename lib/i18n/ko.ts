@@ -39,11 +39,6 @@ export const ko: Dictionary = {
   },
   home: {
     tagline: "은행 소식, 조직도, 회의실 예약을 한 곳에서",
-    featuredNews: {
-      prev: "이전 소식",
-      next: "다음 소식",
-      slide: "슬라이드",
-    },
     news: "공지사항",
     noNews: "등록된 소식이 없습니다.",
     newBadge: "신규",
@@ -78,15 +73,10 @@ export const ko: Dictionary = {
       empty: "예정된 예약이 없습니다.",
       cta: "예약 페이지로 이동 →",
     },
-    todayCalendar: {
-      title: "오늘의 일정",
-      empty: "오늘 예정된 일정이 없습니다.",
-    },
     congrats: {
       title: "축하합니다!",
       birthdays: "생일",
       newHires: "신규 입사자",
-      anniversaries: "근속 기념일",
     },
     announcements: {
       title: "알림",

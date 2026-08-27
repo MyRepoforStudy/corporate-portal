@@ -39,11 +39,6 @@ export const kk: Dictionary = {
   },
   home: {
     tagline: "Банк жаңалықтары, ұйымдық құрылым және кездесу бөлмелерін брондау — бір жерде",
-    featuredNews: {
-      prev: "Алдыңғы жаңалық",
-      next: "Келесі жаңалық",
-      slide: "Слайд",
-    },
     news: "Жаңалықтар",
     noNews: "Әзірге жаңалықтар жоқ.",
     newBadge: "Жаңа",
@@ -78,15 +73,10 @@ export const kk: Dictionary = {
       empty: "Алдағы брондарыңыз жоқ.",
       cta: "Брондауға өту →",
     },
-    todayCalendar: {
-      title: "Бүгінгі күнтізбе",
-      empty: "Бүгін оқиға жоқ.",
-    },
     congrats: {
       title: "Құттықтаймыз!",
       birthdays: "Туған күндер",
       newHires: "Жаңа қызметкерлер",
-      anniversaries: "Жұмыс мерейтойлары",
     },
     announcements: {
       title: "Назар аударыңыз",
