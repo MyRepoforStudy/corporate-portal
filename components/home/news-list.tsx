@@ -169,17 +169,17 @@ function CompactNewsCard({
   return (
     <article
       onClick={onOpen}
-      className="group flex cursor-pointer gap-3 rounded-lg border border-gray-200 bg-white p-2 transition hover:border-brand-300 hover:shadow-sm"
+      className="group flex flex-1 cursor-pointer gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-2 transition hover:border-brand-300 hover:shadow-sm"
     >
       {item.imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.imageUrl} alt="" className="h-16 w-20 shrink-0 rounded-md object-cover" />
+        <img src={item.imageUrl} alt="" className="h-full min-h-[64px] w-24 shrink-0 rounded-md object-cover" />
       ) : (
-        <div className="flex h-16 w-20 shrink-0 items-center justify-center rounded-md bg-gray-100">
+        <div className="flex h-full min-h-[64px] w-24 shrink-0 items-center justify-center rounded-md bg-gray-100">
           <Newspaper className="h-5 w-5 text-gray-300" aria-hidden="true" />
         </div>
       )}
-      <div className="min-w-0 flex-1">
+      <div className="flex min-w-0 flex-1 flex-col justify-center">
         <h4 className="line-clamp-2 text-sm font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
           {item.title}
         </h4>
@@ -520,7 +520,7 @@ export function NewsList({
             onToggleLike={() => handleToggleLike(filtered[0].id)}
           />
           {filtered.length > 1 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex h-full flex-col gap-3">
               {filtered.slice(1, 4).map((item) => (
                 <CompactNewsCard
                   key={item.id}
