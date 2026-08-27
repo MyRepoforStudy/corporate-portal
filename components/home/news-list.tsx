@@ -324,6 +324,7 @@ export function NewsList({
   news,
   categories,
   locale,
+  title,
   emptyText,
   newBadge,
   common,
@@ -332,6 +333,7 @@ export function NewsList({
   news: NewsWithMeta[];
   categories: NewsCategory[];
   locale: Locale;
+  title: string;
   emptyText: string;
   newBadge: string;
   common: Dictionary["common"];
@@ -342,7 +344,14 @@ export function NewsList({
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
   if (news.length === 0) {
-    return <p className="text-sm text-gray-500">{emptyText}</p>;
+    return (
+      <div>
+        <h2 id="news" className="mb-3 scroll-mt-6 text-lg font-semibold text-gray-900">
+          {title}
+        </h2>
+        <p className="text-sm text-gray-500">{emptyText}</p>
+      </div>
+    );
   }
 
   const filtered = activeCategoryId
@@ -403,35 +412,40 @@ export function NewsList({
 
   return (
     <>
-      {categories.length > 0 && (
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => setActiveCategoryId(null)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-              activeCategoryId === null
-                ? "bg-brand-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            {dict.allFilter}
-          </button>
-          {categories.map((cat) => (
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h2 id="news" className="scroll-mt-6 text-lg font-semibold text-gray-900">
+          {title}
+        </h2>
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
             <button
-              key={cat.id}
               type="button"
-              onClick={() => setActiveCategoryId(cat.id)}
+              onClick={() => setActiveCategoryId(null)}
               className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                activeCategoryId === cat.id
+                activeCategoryId === null
                   ? "bg-brand-600 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
-              {cat.name}
+              {dict.allFilter}
             </button>
-          ))}
-        </div>
-      )}
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategoryId(cat.id)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  activeCategoryId === cat.id
+                    ? "bg-brand-600 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((item) => (

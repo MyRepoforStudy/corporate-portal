@@ -138,11 +138,11 @@ export default async function HomePage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div>
-          <h2 id="news" className="mb-3 scroll-mt-6 text-lg font-semibold text-gray-900">{dict.home.news}</h2>
           <NewsList
             news={news}
             categories={newsCategories}
             locale={locale}
+            title={dict.home.news}
             emptyText={dict.home.noNews}
             newBadge={dict.home.newBadge}
             common={dict.common}

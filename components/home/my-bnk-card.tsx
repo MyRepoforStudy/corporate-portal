@@ -16,7 +16,7 @@ export function MyBnkCard({
   profileLink: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="font-medium text-gray-900">{title}</h3>
         <Link href="/profile" className="text-xs text-brand-700 hover:underline dark:text-brand-300">
