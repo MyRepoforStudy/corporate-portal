@@ -7,7 +7,7 @@ import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
 import { BirthdaysWidget } from "@/components/home/birthdays-widget";
 import { NewHiresWidget } from "@/components/home/new-hires-widget";
-import { TeamSpotlightCarousel } from "@/components/home/team-spotlight-carousel";
+import { FeaturedNewsCarousel } from "@/components/home/featured-news-carousel";
 import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { TodayCalendarWidget } from "@/components/home/today-calendar-widget";
 import { CongratsWidget } from "@/components/home/congrats-widget";
@@ -43,7 +43,6 @@ export default async function HomePage() {
     employeesWithBirthdays,
     upcomingHolidays,
     recentHires,
-    teamSpotlights,
     todayBookings,
     newHiresThisWeek,
     employeesWithHireDate,
@@ -93,7 +92,6 @@ export default async function HomePage() {
         orderBy: { hireDate: "desc" },
         take: 3,
       }),
-      prisma.teamSpotlight.findMany({ orderBy: [{ order: "asc" }, { createdAt: "desc" }] }),
       prisma.booking.findMany({
         where: { status: "CONFIRMED", startTime: { gte: startOfToday, lt: startOfTomorrow } },
         orderBy: { startTime: "asc" },
@@ -115,6 +113,7 @@ export default async function HomePage() {
   const todayHoliday = upcomingHolidays.find((h) => h.date.getTime() === startOfToday.getTime()) ?? null;
   const workAnniversariesThisWeek = countUpcomingWorkAnniversaries(employeesWithHireDate);
   const employee = currentUser?.employee ?? null;
+  const featuredNews = news.filter((item) => item.imageUrl).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -134,7 +133,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <TeamSpotlightCarousel spotlights={teamSpotlights} dict={dict.home.teamSpotlight} />
+      <FeaturedNewsCarousel items={featuredNews} dict={dict.home.featuredNews} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div>

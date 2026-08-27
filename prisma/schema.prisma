@@ -419,21 +419,6 @@ model Notification {
   @@index([userId, createdAt])
 }
 
-// Admin-managed photo spotlight carousel for the home page ("Team members
-// in action") - separate from News since it's a lightweight rotating photo
-// gallery, not an article.
-model TeamSpotlight {
-  id       String @id @default(cuid())
-  imageUrl String
-  caption  String
-  order    Int    @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([order])
-}
-
 model Workplace {
   id         String  @id @default(cuid())
   building   String?

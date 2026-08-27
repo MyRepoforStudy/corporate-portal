@@ -39,9 +39,9 @@ export const ko: Dictionary = {
   },
   home: {
     tagline: "은행 소식, 조직도, 회의실 예약을 한 곳에서",
-    teamSpotlight: {
-      prev: "이전 사진",
-      next: "다음 사진",
+    featuredNews: {
+      prev: "이전 소식",
+      next: "다음 소식",
       slide: "슬라이드",
     },
     news: "공지사항",

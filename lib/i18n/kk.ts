@@ -39,9 +39,9 @@ export const kk: Dictionary = {
   },
   home: {
     tagline: "Банк жаңалықтары, ұйымдық құрылым және кездесу бөлмелерін брондау — бір жерде",
-    teamSpotlight: {
-      prev: "Алдыңғы фото",
-      next: "Келесі фото",
+    featuredNews: {
+      prev: "Алдыңғы жаңалық",
+      next: "Келесі жаңалық",
       slide: "Слайд",
     },
     news: "Жаңалықтар",
