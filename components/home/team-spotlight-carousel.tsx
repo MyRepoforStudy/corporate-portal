@@ -28,14 +28,7 @@ export function TeamSpotlightCarousel({
     <div className="relative overflow-hidden rounded-xl border border-gray-200">
       <div className="relative h-[260px] bg-black sm:h-[340px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={current.imageUrl}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={current.imageUrl} alt="" className="absolute inset-0 h-full w-full object-contain" />
+        <img src={current.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
           <h3 className="max-w-2xl text-base font-medium text-white sm:text-lg">{current.caption}</h3>

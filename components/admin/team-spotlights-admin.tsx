@@ -99,6 +99,10 @@ export function TeamSpotlightsAdmin() {
             />
             {isUploading && <span className="text-xs text-gray-500">Загрузка...</span>}
           </div>
+          <p className="mt-1 text-xs text-gray-400">
+            Фото растягивается на всю панель без полей по бокам — если пропорции не совпадают,
+            края немного обрежутся. Держите главное (лица, логотип, текст) ближе к центру фото.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-end gap-3">
