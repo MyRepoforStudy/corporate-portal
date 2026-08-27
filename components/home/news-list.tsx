@@ -520,7 +520,7 @@ export function NewsList({
             onToggleLike={() => handleToggleLike(filtered[0].id)}
           />
           {filtered.length > 1 && (
-            <div className="flex flex-col justify-between gap-3">
+            <div className="flex flex-col gap-3">
               {filtered.slice(1, 4).map((item) => (
                 <CompactNewsCard
                   key={item.id}
