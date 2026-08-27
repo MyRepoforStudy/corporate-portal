@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { RESOURCE_LINK_ICON_OPTIONS } from "@/lib/resource-link-icons";
+
+const ICON_VALUES = RESOURCE_LINK_ICON_OPTIONS.map((o) => o.value) as [string, ...string[]];
 
 export const resourceLinkSchema = z.object({
   title: z.string().trim().min(2, "Минимум 2 символа").max(100),
@@ -10,6 +13,7 @@ export const resourceLinkSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
+  icon: z.enum(ICON_VALUES).default("Link"),
   order: z.coerce.number().int().min(0).max(1000).default(0),
 });
 

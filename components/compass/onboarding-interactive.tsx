@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import type { OnboardingTask } from "@prisma/client";
 import { ONBOARDING_STAGES } from "@/lib/compass/mock-data";
-import { computeStageStatuses, getActiveStageId } from "@/lib/compass/stage-status";
 import { WelcomeHero } from "@/components/compass/welcome-hero";
-import { OnboardingRoadmap } from "@/components/compass/onboarding-roadmap";
 import { TodayTasks } from "@/components/compass/today-tasks";
-import { ProgressCard } from "@/components/compass/progress-card";
 import type { Dictionary, Locale } from "@/lib/i18n";
+
+const STAGE_TITLE_KEY_BY_ID = Object.fromEntries(ONBOARDING_STAGES.map((s) => [s.id, s.titleKey]));
 
 export function OnboardingInteractive({
   userId,
@@ -34,9 +33,7 @@ export function OnboardingInteractive({
   common: Dictionary["common"];
 }) {
   const storageKey = `compass-tasks-${userId}`;
-  const statuses = computeStageStatuses(hireDate);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
-  const [activeStageId, setActiveStageId] = useState(() => getActiveStageId(statuses));
 
   useEffect(() => {
     try {
@@ -45,7 +42,6 @@ export function OnboardingInteractive({
     } catch {
       // storage unavailable (private mode, blocked site data, etc.)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
 
   function toggleTask(id: string) {
@@ -60,19 +56,15 @@ export function OnboardingInteractive({
     });
   }
 
-  const roadmapStages = ONBOARDING_STAGES.map((stage) => ({
-    id: stage.id,
-    title: dict.stages[stage.titleKey],
-    status: statuses[stage.id],
-  }));
-
-  const visibleTasks = tasks
-    .filter((task) => task.stageId === activeStageId)
-    .map((task) => ({
+  const visibleTasks = tasks.map((task) => {
+    const titleKey = STAGE_TITLE_KEY_BY_ID[task.stageId];
+    return {
       id: task.id,
       title: task.title,
       completed: !!completed[task.id],
-    }));
+      stageLabel: titleKey ? dict.stages[titleKey] : task.stageId,
+    };
+  });
 
   const doneCount = tasks.filter((task) => completed[task.id]).length;
   const progressPercent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
@@ -94,25 +86,11 @@ export function OnboardingInteractive({
         openPhotoLabel={common.openPhoto}
         closePhotoLabel={common.close}
       />
-      <OnboardingRoadmap
-        stages={roadmapStages}
-        activeStageId={activeStageId}
-        onSelect={setActiveStageId}
-        title={dict.roadmapTitle}
-        statusLabels={dict.stageStatusLabel}
-      />
       <TodayTasks
         tasks={visibleTasks}
         onToggle={toggleTask}
         title={dict.todayTasksTitle}
         emptyText={dict.tasksEmpty}
-      />
-      <ProgressCard
-        done={doneCount}
-        total={tasks.length}
-        title={dict.progressCardTitle}
-        motivation={dict.progressMotivation}
-        doneOfTotalTemplate={dict.progressDoneOfTotal}
       />
     </>
   );

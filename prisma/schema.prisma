@@ -222,6 +222,10 @@ model ResourceLink {
   title       String
   url         String
   description String?
+  // Name of a lucide-react icon shown in the sidebar - see lib/resource-link-icons.ts
+  // for the allowed set. Free string (not a DB enum) to keep the icon list
+  // easy to extend without a migration.
+  icon        String  @default("Link")
   order       Int     @default(0)
 
   createdAt DateTime @default(now())
@@ -309,6 +313,20 @@ model ItRequest {
 
   @@index([requesterId])
   @@index([status])
+}
+
+// Admin/HR-managed "Внимание" panel on the home page - deliberately its own
+// model rather than reusing News.isPinned, since these are meant to be
+// short standalone notices, not full articles.
+model Announcement {
+  id    String @id @default(cuid())
+  title String
+  order Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
 }
 
 model Holiday {

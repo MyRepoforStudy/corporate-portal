@@ -11,10 +11,12 @@ export function EmployeeCard({
   employee,
   locale,
   dict,
+  highlighted = false,
 }: {
   employee: EmployeeWithPosition;
   locale: Locale;
   dict: Dictionary["orgStructure"]["employeeModal"];
+  highlighted?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
@@ -24,9 +26,12 @@ export function EmployeeCard({
   return (
     <>
       <button
+        id={`org-employee-${employee.id}`}
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition hover:border-brand-300 hover:shadow-sm"
+        className={`flex w-full scroll-mt-6 gap-3 rounded-lg border bg-white p-3 text-left text-sm transition hover:border-brand-300 hover:shadow-sm ${
+          highlighted ? "border-brand-500 ring-2 ring-brand-500 ring-offset-2" : "border-gray-200"
+        }`}
       >
         <ClickablePhoto
           src={employee.photoUrl}

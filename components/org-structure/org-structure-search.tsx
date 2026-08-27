@@ -13,7 +13,7 @@ export function OrgStructureSearch({
   onSelect,
   dict,
 }: {
-  onSelect: (departmentId: string) => void;
+  onSelect: (departmentId: string, employeeId: string) => void;
   dict: Pick<Dictionary["orgStructure"], "searchPlaceholder" | "noResults">;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -67,7 +67,7 @@ export function OrgStructureSearch({
   function handleSelect(employee: EmployeeResult) {
     setIsOpen(false);
     setQuery("");
-    onSelect(employee.departmentId);
+    onSelect(employee.departmentId, employee.id);
   }
 
   const trimmed = query.trim();

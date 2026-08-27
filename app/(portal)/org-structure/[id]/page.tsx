@@ -5,7 +5,13 @@ import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export default async function OrgStructureDepartmentPage({ params }: { params: { id: string } }) {
+export default async function OrgStructureDepartmentPage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { highlight?: string };
+}) {
   const [departments, employees, vacancies] = await Promise.all([
     prisma.department.findMany({ orderBy: { name: "asc" } }),
     prisma.employee.findMany({
@@ -28,7 +34,13 @@ export default async function OrgStructureDepartmentPage({ params }: { params: {
         <h1 className="text-xl font-semibold text-gray-900">{dict.orgStructure.title}</h1>
         <p className="text-sm text-gray-500">{dict.orgStructure.subtitle}</p>
       </div>
-      <OrgChart tree={tree} currentId={params.id} locale={locale} dict={dict.orgStructure} />
+      <OrgChart
+        tree={tree}
+        currentId={params.id}
+        locale={locale}
+        dict={dict.orgStructure}
+        highlightedEmployeeId={searchParams.highlight ?? null}
+      />
     </div>
   );
 }

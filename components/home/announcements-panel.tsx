@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
-import type { News } from "@prisma/client";
+import type { Announcement } from "@prisma/client";
 import type { Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
 
@@ -11,7 +11,7 @@ export function AnnouncementsPanel({
   emptyText,
   allLabel,
 }: {
-  announcements: Pick<News, "id" | "title" | "createdAt">[];
+  announcements: Pick<Announcement, "id" | "title" | "createdAt">[];
   locale: Locale;
   title: string;
   emptyText: string;

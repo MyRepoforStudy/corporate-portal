@@ -8,15 +8,14 @@ import {
   Building2,
   CalendarClock,
   Compass,
-  FileText,
   HeartHandshake,
-  LifeBuoy,
   ShieldCheck,
   ExternalLink,
   type LucideIcon,
 } from "lucide-react";
 import type { ResourceLink } from "@prisma/client";
 import type { Dictionary } from "@/lib/i18n";
+import { RESOURCE_LINK_ICONS } from "@/lib/resource-link-icons";
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -76,9 +75,7 @@ export function IconSidebar({
     { href: "/", label: dict.nav.home, icon: Home },
     { href: "/compass", label: dict.nav.compass, icon: Compass },
     { href: "/org-structure", label: dict.nav.orgStructure, icon: Building2 },
-    { href: "/documents", label: dict.nav.documents, icon: FileText },
     { href: "/hr", label: dict.nav.hr, icon: HeartHandshake },
-    { href: "/it-services", label: dict.nav.itServices, icon: LifeBuoy },
     { href: "/bookings", label: dict.nav.bookings, icon: CalendarClock },
     { href: "/profile", label: dict.nav.profile, icon: User },
   ];
@@ -96,7 +93,14 @@ export function IconSidebar({
               {dict.nav.resourceLinks}
             </div>
             {resourceLinks.map((link) => (
-              <NavRow key={link.id} href={link.url} label={link.title} icon={ExternalLink} active={false} external />
+              <NavRow
+                key={link.id}
+                href={link.url}
+                label={link.title}
+                icon={RESOURCE_LINK_ICONS[link.icon] ?? ExternalLink}
+                active={false}
+                external
+              />
             ))}
           </>
         )}

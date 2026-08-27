@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
 import {
@@ -183,17 +183,27 @@ export function OrgChart({
   currentId,
   locale,
   dict,
+  highlightedEmployeeId = null,
 }: {
   tree: DepartmentNode[];
   currentId: string | null;
   locale: Locale;
   dict: Dictionary["orgStructure"];
+  highlightedEmployeeId?: string | null;
 }) {
   const router = useRouter();
 
-  function goTo(id: string | null) {
-    router.push(id ? `/org-structure/${id}` : "/org-structure");
+  function goTo(id: string | null, highlightEmployeeId?: string) {
+    const base = id ? `/org-structure/${id}` : "/org-structure";
+    router.push(highlightEmployeeId ? `${base}?highlight=${highlightEmployeeId}` : base);
   }
+
+  useEffect(() => {
+    if (!highlightedEmployeeId) return;
+    document
+      .getElementById(`org-employee-${highlightedEmployeeId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightedEmployeeId]);
 
   // With a single real top-level department, that department IS the top of
   // the chart - no need for a synthetic "BNK" wrapper level above it. Only
@@ -255,7 +265,12 @@ export function OrgChart({
           {head && (
             <div className="mt-4 w-full max-w-2xl">
               <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">{dict.headLabel}</p>
-              <EmployeeCard employee={head} locale={locale} dict={dict.employeeModal} />
+              <EmployeeCard
+                employee={head}
+                locale={locale}
+                dict={dict.employeeModal}
+                highlighted={head.id === highlightedEmployeeId}
+              />
             </div>
           )}
 
@@ -264,7 +279,13 @@ export function OrgChart({
               {staff.length > 0 && (
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {staff.map((employee) => (
-                    <EmployeeCard key={employee.id} employee={employee} locale={locale} dict={dict.employeeModal} />
+                    <EmployeeCard
+                      key={employee.id}
+                      employee={employee}
+                      locale={locale}
+                      dict={dict.employeeModal}
+                      highlighted={employee.id === highlightedEmployeeId}
+                    />
                   ))}
                 </div>
               )}

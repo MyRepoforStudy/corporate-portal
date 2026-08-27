@@ -4,7 +4,7 @@ export function TodayTasks({
   title,
   emptyText,
 }: {
-  tasks: { id: string; title: string; completed: boolean }[];
+  tasks: { id: string; title: string; completed: boolean; stageLabel: string }[];
   onToggle: (id: string) => void;
   title: string;
   emptyText: string;
@@ -27,10 +27,13 @@ export function TodayTasks({
               />
               <label
                 htmlFor={`compass-task-${task.id}`}
-                className={`text-sm transition ${task.completed ? "text-gray-400 line-through" : "text-gray-700"}`}
+                className={`flex-1 text-sm transition ${task.completed ? "text-gray-400 line-through" : "text-gray-700"}`}
               >
                 {task.title}
               </label>
+              <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">
+                {task.stageLabel}
+              </span>
             </li>
           ))}
         </ul>
