@@ -23,6 +23,9 @@ export function NewHiresWidget({
 }) {
   const [index, setIndex] = useState(0);
   const [detailTarget, setDetailTarget] = useState<NewHire | null>(null);
+  // The list can shrink while the page stays open (a hire expires after an
+  // automatic refresh), so never index past its end.
+  const active = index < employees.length ? index : 0;
 
   useEffect(() => {
     if (employees.length <= 1) return;
@@ -64,7 +67,7 @@ export function NewHiresWidget({
       ) : (
         <>
           {employees.map((employee, i) => {
-            if (i !== index) return null;
+            if (i !== active) return null;
             const isRecent =
               !!employee.hireDate && (Date.now() - new Date(employee.hireDate).getTime()) / 86_400_000 <= 30;
             return (
@@ -97,7 +100,7 @@ export function NewHiresWidget({
           })}
 
           {(() => {
-            const current = employees[index];
+            const current = employees[active];
             const isRecent =
               !!current.hireDate && (Date.now() - new Date(current.hireDate).getTime()) / 86_400_000 <= 30;
             if (employees.length <= 1 && !isRecent) return null;
@@ -111,7 +114,7 @@ export function NewHiresWidget({
                         type="button"
                         onClick={() => setIndex(i)}
                         aria-label={employee.fullName}
-                        className={`h-1.5 w-1.5 rounded-full transition ${i === index ? "bg-brand-600" : "bg-gray-200"}`}
+                        className={`h-1.5 w-1.5 rounded-full transition ${i === active ? "bg-brand-600" : "bg-gray-200"}`}
                       />
                     ))}
                   </div>

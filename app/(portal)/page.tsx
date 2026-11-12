@@ -13,6 +13,7 @@ import { AnnouncementsPanel } from "@/components/home/announcements-panel";
 import { MyBnkCard } from "@/components/home/my-bnk-card";
 import { AutoRefresh } from "@/components/home/auto-refresh";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
+import { getNewHireWindow } from "@/lib/new-hires";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -23,14 +24,7 @@ export default async function HomePage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
 
-  const now = new Date();
-  const startOfToday = new Date(now);
-  startOfToday.setHours(0, 0, 0, 0);
-  const dayOfWeek = (now.getDay() + 6) % 7; // Monday = 0
-  const startOfWeek = new Date(startOfToday);
-  startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(endOfWeek.getDate() + 7);
+  const hireWindow = getNewHireWindow();
 
   const [
     news,
@@ -39,7 +33,6 @@ export default async function HomePage() {
     employeesWithBirthdays,
     upcomingHolidays,
     recentHires,
-    newHiresThisWeek,
     announcements,
     currentUser,
   ] = await Promise.all([
@@ -80,13 +73,13 @@ export default async function HomePage() {
         orderBy: { date: "asc" },
         take: 3,
       }),
+      // Only people hired in the last few days (lib/new-hires.ts): a new hire
+      // does not stay on the home page forever.
       prisma.employee.findMany({
-        where: { hireDate: { not: null } },
+        where: { hireDate: { gte: hireWindow.from, lt: hireWindow.to } },
         include: { position: true, department: true },
         orderBy: { hireDate: "desc" },
-        take: 3,
       }),
-      prisma.employee.count({ where: { hireDate: { gte: startOfWeek, lt: endOfWeek } } }),
       prisma.announcement.findMany({
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
         take: 10,
@@ -148,7 +141,7 @@ export default async function HomePage() {
               title={dict.home.congrats.title}
               tiles={[
                 { icon: Cake, count: upcomingBirthdays.length, label: dict.home.congrats.birthdays },
-                { icon: UserPlus, count: newHiresThisWeek, label: dict.home.congrats.newHires },
+                { icon: UserPlus, count: recentHires.length, label: dict.home.congrats.newHires },
               ]}
             />
             <BirthdaysWidget

@@ -26,6 +26,9 @@ export function BirthdaysWidget({
   const [index, setIndex] = useState(0);
   const [congratulateTarget, setCongratulateTarget] = useState<UpcomingBirthday | null>(null);
   const [detailTarget, setDetailTarget] = useState<UpcomingBirthday | null>(null);
+  // The list can shrink while the page stays open (a birthday expires after an
+  // automatic refresh), so never index past its end.
+  const active = index < birthdays.length ? index : 0;
 
   useEffect(() => {
     if (birthdays.length <= 1) return;
@@ -67,7 +70,7 @@ export function BirthdaysWidget({
       ) : (
         <>
           {birthdays.map((b, i) => {
-            if (i !== index) return null;
+            if (i !== active) return null;
             return (
               <button
                 key={b.id}
@@ -105,7 +108,7 @@ export function BirthdaysWidget({
                     type="button"
                     onClick={() => setIndex(i)}
                     aria-label={b.fullName}
-                    className={`h-1.5 w-1.5 rounded-full transition ${i === index ? "bg-brand-600" : "bg-gray-200"}`}
+                    className={`h-1.5 w-1.5 rounded-full transition ${i === active ? "bg-brand-600" : "bg-gray-200"}`}
                   />
                 ))}
               </div>
@@ -114,7 +117,7 @@ export function BirthdaysWidget({
             )}
             <button
               type="button"
-              onClick={() => setCongratulateTarget(birthdays[index])}
+              onClick={() => setCongratulateTarget(birthdays[active])}
               className="rounded-md border border-gray-200 px-2.5 py-1 text-xs text-brand-700 hover:border-brand-300 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-brand-900/40"
             >
               {dict.congratulate}
