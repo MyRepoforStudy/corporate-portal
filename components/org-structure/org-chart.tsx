@@ -158,7 +158,7 @@ function DeptCard({
       <HeadAvatar node={node} size={36} />
       <div className="min-w-0 w-full">
         <p className="text-xs font-medium leading-snug text-gray-900">{node.name}</p>
-        {head && <p className="truncate text-[11px] text-gray-500">{head.fullName}</p>}
+        {head && <p className="truncate text-xs text-gray-500">{head.fullName}</p>}
       </div>
       <CountBadge node={node} delay={delay + 150} />
     </button>
@@ -187,7 +187,7 @@ function TeamPill({
       className={`chart-pill-enter flex ${layoutClass} items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:-translate-y-px hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 hover:shadow-sm dark:hover:bg-brand-900/30 dark:hover:text-brand-300`}
     >
       <span className="truncate">{node.name}</span>
-      {employeeTotal > 0 && <span className="shrink-0 text-gray-400">{employeeTotal}</span>}
+      {employeeTotal > 0 && <span className="shrink-0 text-gray-500">{employeeTotal}</span>}
     </button>
   );
 }
@@ -386,7 +386,7 @@ export function OrgChart({
 
           {head && (
             <div className="mt-4 w-full max-w-2xl">
-              <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">{dict.headLabel}</p>
+              <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-500">{dict.headLabel}</p>
               <EmployeeCard
                 employee={head}
                 locale={locale}
@@ -413,7 +413,7 @@ export function OrgChart({
               )}
               {currentNode.vacancies.length > 0 && (
                 <div>
-                  <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">
+                  <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-gray-500">
                     {dict.vacanciesTitle}
                   </p>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

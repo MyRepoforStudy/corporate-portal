@@ -87,6 +87,11 @@ export const kk: Dictionary = {
       title: "Менің BNK",
       profileLink: "Менің профилім",
     },
+    quickActions: {
+      bookRoom: "Кездесу бөлмесін брондау",
+      findEmployee: "Қызметкерді табу",
+      compass: "Жаңашы компасы",
+    },
   },
   orgStructure: {
     title: "Ұйымдық құрылым",

@@ -49,7 +49,7 @@ export function ProfileMenu({
         )}
         <span className="hidden leading-tight text-left sm:block">
           <span className="block text-sm text-gray-700">{name}</span>
-          {departmentName && <span className="block text-xs text-gray-400">{departmentName}</span>}
+          {departmentName && <span className="block text-xs text-gray-500">{departmentName}</span>}
         </span>
         <ChevronDown className={`h-4 w-4 shrink-0 text-gray-400 transition ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>

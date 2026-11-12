@@ -37,7 +37,7 @@ export default async function DocumentsPage() {
                 {document.description && (
                   <p className="mt-0.5 text-xs text-gray-500">{document.description}</p>
                 )}
-                <p className="mt-1 truncate text-xs text-gray-400">{document.fileName}</p>
+                <p className="mt-1 truncate text-xs text-gray-500">{document.fileName}</p>
               </div>
             </a>
           ))}

@@ -87,6 +87,11 @@ export const ko: Dictionary = {
       title: "마이 BNK",
       profileLink: "마이 페이지",
     },
+    quickActions: {
+      bookRoom: "회의실 예약",
+      findEmployee: "직원 찾기",
+      compass: "신입사원 나침반",
+    },
   },
   orgStructure: {
     title: "조직도",

@@ -85,6 +85,11 @@ export const ru = {
       title: "Мой BNK",
       profileLink: "Мой профиль",
     },
+    quickActions: {
+      bookRoom: "Забронировать переговорную",
+      findEmployee: "Найти сотрудника",
+      compass: "Компас новичка",
+    },
   },
   orgStructure: {
     title: "Оргструктура",

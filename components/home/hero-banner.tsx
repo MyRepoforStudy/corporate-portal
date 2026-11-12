@@ -1,35 +1,8 @@
+import Link from "next/link";
+import { CalendarClock, Compass, Search } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatWelcome } from "@/lib/i18n/format";
-
-/** Abstract geometric pattern in the brand red family - deliberately not a
- * stock "our building" photo, since this is a real bank's internal portal
- * and a generic stock photo presented as "our HQ" would be misleading.
- * Same rotated-square motif as SideDecoration (components/layout/side-decoration.tsx). */
-function HeroPattern() {
-  const squares = [
-    { size: 160, top: "-20%", right: "4%", rotate: 18, opacity: 0.16 },
-    { size: 100, top: "40%", right: "18%", rotate: -12, opacity: 0.14 },
-    { size: 70, top: "68%", right: "2%", rotate: 24, opacity: 0.18 },
-  ];
-  return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      {squares.map((sq, i) => (
-        <div
-          key={i}
-          className="absolute rounded-2xl bg-white"
-          style={{
-            width: sq.size,
-            height: sq.size,
-            top: sq.top,
-            right: sq.right,
-            opacity: sq.opacity,
-            transform: `rotate(${sq.rotate}deg)`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+import { BrandPattern } from "@/components/ui/brand-pattern";
 
 export function HeroBanner({
   displayName,
@@ -40,12 +13,30 @@ export function HeroBanner({
   locale: Locale;
   dict: Dictionary["home"];
 }) {
+  const actions = [
+    { href: "/bookings", label: dict.quickActions.bookRoom, icon: CalendarClock },
+    { href: "/org-structure", label: dict.quickActions.findEmployee, icon: Search },
+    { href: "/compass", label: dict.quickActions.compass, icon: Compass },
+  ];
+
   return (
-    <div className="relative h-full overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-8 sm:px-10 sm:py-10">
-      <HeroPattern />
+    <div className="relative flex h-full flex-col justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-7 sm:px-10 sm:py-8">
+      <BrandPattern variant="hero" />
       <div className="relative">
         <p className="text-xl font-semibold text-white sm:text-2xl">{formatWelcome(displayName, locale)}</p>
-        <p className="mt-2 max-w-lg text-sm text-brand-100">{dict.tagline}</p>
+        <p className="mt-2 max-w-lg text-sm text-brand-50">{dict.tagline}</p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {actions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/15 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-white/25 active:scale-[0.97]"
+            >
+              <action.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              {action.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

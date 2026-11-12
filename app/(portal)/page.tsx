@@ -1,14 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Cake, UserPlus } from "lucide-react";
 import { NewsList } from "@/components/home/news-list";
-import { NearestBookingWidget } from "@/components/home/nearest-booking-widget";
 import { HeroBanner } from "@/components/home/hero-banner";
-import { BirthdaysWidget } from "@/components/home/birthdays-widget";
-import { NewHiresWidget } from "@/components/home/new-hires-widget";
-import { HolidaysWidget } from "@/components/home/holidays-widget";
-import { CongratsWidget } from "@/components/home/congrats-widget";
+import { PeopleWidget } from "@/components/home/people-widget";
+import { CalendarWidget } from "@/components/home/calendar-widget";
 import { AnnouncementsPanel } from "@/components/home/announcements-panel";
 import { MyBnkCard } from "@/components/home/my-bnk-card";
 import { AutoRefresh } from "@/components/home/auto-refresh";
@@ -101,20 +97,18 @@ export default async function HomePage() {
         <Reveal index={0} className="h-full">
           <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
         </Reveal>
-        <div className="space-y-4">
-          {employee && (
-            <Reveal index={1}>
-              <MyBnkCard
-                fullName={employee.fullName}
-                positionTitle={employee.position?.title ?? null}
-                departmentName={employee.department?.name ?? null}
-                photoUrl={employee.photoUrl}
-                title={dict.home.myBnk.title}
-                profileLink={dict.home.myBnk.profileLink}
-              />
-            </Reveal>
-          )}
-        </div>
+        {employee && (
+          <Reveal index={1} className="h-full">
+            <MyBnkCard
+              fullName={employee.fullName}
+              positionTitle={employee.position?.title ?? null}
+              departmentName={employee.department?.name ?? null}
+              photoUrl={employee.photoUrl}
+              title={dict.home.myBnk.title}
+              profileLink={dict.home.myBnk.profileLink}
+            />
+          </Reveal>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
@@ -147,48 +141,21 @@ export default async function HomePage() {
               />
             </Reveal>
             <Reveal index={4}>
-              <CongratsWidget
-                title={dict.home.congrats.title}
-                tiles={[
-                  { icon: Cake, count: upcomingBirthdays.length, label: dict.home.congrats.birthdays },
-                  { icon: UserPlus, count: recentHires.length, label: dict.home.congrats.newHires },
-                ]}
-                countDelay={4 * 70 + 120}
+              <PeopleWidget
+                birthdays={upcomingBirthdays}
+                hires={recentHires}
+                locale={locale}
+                dict={dict.home}
+                employeeModalDict={dict.orgStructure.employeeModal}
+                common={dict.common}
               />
             </Reveal>
             <Reveal index={5}>
-              <BirthdaysWidget
-                birthdays={upcomingBirthdays}
-                locale={locale}
-                dict={dict.home.birthdays}
-                employeeModalDict={dict.orgStructure.employeeModal}
-                common={dict.common}
-              />
-            </Reveal>
-            <Reveal index={6}>
-              <NewHiresWidget
-                employees={recentHires}
-                locale={locale}
-                dict={dict.home.newHires}
-                employeeModalDict={dict.orgStructure.employeeModal}
-                common={dict.common}
-              />
-            </Reveal>
-            {/* HolidaysWidget renders nothing without holidays: no empty wrapper, or it would add a gap */}
-            {upcomingHolidays.length > 0 && (
-              <Reveal index={7}>
-                <HolidaysWidget
-                  holidays={upcomingHolidays}
-                  locale={locale}
-                  title={dict.home.holidays.title}
-                />
-              </Reveal>
-            )}
-            <Reveal index={8}>
-              <NearestBookingWidget
+              <CalendarWidget
+                holidays={upcomingHolidays}
                 booking={nearestBooking}
                 locale={locale}
-                dict={dict.home.nearestBooking}
+                dict={dict.home}
               />
             </Reveal>
           </div>

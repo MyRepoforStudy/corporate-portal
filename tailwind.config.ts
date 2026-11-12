@@ -47,9 +47,18 @@ const config: Config = {
           700: "#a80009",
           800: "#7a0007",
           900: "#4f0005",
+          // Darkest tint: the dark-mode background of the announcements block (dark:bg-brand-950/40).
+          950: "#2b0003",
         },
         // The warm gray-brown used for "Commercial Bank" in the logo wordmark.
         ink: "#6f6350",
+      },
+      // `white` above follows the theme: it is the card surface, so it turns
+      // dark in dark mode. That is right for backgrounds and borders, but text
+      // that is white sits on red (buttons, badges, the hero banner, the active
+      // menu item) and must stay white in both themes - so text gets a fixed white.
+      textColor: {
+        white: "#ffffff",
       },
     },
   },

@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 
 // Purely decorative brand mark for the empty margins on very wide screens
 // (content itself caps at max-w-[1600px] for readability - see layout.tsx).
+// Shown only from 1900px up: the marks reach ~160px into the page, so on
+// narrower screens they would peek out from behind the cards.
 // Plays a one-time fade/slide-in on mount (globals.css .mark-enter), then
 // stays still - a continuous "breathing" loop was tried earlier and
 // explicitly rejected as distracting, so this never repeats or loops.
@@ -47,7 +49,7 @@ const MARKS: { top: string; size: number; rotate: number; delay: number }[] = [
 
 export function SideDecoration() {
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden min-[1900px]:block">
       {MARKS.map((mark, i) => (
         <Mark key={`l-${i}`} side="left" {...mark} />
       ))}

@@ -61,7 +61,7 @@ export default async function ItServicesPage() {
                 <p className="flex items-center gap-2 text-sm font-medium text-gray-900">
                   {request.subject}
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
+                    className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
                       request.status === "OPEN"
                         ? "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
                         : "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300"

@@ -56,14 +56,14 @@ export function WelcomeHero({
               {positionTitle} · {departmentName}
             </p>
             {hireDate && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 {hireDateLabel}: {formatDateLong(hireDate, locale, true)}
               </p>
             )}
           </div>
         </div>
         <div className="shrink-0 text-left sm:text-right">
-          <p className="text-xs uppercase tracking-wide text-gray-400">{progressLabel}</p>
+          <p className="text-xs uppercase tracking-wide text-gray-500">{progressLabel}</p>
           <p className="text-2xl font-semibold text-brand-600">{progressPercent}%</p>
         </div>
       </div>

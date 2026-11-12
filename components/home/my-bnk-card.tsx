@@ -23,7 +23,8 @@ export function MyBnkCard({
           {profileLink} →
         </Link>
       </div>
-      <div className="flex items-center gap-3">
+      {/* flex-1 + items-center: the card stretches to the height of the banner next to it, the person sits in the middle */}
+      <div className="flex flex-1 items-center gap-3">
         {photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photoUrl} alt="" className="h-12 w-12 shrink-0 rounded-full border border-gray-200 object-cover" />
@@ -34,8 +35,8 @@ export function MyBnkCard({
         )}
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-gray-900">{fullName}</p>
-          {positionTitle && <p className="truncate text-xs text-gray-500">{positionTitle}</p>}
-          {departmentName && <p className="truncate text-xs text-gray-400">{departmentName}</p>}
+          {positionTitle && <p className="truncate text-xs text-gray-600">{positionTitle}</p>}
+          {departmentName && <p className="truncate text-xs text-gray-500">{departmentName}</p>}
         </div>
       </div>
     </div>

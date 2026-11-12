@@ -123,7 +123,7 @@ export function DepartmentsAdmin() {
         </div>
         <div className="w-64">
           <label className="mb-1 block text-sm text-gray-700">
-            Руководитель <span className="font-normal text-gray-400">(необязательно)</span>
+            Руководитель <span className="font-normal text-gray-500">(необязательно)</span>
           </label>
           <DepartmentHeadPicker value={headEmployee} onChange={setHeadEmployee} />
         </div>

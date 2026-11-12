@@ -29,7 +29,7 @@ function isRecent(date: Date | string) {
 function NewBadge({ label, className }: { label: string; className?: string }) {
   return (
     <span
-      className={`rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white shadow-sm ${className ?? ""}`}
+      className={`rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-medium text-white shadow-sm ${className ?? ""}`}
     >
       {label}
     </span>
@@ -38,7 +38,7 @@ function NewBadge({ label, className }: { label: string; className?: string }) {
 
 function PinBadge({ label }: { label: string }) {
   return (
-    <span className="flex shrink-0 items-center gap-1 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-medium text-white shadow-sm">
+    <span className="flex shrink-0 items-center gap-1 rounded-full bg-brand-700 px-2 py-0.5 text-[11px] font-medium text-white shadow-sm">
       <Pin className="h-2.5 w-2.5" aria-hidden="true" />
       {label}
     </span>
@@ -123,7 +123,7 @@ function NewsCard({
           {item.isPinned && <PinBadge label={dict.pinnedBadge} />}
           {showBadge && <NewBadge label={newBadge} />}
           {item.category && (
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
               {item.category.name}
             </span>
           )}
@@ -204,7 +204,7 @@ function CompactNewsCard({
         <h4 className="line-clamp-2 text-sm font-medium text-gray-900 transition group-hover:text-brand-700 dark:group-hover:text-brand-300">
           {item.title}
         </h4>
-        <div className="mt-1 flex items-center gap-2.5 text-[11px] text-gray-500">
+        <div className="mt-1 flex items-center gap-2.5 text-xs text-gray-500">
           <span>{formatDateLong(item.createdAt, locale, true)}</span>
           <span className="flex items-center gap-1" aria-label={dict.viewsAriaLabel}>
             <Eye className="h-3 w-3" aria-hidden="true" />
@@ -316,7 +316,7 @@ function NewsDetailModal({
           <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-gray-500">
             <span>{formatDateLong(item.createdAt, locale, true)}</span>
             {item.category && (
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
                 {item.category.name}
               </span>
             )}

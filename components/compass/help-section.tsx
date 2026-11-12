@@ -10,7 +10,7 @@ export interface HelpContact {
 function HelpCard({ contact, contactLabel }: { contact: HelpContact; contactLabel: string }) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">{contact.label}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{contact.label}</p>
       {contact.employee ? (
         <>
           <p className="mt-1 font-medium text-gray-900">{contact.employee.fullName}</p>

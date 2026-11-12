@@ -158,7 +158,7 @@ export function IconSidebar({
 
         {resourceLinks.length > 0 && (
           <>
-            <div className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-gray-400">
+            <div className="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-gray-500">
               {dict.nav.resourceLinks}
             </div>
             {resourceLinks.map((link) => (
