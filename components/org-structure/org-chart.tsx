@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, User, Users } from "lucide-react";
 import {
@@ -150,7 +150,7 @@ function DeptCard({
     <button
       type="button"
       onClick={onClick}
-      className="chart-node-enter group flex flex-col items-center gap-2 rounded-lg border border-gray-200 border-t-[3px] border-t-brand-600 bg-white px-3 py-2.5 text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-sm"
+      className="chart-node-enter group flex min-h-[9rem] w-full flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 border-t-[3px] border-t-brand-600 bg-white px-3 py-2.5 text-center transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
       style={{ animationDelay: `${delay}ms` }}
     >
       <HeadAvatar node={node} size={36} />
@@ -163,18 +163,138 @@ function DeptCard({
   );
 }
 
-function TeamPill({ node, onClick }: { node: DepartmentNode; onClick: () => void }) {
+function TeamPill({
+  node,
+  onClick,
+  delay = 0,
+  layoutClass = "w-full",
+}: {
+  node: DepartmentNode;
+  onClick: () => void;
+  delay?: number;
+  /** Sizing/placement inside the pill grid (a lone last pill is centered, see ChildrenGrid). */
+  layoutClass?: string;
+}) {
   const employeeTotal = countEmployees(node);
   return (
     <button
       type="button"
       onClick={onClick}
       title={node.name}
-      className="flex w-full items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-brand-900/30 dark:hover:text-brand-300"
+      style={{ animationDelay: `${delay}ms` }}
+      className={`chart-pill-enter flex ${layoutClass} items-center justify-between gap-1.5 truncate rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-600 transition hover:-translate-y-px hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 hover:shadow-sm dark:hover:bg-brand-900/30 dark:hover:text-brand-300`}
     >
       <span className="truncate">{node.name}</span>
       {employeeTotal > 0 && <span className="shrink-0 text-gray-400">{employeeTotal}</span>}
     </button>
+  );
+}
+
+// useLayoutEffect warns when the component is rendered on the server.
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+/**
+ * The departments under the current node: equal-width columns (a card with its
+ * team pills), wrapped into centered rows. Which columns share the first row is
+ * measured in the browser, so the connector lines hang exactly on those cards
+ * at any screen width; lower rows get no connectors (they would lead nowhere).
+ * The entrance is staggered from the center outwards to keep it symmetric.
+ */
+function ChildrenGrid({ nodes, onOpen }: { nodes: DepartmentNode[]; onOpen: (id: string) => void }) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [layout, setLayout] = useState<{ columns: number; centers: number[] }>({ columns: 3, centers: [] });
+
+  useIsomorphicLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const measure = () => {
+      const items = Array.from(grid.querySelectorAll<HTMLElement>("[data-column]"));
+      if (items.length === 0) return;
+      const firstTop = items[0].offsetTop;
+      const firstRow = items.filter((el) => Math.abs(el.offsetTop - firstTop) < 2);
+      const next = {
+        columns: firstRow.length,
+        centers: firstRow.map((el) => Math.round(el.offsetLeft + el.offsetWidth / 2)),
+      };
+      setLayout((prev) =>
+        prev.columns === next.columns &&
+        prev.centers.length === next.centers.length &&
+        prev.centers.every((c, i) => c === next.centers[i])
+          ? prev
+          : next
+      );
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, [nodes.length]);
+
+  const { columns, centers } = layout;
+  const cardDelay = (index: number) => {
+    const row = Math.floor(index / columns);
+    const rowLength = Math.min(columns, nodes.length - row * columns);
+    const fromCenter = Math.abs((index % columns) - (rowLength - 1) / 2);
+    return 330 + row * 100 + fromCenter * 70;
+  };
+
+  return (
+    <>
+      <div className="chart-line-enter h-6 w-px bg-gray-300" />
+      <div className="relative h-6 w-full" aria-hidden="true">
+        {centers.length > 1 && (
+          <div
+            className="chart-bus-enter absolute top-0 h-px bg-gray-300"
+            style={{ left: centers[0], width: centers[centers.length - 1] - centers[0], animationDelay: "120ms" }}
+          />
+        )}
+        {centers.map((x, i) => (
+          <div
+            key={i}
+            className="chart-line-enter absolute top-0 h-6 w-px bg-gray-300"
+            style={{ left: x, animationDelay: `${230 + Math.abs(i - (centers.length - 1) / 2) * 45}ms` }}
+          />
+        ))}
+      </div>
+
+      <div ref={gridRef} className="relative flex w-full flex-wrap justify-center gap-x-8 gap-y-6">
+        {nodes.map((child, i) => {
+          const grandchildren = publishedChildren(child);
+          const delay = cardDelay(i);
+          return (
+            <div key={child.id} data-column className="relative flex w-[360px] flex-col items-center gap-2.5">
+              <div className="w-[230px]">
+                <DeptCard node={child} onClick={() => onOpen(child.id)} delay={delay} />
+              </div>
+              {grandchildren.length > 0 && (
+                <div className="grid w-[360px] grid-cols-2 gap-1.5">
+                  {grandchildren.map((grandchild, j) => {
+                    // An odd pill left alone in the last row sits in the middle under its card, not at the left.
+                    const isLoneLast = grandchildren.length % 2 === 1 && j === grandchildren.length - 1;
+                    const layoutClass = !isLoneLast
+                      ? "w-full"
+                      : grandchildren.length === 1
+                        ? "col-span-2 w-[230px] justify-self-center"
+                        : "col-span-2 w-[calc(50%_-_3px)] justify-self-center";
+                    return (
+                      <TeamPill
+                        key={grandchild.id}
+                        node={grandchild}
+                        onClick={() => onOpen(grandchild.id)}
+                        delay={delay + 170 + j * 40}
+                        layoutClass={layoutClass}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 
@@ -304,31 +424,7 @@ export function OrgChart({
             </div>
           )}
 
-          {children.length > 0 && (
-            <>
-              <div className="chart-line-enter h-6 w-px bg-gray-300" />
-              <div className="flex w-full flex-wrap justify-center gap-x-8 gap-y-6 border-t border-gray-300 pt-6">
-                {children.map((child, i) => {
-                  const grandchildren = publishedChildren(child);
-                  return (
-                    <div key={child.id} className="relative flex flex-col items-center gap-2.5">
-                      <div className="chart-line-enter absolute -top-6 left-1/2 h-6 w-px -translate-x-1/2 bg-gray-300" />
-                      <div className="w-[230px]">
-                        <DeptCard node={child} onClick={() => goTo(child.id)} delay={i * 40} />
-                      </div>
-                      {grandchildren.length > 0 && (
-                        <div className="grid w-[360px] grid-cols-2 gap-1.5">
-                          {grandchildren.map((grandchild) => (
-                            <TeamPill key={grandchild.id} node={grandchild} onClick={() => goTo(grandchild.id)} />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
+          {children.length > 0 && <ChildrenGrid nodes={children} onOpen={(id) => goTo(id)} />}
         </div>
       </div>
     </div>
