@@ -75,7 +75,7 @@ export function NewHiresWidget({
                 key={employee.id}
                 type="button"
                 onClick={() => setDetailTarget(employee)}
-                className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition hover:bg-gray-50"
+                className="slide-enter flex w-full items-center gap-3 rounded-lg p-2 text-left transition hover:bg-gray-50"
               >
                 {employee.photoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element

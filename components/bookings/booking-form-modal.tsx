@@ -8,6 +8,7 @@ import { ParticipantPicker } from "@/components/bookings/participant-picker";
 import type { BookingUserSummary, BookingWithRelations } from "@/types/booking";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatFloor, formatCapacity } from "@/lib/i18n/format";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 export function BookingFormModal({
   rooms,
@@ -51,6 +52,8 @@ export function BookingFormModal({
   const [error, setError] = useState<string | null>(null);
   const [skippedDates, setSkippedDates] = useState<string[] | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // A long form: neither Escape nor a click on the backdrop may throw away what was typed.
+  const { closing, close } = useModalClose(onClose, { closeOnEscape: false });
 
   const selectedRoom = rooms.find((r) => r.id === roomId);
   const capacityExceeded = useMemo(
@@ -108,8 +111,10 @@ export function BookingFormModal({
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+    <div
+      className={`modal-overlay fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4 ${closing ? "is-closing" : ""}`}
+    >
+      <div className="modal-panel w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {isEditing ? dict.modal.editTitle : dict.modal.title}
         </h2>
@@ -248,7 +253,7 @@ export function BookingFormModal({
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={close}
                 className="rounded-md px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
               >
                 {dict.modal.cancel}

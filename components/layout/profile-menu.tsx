@@ -55,7 +55,7 @@ export function ProfileMenu({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-30 mt-1 w-44 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="popover-enter absolute right-0 top-full z-30 mt-1 w-44 origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
           <Link
             href="/profile"
             onClick={() => setIsOpen(false)}

@@ -14,6 +14,7 @@ import { EmployeeCard } from "@/components/org-structure/employee-card";
 import { VacancyCard } from "@/components/org-structure/vacancy-card";
 import { OrgStructureSearch } from "@/components/org-structure/org-structure-search";
 import { ClickablePhoto } from "@/components/ui/photo-lightbox";
+import { CountUp } from "@/components/ui/count-up";
 import type { Dictionary, Locale } from "@/lib/i18n";
 
 const ROOT_ID = "__root__";
@@ -22,19 +23,20 @@ function publishedChildren(node: DepartmentNode): DepartmentNode[] {
   return node.children.filter((child) => child.isPublished);
 }
 
-function CountBadge({ node }: { node: DepartmentNode }) {
+/** `delay`: when the numbers start counting up (ms) - after the card around them has appeared. */
+function CountBadge({ node, delay = 0 }: { node: DepartmentNode; delay?: number }) {
   const employeeTotal = countEmployees(node);
   const vacancyTotal = countVacancies(node);
   return (
     <span className="flex items-center gap-2 text-xs text-gray-500">
       <span className="flex items-center gap-1">
         <Users className="h-3 w-3" aria-hidden="true" />
-        {employeeTotal}
+        <CountUp value={employeeTotal} delay={delay} />
       </span>
       {vacancyTotal > 0 && (
         <span className="flex items-center gap-1 text-brand-700 dark:text-brand-300">
           <span className="h-1.5 w-1.5 rounded-full bg-brand-600" aria-hidden="true" />
-          {vacancyTotal}
+          <CountUp value={vacancyTotal} delay={delay} />
         </span>
       )}
     </span>
@@ -130,7 +132,7 @@ function CurrentDeptBar({ node, dict }: { node: DepartmentNode; dict: Dictionary
           </p>
         )}
       </div>
-      <CountBadge node={node} />
+      <CountBadge node={node} delay={150} />
     </div>
   );
 }
@@ -158,7 +160,7 @@ function DeptCard({
         <p className="text-xs font-medium leading-snug text-gray-900">{node.name}</p>
         {head && <p className="truncate text-[11px] text-gray-500">{head.fullName}</p>}
       </div>
-      <CountBadge node={node} />
+      <CountBadge node={node} delay={delay + 150} />
     </button>
   );
 }

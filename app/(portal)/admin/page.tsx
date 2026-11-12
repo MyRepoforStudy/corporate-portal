@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { CountUp } from "@/components/ui/count-up";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +28,15 @@ export default async function AdminOverviewPage() {
     <div className="space-y-6">
       <h1 className="text-xl font-semibold text-gray-900">Обзор</h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {cards.map((card) => (
-          <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-2xl font-semibold text-gray-900">{card.value}</p>
+        {cards.map((card, i) => (
+          <div
+            key={card.label}
+            className="reveal rounded-lg border border-gray-200 bg-white p-4"
+            style={{ animationDelay: `${i * 50}ms` }}
+          >
+            <p className="text-2xl font-semibold text-gray-900">
+              <CountUp value={card.value} delay={i * 50 + 100} />
+            </p>
             <p className="text-sm text-gray-500">{card.label}</p>
           </div>
         ))}

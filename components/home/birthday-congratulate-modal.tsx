@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 export function BirthdayCongratulateModal({
   toEmployeeId,
@@ -21,6 +22,7 @@ export function BirthdayCongratulateModal({
   const [anonymous, setAnonymous] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const { closing, close } = useModalClose(onClose);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -44,15 +46,18 @@ export function BirthdayCongratulateModal({
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`modal-overlay fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4 ${closing ? "is-closing" : ""}`}
+      onClick={close}
+    >
+      <div className="modal-panel w-full max-w-sm rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
             {dict.title} — {toName}
           </h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             aria-label={dict.close}
             className="shrink-0 text-gray-400 hover:text-gray-600"
           >
@@ -78,7 +83,7 @@ export function BirthdayCongratulateModal({
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={close}
               className="rounded-md px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
             >
               {dict.cancel}

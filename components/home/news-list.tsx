@@ -5,6 +5,7 @@ import { Eye, Heart, MessageCircle, Newspaper, Paperclip, Pin, X } from "lucide-
 import type { News, NewsCategory } from "@prisma/client";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 const RECENT_THRESHOLD_MS = 48 * 60 * 60 * 1000;
 
@@ -41,6 +42,26 @@ function PinBadge({ label }: { label: string }) {
       <Pin className="h-2.5 w-2.5" aria-hidden="true" />
       {label}
     </span>
+  );
+}
+
+/** The heart "pops" when a like is switched on. It stays still on first render, so a
+ * list of already-liked cards does not jump (callers key it by item, see NewsCard). */
+function LikeHeart({ liked, className }: { liked: boolean; className: string }) {
+  const [popped, setPopped] = useState(false);
+  const wasLiked = useRef(liked);
+
+  useEffect(() => {
+    if (liked && !wasLiked.current) setPopped(true);
+    if (!liked) setPopped(false);
+    wasLiked.current = liked;
+  }, [liked]);
+
+  return (
+    <Heart
+      className={`${className} ${liked ? "fill-current" : ""} ${popped ? "like-pop" : ""}`}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -135,7 +156,7 @@ function NewsCard({
                 likedByMe ? "text-brand-600" : "hover:text-brand-600"
               }`}
             >
-              <Heart className={`h-3.5 w-3.5 ${likedByMe ? "fill-current" : ""}`} aria-hidden="true" />
+              <LikeHeart liked={likedByMe} className="h-3.5 w-3.5" />
               {item._count.likes}
             </button>
             <span
@@ -222,6 +243,7 @@ function NewsDetailModal({
   const [error, setError] = useState<string | null>(null);
   const viewedRef = useRef(false);
   const likedByMe = item.likes.length > 0;
+  const { closing, close } = useModalClose(onClose);
 
   useEffect(() => {
     if (!viewedRef.current) {
@@ -267,9 +289,12 @@ function NewsDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
+    <div
+      className={`modal-overlay fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4 ${closing ? "is-closing" : ""}`}
+      onClick={close}
+    >
       <div
-        className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-xl"
+        className="modal-panel max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {item.imageUrl && (
@@ -281,7 +306,7 @@ function NewsDetailModal({
             <h2 className="text-lg font-semibold text-gray-900">{item.title}</h2>
             <button
               type="button"
-              onClick={onClose}
+              onClick={close}
               aria-label={common.close}
               className="shrink-0 text-gray-400 hover:text-gray-600"
             >
@@ -312,7 +337,7 @@ function NewsDetailModal({
                 likedByMe ? "text-brand-600" : "hover:text-brand-600"
               }`}
             >
-              <Heart className={`h-4 w-4 ${likedByMe ? "fill-current" : ""}`} aria-hidden="true" />
+              <LikeHeart liked={likedByMe} className="h-4 w-4" />
               {item._count.likes}
             </button>
             <span className="flex items-center gap-1.5" aria-label={dict.commentsAriaLabel}>
@@ -326,7 +351,7 @@ function NewsDetailModal({
             {comments === null ? (
               <div className="space-y-2">
                 {Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="h-8 animate-pulse rounded bg-gray-100" />
+                  <div key={i} className="skeleton-shimmer h-8 rounded bg-gray-100" />
                 ))}
               </div>
             ) : comments.length === 0 ? (
@@ -511,6 +536,7 @@ export function NewsList({
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
           <NewsCard
+            key={filtered[0].id}
             item={filtered[0]}
             locale={locale}
             newBadge={newBadge}

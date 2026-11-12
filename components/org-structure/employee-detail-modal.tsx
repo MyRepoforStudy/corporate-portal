@@ -6,6 +6,7 @@ import type { Department, Employee, Position, Workplace } from "@prisma/client";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
 import { ClickablePhoto } from "@/components/ui/photo-lightbox";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 type EmployeeDetail = Employee & { department: Department; position: Position; workplace: Workplace | null };
 
@@ -51,6 +52,7 @@ export function EmployeeDetailModal({
   const [detail, setDetail] = useState<EmployeeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const { closing, close } = useModalClose(onClose);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,8 +84,11 @@ export function EmployeeDetailModal({
     : "";
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`modal-overlay fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4 ${closing ? "is-closing" : ""}`}
+      onClick={close}
+    >
+      <div className="modal-panel w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-4">
             <ClickablePhoto
@@ -102,7 +107,7 @@ export function EmployeeDetailModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             aria-label={dict.close}
             className="shrink-0 text-gray-400 hover:text-gray-600"
           >
@@ -113,7 +118,7 @@ export function EmployeeDetailModal({
         {isLoading ? (
           <div className="space-y-2.5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-4 animate-pulse rounded bg-gray-100" style={{ width: `${80 - i * 10}%` }} />
+              <div key={i} className="skeleton-shimmer h-4 rounded bg-gray-100" style={{ width: `${80 - i * 10}%` }} />
             ))}
           </div>
         ) : (

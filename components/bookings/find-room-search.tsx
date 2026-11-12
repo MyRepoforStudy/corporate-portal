@@ -5,6 +5,7 @@ import type { Room } from "@prisma/client";
 import { toDateInputValue } from "@/lib/booking-time";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatFloor, formatCapacity } from "@/lib/i18n/format";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 export function FindRoomSearch({
   onClose,
@@ -26,6 +27,7 @@ export function FindRoomSearch({
   const [rooms, setRooms] = useState<Room[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { closing, close } = useModalClose(onClose);
 
   async function handleSearch() {
     setError(null);
@@ -47,9 +49,12 @@ export function FindRoomSearch({
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
+    <div
+      className={`modal-overlay fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4 ${closing ? "is-closing" : ""}`}
+      onClick={close}
+    >
       <div
-        className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
+        className="modal-panel w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-4 text-lg font-semibold text-gray-900">{dict.title}</h2>
@@ -100,7 +105,7 @@ export function FindRoomSearch({
         <div className="mt-4 flex justify-end gap-2">
           <button
             type="button"
-            onClick={onClose}
+            onClick={close}
             className="rounded-md px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
           >
             {dict.close}

@@ -1,6 +1,7 @@
 "use client";
 
 import { User, X } from "lucide-react";
+import { useModalClose } from "@/lib/hooks/use-modal-close";
 
 export function PhotoLightbox({
   src,
@@ -11,14 +12,16 @@ export function PhotoLightbox({
   onClose: () => void;
   closeLabel?: string;
 }) {
+  const { closing, close } = useModalClose(onClose);
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-      onClick={onClose}
+      className={`modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 ${closing ? "is-closing" : ""}`}
+      onClick={close}
     >
       <button
         type="button"
-        onClick={onClose}
+        onClick={close}
         aria-label={closeLabel}
         className="absolute right-4 top-4 text-white/80 hover:text-white"
       >
@@ -30,7 +33,7 @@ export function PhotoLightbox({
         alt=""
         draggable={false}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[85vh] max-w-[85vw] select-none rounded-lg object-contain shadow-2xl"
+        className="modal-panel max-h-[85vh] max-w-[85vw] select-none rounded-lg object-contain shadow-2xl"
       />
     </div>
   );

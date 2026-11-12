@@ -89,7 +89,7 @@ export function GlobalSearch({ dict }: { dict: Dictionary["search"] }) {
       />
 
       {isOpen && hasQuery && (
-        <div className="absolute left-0 top-full z-30 mt-1 max-h-96 w-80 overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="popover-enter absolute left-0 top-full z-30 mt-1 max-h-96 w-80 origin-top-left overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg">
           {isLoading ? (
             <p className="px-3 py-3 text-sm text-gray-500">...</p>
           ) : !hasResults ? (

@@ -17,6 +17,8 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Wrong password: the form shakes once (the class is dropped when the animation ends).
+  const [isShaking, setIsShaking] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -33,6 +35,7 @@ export function LoginForm({
 
     if (result?.error) {
       setError(dict.error);
+      setIsShaking(true);
       return;
     }
 
@@ -41,7 +44,13 @@ export function LoginForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget) setIsShaking(false);
+      }}
+      className={`space-y-4 ${isShaking ? "shake" : ""}`}
+    >
       <div>
         <label htmlFor="username" className="mb-1 block text-sm font-medium text-gray-700">
           {dict.username}

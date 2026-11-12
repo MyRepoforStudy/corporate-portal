@@ -41,7 +41,7 @@ export function HeroBanner({
   dict: Dictionary["home"];
 }) {
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-8 sm:px-10 sm:py-10">
+    <div className="relative h-full overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-8 sm:px-10 sm:py-10">
       <HeroPattern />
       <div className="relative">
         <p className="text-xl font-semibold text-white sm:text-2xl">{formatWelcome(displayName, locale)}</p>

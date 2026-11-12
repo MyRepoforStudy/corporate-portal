@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 
@@ -13,6 +13,9 @@ interface NotificationItem {
   createdAt: string;
 }
 
+/** How often the bell looks for new notifications (only while the tab is visible). */
+const POLL_MS = 60_000;
+
 export function NotificationsBell({
   dict,
 }: {
@@ -21,17 +24,31 @@ export function NotificationsBell({
   const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  // Bumped whenever more unread notifications than before are found: the bell rings once.
+  const [ringKey, setRingKey] = useState(0);
+  const previousUnread = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch("/api/notifications")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
         setItems(data.notifications);
         setUnreadCount(data.unreadCount);
-      });
+        if (data.unreadCount > previousUnread.current) setRingKey((k) => k + 1);
+        previousUnread.current = data.unreadCount;
+      })
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    load();
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [load]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -49,6 +66,7 @@ export function NotificationsBell({
 
   async function handleMarkAllRead() {
     setUnreadCount(0);
+    previousUnread.current = 0;
     setItems((prev) => prev.map((item) => ({ ...item, isRead: true })));
     await fetch("/api/notifications/read-all", { method: "PATCH" });
   }
@@ -61,16 +79,19 @@ export function NotificationsBell({
         aria-label={dict.title}
         className="relative rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
       >
-        <Bell className="h-5 w-5" aria-hidden="true" />
+        <Bell key={ringKey} className={`h-5 w-5 ${ringKey > 0 ? "bell-ring" : ""}`} aria-hidden="true" />
         {unreadCount > 0 && (
-          <span className="absolute right-1 top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-medium text-white">
+          <span
+            key={unreadCount}
+            className="badge-pop absolute right-1 top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-medium text-white"
+          >
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="popover-enter absolute right-0 top-full z-30 mt-2 w-80 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="flex items-center justify-between border-b border-gray-100 px-3 py-2">
             <span className="text-sm font-medium text-gray-900">{dict.title}</span>
             {unreadCount > 0 && (

@@ -6,11 +6,17 @@ interface ToastItem {
   id: number;
   message: string;
   variant: "error" | "success";
+  /** The exit animation is running (the toast is removed right after it). */
+  leaving?: boolean;
 }
 
 type ShowToast = (message: string, variant?: "error" | "success") => void;
 
 const ToastContext = createContext<ShowToast | null>(null);
+
+/** A toast stays on screen this long in total; the last LEAVE_MS of it are the slide-out. */
+const TOAST_MS = 4000;
+const LEAVE_MS = 200;
 
 export function useToast(): ShowToast {
   const ctx = useContext(ToastContext);
@@ -27,8 +33,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const id = Date.now() + Math.random();
     setToasts((prev) => [...prev, { id, message, variant }]);
     setTimeout(() => {
+      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, leaving: true } : t)));
+    }, TOAST_MS - LEAVE_MS);
+    setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, TOAST_MS);
   }, []);
 
   return (
@@ -39,6 +48,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={t.id}
             className={`pointer-events-auto rounded-lg border px-4 py-2.5 text-sm shadow-md ${
+              t.leaving ? "toast-leave" : "toast-enter"
+            } ${
               t.variant === "error"
                 ? "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300"
                 : "border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300"
