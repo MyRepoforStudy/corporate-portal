@@ -8,7 +8,6 @@ import {
   Building2,
   CalendarClock,
   Compass,
-  HeartHandshake,
   ShieldCheck,
   ExternalLink,
   type LucideIcon,
@@ -75,7 +74,6 @@ export function IconSidebar({
     { href: "/", label: dict.nav.home, icon: Home },
     { href: "/compass", label: dict.nav.compass, icon: Compass },
     { href: "/org-structure", label: dict.nav.orgStructure, icon: Building2 },
-    { href: "/hr", label: dict.nav.hr, icon: HeartHandshake },
     { href: "/bookings", label: dict.nav.bookings, icon: CalendarClock },
     { href: "/profile", label: dict.nav.profile, icon: User },
   ];

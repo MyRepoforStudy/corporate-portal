@@ -90,7 +90,7 @@ export function BirthdaysWidget({
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-gray-900">{b.fullName}</p>
                   <p className="truncate text-xs text-gray-500">{b.positionTitle}</p>
-                  <p className="truncate text-xs text-gray-500">{formatDateLong(b.nextOccurrence, locale)}</p>
+                  <p className="truncate text-xs text-gray-500">{formatDateLong(b.occurrence, locale)}</p>
                 </div>
               </button>
             );

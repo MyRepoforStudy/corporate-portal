@@ -13,7 +13,6 @@ export function AnnouncementsPanel({
   locale,
   title,
   emptyText,
-  allLabel,
   showMoreLabel,
   showLessLabel,
   closeLabel,
@@ -22,7 +21,6 @@ export function AnnouncementsPanel({
   locale: Locale;
   title: string;
   emptyText: string;
-  allLabel: string;
   showMoreLabel: string;
   showLessLabel: string;
   closeLabel: string;
@@ -35,16 +33,9 @@ export function AnnouncementsPanel({
 
   return (
     <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 dark:border-brand-900 dark:bg-brand-950/40">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-          <h3 className="font-medium text-brand-800 dark:text-brand-200">{title}</h3>
-        </div>
-        {announcements.length > 0 && (
-          <a href="#news" className="shrink-0 text-xs text-brand-700 hover:underline dark:text-brand-300">
-            {allLabel}
-          </a>
-        )}
+      <div className="mb-2 flex items-center gap-2">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
+        <h3 className="font-medium text-brand-800 dark:text-brand-200">{title}</h3>
       </div>
       {announcements.length === 0 ? (
         <p className="text-sm text-brand-700/70 dark:text-brand-300/70">{emptyText}</p>

@@ -14,7 +14,6 @@ export const kk: Dictionary = {
     home: "Басты бет",
     compass: "Жаңашы компасы",
     orgStructure: "Құрылым",
-    hr: "HR",
     bookings: "Брондау",
     profile: "Жеке кабинет",
     resourceLinks: "Пайдалы сілтемелер",
@@ -81,7 +80,6 @@ export const kk: Dictionary = {
     announcements: {
       title: "Назар аударыңыз",
       empty: "Маңызды хабарландырулар әлі жоқ.",
-      all: "Барлық жаңалықтар →",
       showMore: "Тағы көрсету",
       showLess: "Жию",
     },

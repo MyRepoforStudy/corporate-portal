@@ -14,7 +14,6 @@ export const ko: Dictionary = {
     home: "홈",
     compass: "신입사원 나침반",
     orgStructure: "조직도",
-    hr: "HR",
     bookings: "예약",
     profile: "마이 페이지",
     resourceLinks: "유용한 링크",
@@ -81,7 +80,6 @@ export const ko: Dictionary = {
     announcements: {
       title: "알림",
       empty: "아직 중요 공지가 없습니다.",
-      all: "전체 소식 보기 →",
       showMore: "더 보기",
       showLess: "접기",
     },

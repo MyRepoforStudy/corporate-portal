@@ -11,6 +11,7 @@ import { HolidaysWidget } from "@/components/home/holidays-widget";
 import { CongratsWidget } from "@/components/home/congrats-widget";
 import { AnnouncementsPanel } from "@/components/home/announcements-panel";
 import { MyBnkCard } from "@/components/home/my-bnk-card";
+import { AutoRefresh } from "@/components/home/auto-refresh";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
@@ -101,6 +102,7 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-6">
+      <AutoRefresh />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
         <div className="space-y-4">
@@ -138,7 +140,6 @@ export default async function HomePage() {
               locale={locale}
               title={dict.home.announcements.title}
               emptyText={dict.home.announcements.empty}
-              allLabel={dict.home.announcements.all}
               showMoreLabel={dict.home.announcements.showMore}
               showLessLabel={dict.home.announcements.showLess}
               closeLabel={dict.common.close}

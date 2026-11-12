@@ -12,7 +12,6 @@ export const ru = {
     home: "Главная",
     compass: "Компас новичка",
     orgStructure: "Оргструктура",
-    hr: "HR",
     bookings: "Бронирование",
     profile: "Личный кабинет",
     resourceLinks: "Полезные ссылки",
@@ -79,7 +78,6 @@ export const ru = {
     announcements: {
       title: "Внимание",
       empty: "Важных объявлений пока нет.",
-      all: "Все новости →",
       showMore: "Показать ещё",
       showLess: "Свернуть",
     },
