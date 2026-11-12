@@ -51,6 +51,14 @@ export const employeeSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
+  // "" clears the location (stored as null); a missing key leaves it untouched,
+  // which the bulk "apply" in the admin relies on (it sends no location at all).
+  location: z
+    .string()
+    .trim()
+    .max(200)
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v === "" ? null : v)),
 });
 
 export const vacationSchema = z.object({

@@ -103,7 +103,8 @@ export const kk: Dictionary = {
     employeeModal: {
       hireDate: "Қабылданған күні",
       workplace: "Жұмыс орны",
-      notAssigned: "Жұмыс орны тағайындалмаған",
+      location: "Орналасқан жері",
+      locationNotSet: "Орналасқан жері көрсетілмеген",
       floor: "қабат",
       desk: "орын",
       onVacation: "Демалыста",
@@ -203,6 +204,7 @@ export const kk: Dictionary = {
     unavailable: "Қолжетімсіз",
     department: "Бөлім",
     position: "Лауазым",
+    location: "Орналасқан жері",
     workplace: "Жұмыс орны",
     floor: "қабат",
     vacationRemaining: "Демалыс қалдығы",

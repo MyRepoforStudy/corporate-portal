@@ -19,6 +19,7 @@ const emptyForm = {
   departmentId: "",
   positionId: "",
   activityArea: "",
+  location: "",
 };
 
 function VacationEditor({ employee, onSaved }: { employee: EmployeeWithRelations; onSaved: () => void }) {
@@ -290,6 +291,7 @@ export function EmployeesAdmin() {
       departmentId: employee.departmentId,
       positionId: employee.positionId,
       activityArea: employee.activityArea ?? "",
+      location: employee.location ?? "",
     });
   }
 
@@ -426,6 +428,13 @@ export function EmployeesAdmin() {
           placeholder="Род деятельности / направление (необязательно)"
           value={form.activityArea}
           onChange={(e) => setForm({ ...form, activityArea: e.target.value })}
+          className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm sm:col-span-2"
+        />
+        <input
+          type="text"
+          placeholder="Локация: этаж, крыло или филиал (необязательно)"
+          value={form.location}
+          onChange={(e) => setForm({ ...form, location: e.target.value })}
           className="rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm sm:col-span-2"
         />
 
@@ -572,6 +581,7 @@ export function EmployeesAdmin() {
                   <p className="text-sm font-medium text-gray-900">{employee.fullName}</p>
                   <p className="text-xs text-gray-500">
                     {employee.position.title} · {employee.department.name} · {employee.email}
+                    {employee.location ? ` · ${employee.location}` : ""}
                   </p>
                 </div>
               </div>

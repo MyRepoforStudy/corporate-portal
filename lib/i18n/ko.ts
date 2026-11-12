@@ -103,7 +103,8 @@ export const ko: Dictionary = {
     employeeModal: {
       hireDate: "입사일",
       workplace: "근무 좌석",
-      notAssigned: "배정된 좌석이 없습니다",
+      location: "위치",
+      locationNotSet: "위치가 지정되지 않았습니다",
       floor: "층",
       desk: "좌석",
       onVacation: "휴가 중",
@@ -203,6 +204,7 @@ export const ko: Dictionary = {
     unavailable: "불가능",
     department: "부서",
     position: "직급",
+    location: "위치",
     workplace: "근무지",
     floor: "층",
     vacationRemaining: "남은 연차",

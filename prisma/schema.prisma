@@ -123,6 +123,12 @@ model Employee {
   // Position title, self-described by the employee (e.g. "Backend-разработка").
   activityArea String?
 
+  // Where the employee sits, as shown on their card: a floor/wing in the head
+  // office ("2 этаж, левое крыло") or a branch ("Шымкентский филиал"). Free
+  // text on purpose - the bank's directory has no desk-level data, unlike the
+  // structured Workplace record.
+  location String?
+
   vacationDaysTotal Int @default(28)
   vacationDaysUsed  Int @default(0)
 

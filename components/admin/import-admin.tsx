@@ -6,6 +6,8 @@ interface ImportResult {
   created: number;
   updated: number;
   errors: { row: number; message: string }[];
+  departmentsCreated: number;
+  positionsCreated: number;
 }
 
 export function ImportAdmin() {
@@ -53,9 +55,12 @@ export function ImportAdmin() {
           <code>ИТ{">"}Департамент ИТ{">"}Управление разработки</code> — так же, как в файле из
           «Экспорт в CSV»: каждый уровень пути создаётся автоматически с правильной
           вложенностью). Необязательные: <code>phone</code>, <code>birthDate</code>,{" "}
-          <code>hireDate</code> (в формате ГГГГ-ММ-ДД). Отдел(ы) и должность создаются
-          автоматически, если ещё не существуют. Сотрудник обновляется, если email уже есть в
-          системе.
+          <code>hireDate</code> (в формате ГГГГ-ММ-ДД), <code>location</code> (локация: этаж,
+          крыло или филиал) и <code>position_rank</code> (старшинство должности, целое число
+          0–1000: по нему выбирается руководитель отдела и порядок сотрудников). Отдел(ы) и
+          должность создаются автоматически, если ещё не существуют; новые отделы встают в том
+          порядке, в котором идут в файле. Сотрудник обновляется, если email уже есть в системе
+          (регистр не важен); пустые необязательные поля уже сохранённые данные не стирают.
         </p>
       </div>
 
@@ -77,6 +82,9 @@ export function ImportAdmin() {
             Создано: <span className="font-medium">{result.created}</span> · Обновлено:{" "}
             <span className="font-medium">{result.updated}</span> · Ошибок:{" "}
             <span className="font-medium">{result.errors.length}</span>
+          </p>
+          <p className="mt-1 text-xs text-gray-500">
+            Новых отделов: {result.departmentsCreated} · Новых должностей: {result.positionsCreated}
           </p>
           {result.errors.length > 0 && (
             <ul className="mt-3 space-y-1 text-sm text-red-600 dark:text-red-400">

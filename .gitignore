@@ -19,3 +19,7 @@ next-env.d.ts
 /.agents/
 /.claude/skills/
 /.claude/settings.local.json
+
+# Employee directory files contain personal data - never commit them
+*.xlsx
+/directory-import*.csv

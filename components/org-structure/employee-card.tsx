@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Palmtree } from "lucide-react";
+import { MapPin, Palmtree } from "lucide-react";
 import type { EmployeeWithPosition } from "@/lib/org-tree";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { ClickablePhoto } from "@/components/ui/photo-lightbox";
@@ -54,6 +54,12 @@ export function EmployeeCard({
           <div className="mt-1 space-y-0.5 text-gray-500">
             <p className="truncate">{employee.email}</p>
             {employee.phone && <p>{employee.phone}</p>}
+            {employee.location && (
+              <p className="flex items-center gap-1 truncate">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
+                {employee.location}
+              </p>
+            )}
           </div>
         </div>
       </button>

@@ -20,6 +20,7 @@ interface EmployeeProfile {
   photoUrl: string | null;
   bio: string | null;
   activityArea: string | null;
+  location: string | null;
   department: string;
   position: string;
   workplace: { building: string | null; floor: number; room: string; deskNumber: string } | null;
@@ -128,6 +129,12 @@ export function ProfileForm({
                 <p className="text-xs text-gray-500">{dict.position}</p>
                 <p className="text-gray-900">{employee.position}</p>
               </div>
+              {employee.location && (
+                <div className="sm:col-span-2">
+                  <p className="text-xs text-gray-500">{dict.location}</p>
+                  <p className="text-gray-900">{employee.location}</p>
+                </div>
+              )}
               {employee.workplace && (
                 <div className="sm:col-span-2">
                   <p className="text-xs text-gray-500">{dict.workplace}</p>

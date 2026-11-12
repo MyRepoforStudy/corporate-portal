@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Mail, Phone, Building2, Briefcase, CalendarDays, MapPin, Palmtree } from "lucide-react";
+import { X, Mail, Phone, Building2, Briefcase, CalendarDays, MapPin, Palmtree, Armchair } from "lucide-react";
 import type { Department, Employee, Position, Workplace } from "@prisma/client";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { formatDateLong } from "@/lib/i18n/format";
@@ -79,7 +79,7 @@ export function EmployeeDetailModal({
       ]
         .filter(Boolean)
         .join(", ")
-    : dict.notAssigned;
+    : "";
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
@@ -154,10 +154,22 @@ export function EmployeeDetailModal({
                 {dict.hireDate}: {formatDateLong(detail.hireDate, locale, true)}
               </div>
             )}
-            {detail && (
+            {detail?.location && (
               <div className="flex items-center gap-2 text-gray-600">
                 <MapPin className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
-                {workplaceText}
+                {dict.location}: {detail.location}
+              </div>
+            )}
+            {detail?.workplace && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <Armchair className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+                {dict.workplace}: {workplaceText}
+              </div>
+            )}
+            {detail && !detail.location && !detail.workplace && (
+              <div className="flex items-center gap-2 text-gray-500">
+                <MapPin className="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" />
+                {dict.locationNotSet}
               </div>
             )}
           </dl>

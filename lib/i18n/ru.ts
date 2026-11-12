@@ -101,7 +101,8 @@ export const ru = {
     employeeModal: {
       hireDate: "Дата приёма",
       workplace: "Рабочее место",
-      notAssigned: "Рабочее место не назначено",
+      location: "Локация",
+      locationNotSet: "Локация не указана",
       floor: "этаж",
       desk: "место",
       onVacation: "В отпуске",
@@ -201,6 +202,7 @@ export const ru = {
     unavailable: "Недоступно",
     department: "Отдел",
     position: "Должность",
+    location: "Локация",
     workplace: "Рабочее место",
     floor: "этаж",
     vacationRemaining: "Остаток отпуска",

@@ -17,7 +17,7 @@ export async function GET() {
     ]);
 
     const csv = toCsv([
-      ["fullName", "email", "phone", "department_path", "position", "birthDate", "hireDate"],
+      ["fullName", "email", "phone", "department_path", "position", "birthDate", "hireDate", "location"],
       ...employees.map((e) => [
         e.fullName,
         e.email,
@@ -28,6 +28,7 @@ export async function GET() {
         e.position.title,
         e.birthDate ? e.birthDate.toISOString().slice(0, 10) : "",
         e.hireDate ? e.hireDate.toISOString().slice(0, 10) : "",
+        e.location ?? "",
       ]),
     ]);
 
