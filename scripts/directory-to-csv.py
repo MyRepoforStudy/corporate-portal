@@ -4,7 +4,11 @@ portal's Admin -> Import screen (/admin/import).
 
     python scripts/directory-to-csv.py "Справочник сотрудников.xlsx" import.csv
         [--keep-zero-location]   keep a "0" location as "0 этаж" (default: treat as "not set")
-        [--no-categories]        drop the top "Категория" level from the department tree
+        [--no-categories]        drop the "Категория" level from the department tree
+        [--no-root]              keep every category as its own top-level node. By default the first
+                                 category (the Management Board) becomes the single root "Правление"
+                                 and the other categories are its children, as the org chart looked
+                                 before the directory was imported
 
 Only the Python standard library is used. Columns are found by their header
 text, merged cells are expanded, and the result has these columns:
@@ -26,6 +30,7 @@ R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 # ---- known fixes for this directory (edit when the next version has others) ----
 POSITION_FIXES = {"Специалист в филиале г.Шымент": "Специалист в филиале г. Шымкент"}
 LOCATION_ALIASES = {"ШФ": "Шымкентский филиал"}
+ROOT_NAME = "Правление"  # name of the single top node (see --no-root)
 
 # Seniority by position title, first match wins. A higher rank sorts higher in a
 # department and decides who is shown as its head.
@@ -185,6 +190,9 @@ def read_people(rows, merges, cols, header_row, args):
     # A header cell merged over several rows ("ФИО" spanning rows 3-4) would
     # otherwise read as data in the rows below the header.
     header_end = max([header_row] + [r2 for r1, c1, r2, c2 in merges if r1 <= header_row <= r2])
+    first_category = next(
+        (get(r, cols.get("category")) for r in sorted(rows)
+         if r > header_end and get(r, cols["name"]) and get(r, cols.get("category"))), "")
     last_dept = {}
     people, problems, position_fixes = [], [], []
     for r in sorted(rows):
@@ -205,6 +213,10 @@ def read_people(rows, merges, cols, header_row, args):
         for part in (dept, sub):
             if part and (not path or part != path[-1]):
                 path.append(part)
+        if args.root and category and not args.no_categories:
+            # The first category is the Management Board itself: its people sit directly in the
+            # root node, while every other category becomes a child of that root.
+            path = [ROOT_NAME] + (path[1:] if category == first_category else path)
         if not path:
             problems.append((r, get(r, cols["name"]), "нет подразделения"))
             continue
@@ -252,14 +264,17 @@ def split_duplicate_emails(people):
     return kept, dropped
 
 
-def print_report(sheet, header_row, total, kept, problems, dropped, domain_fixes, position_fixes, unranked, dst):
+def print_report(sheet, header_row, total, kept, problems, dropped, domain_fixes, position_fixes, unranked, dst,
+                 root_used=False):
     print("Лист «%s», заголовок в строке %d, людей в файле: %d" % (sheet, header_row, total))
     print("Записано в CSV: %d строк -> %s" % (len(kept), dst))
 
     nodes = {tuple(p["path"][:i]) for p in kept for i in range(1, len(p["path"]) + 1)}
     levels = Counter(len(n) for n in nodes)
     print("\nПодразделения: %d узлов (%s)" % (len(nodes), ", ".join("уровень %d: %d" % kv for kv in sorted(levels.items()))))
-    for top, n in Counter(p["path"][0] for p in kept).items():
+    # with a single root the interesting grouping is its direct children (the blocks)
+    block = lambda p: p["path"][1] if root_used and len(p["path"]) > 1 else p["path"][0]
+    for top, n in Counter(block(p) for p in kept).items():
         print("   %3d чел.  %s" % (n, top))
 
     by_title = OrderedDict()
@@ -292,13 +307,14 @@ def print_report(sheet, header_row, total, kept, problems, dropped, domain_fixes
 def main(argv):
     flags = {a for a in argv if a.startswith("--")}
     paths = [a for a in argv if not a.startswith("--")]
-    if len(paths) != 2 or flags - {"--keep-zero-location", "--no-categories"}:
+    if len(paths) != 2 or flags - {"--keep-zero-location", "--no-categories", "--no-root"}:
         print(__doc__)
         return 2
 
     class Args:
         keep_zero_location = "--keep-zero-location" in flags
         no_categories = "--no-categories" in flags
+        root = "--no-root" not in flags
 
     src, dst = paths
     sheet, rows, merges = read_first_sheet(src)
@@ -328,7 +344,7 @@ def main(argv):
 
     unranked = sorted({p["position"] for p in kept if p["rank"] is None})
     print_report(sheet, header_row, len(people) + unplaced, kept, problems, dropped,
-                 domain_fixes, position_fixes, unranked, dst)
+                 domain_fixes, position_fixes, unranked, dst, Args.root and not Args.no_categories)
     return 0
 
 
