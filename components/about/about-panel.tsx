@@ -27,6 +27,9 @@ export function AboutPanel({
   const [chapters, setChapters] = useState<AboutChapterView[]>([]);
   const [chapterId, setChapterId] = useState<string | null>(null);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
+  // Sections that were opened at least once. The text of a section (and its photos) is only put into the page
+  // from then on, so a closed section costs nothing: the tab does not download the pictures of all sections at once.
+  const [seenKeys, setSeenKeys] = useState<Set<string>>(new Set());
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -53,6 +56,7 @@ export function AboutPanel({
       if (!next.delete(key)) next.add(key);
       return next;
     });
+    setSeenKeys((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
   }
 
   // The chosen chapter can vanish after a reload (hidden or deleted in the admin).
@@ -78,7 +82,7 @@ export function AboutPanel({
         <div className="collapsible" data-open={isOpen}>
           <div>
             <div className="border-t border-gray-100 px-4 py-4">
-              {section.body.trim() ? <RichText text={section.body} /> : null}
+              {seenKeys.has(section.key) && section.body.trim() ? <RichText text={section.body} /> : null}
             </div>
           </div>
         </div>

@@ -16,7 +16,9 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isApiRoute = pathname.startsWith("/api");
+  // Uploaded files (news pictures, attachments, photos of "О нас") are for signed-in employees only. Without a
+  // session they get a 401 like an API call, not a redirect to the login page (an <img> cannot follow it).
+  const isApiRoute = pathname.startsWith("/api") || pathname.startsWith("/uploads");
 
   if (!token) {
     if (isApiRoute) {
@@ -59,9 +61,15 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // Explicit allowlist of routes that actually need auth, instead of trying
   // to exclude every static-asset pattern from a catch-all matcher. Anything
-  // not listed here (public/logo.svg, public/uploads/*, _next/*, etc.) is
-  // simply never seen by this middleware and Next.js serves it normally -
-  // far more robust than maintaining a growing exclusion regex.
+  // not listed here (public/logo.svg, _next/*, etc.) is simply never seen by
+  // this middleware and Next.js serves it normally - far more robust than
+  // maintaining a growing exclusion regex.
+  //
+  // "/uploads/:path*" must be listed: the middleware runs before Next looks
+  // at public/, and the production server serves the files of public/uploads
+  // that existed at boot straight from disk (the route in app/uploads only
+  // sees the files written later). Without this entry those files would be
+  // open to anyone who knows the link.
   matcher: [
     "/",
     "/compass/:path*",
@@ -73,5 +81,6 @@ export const config = {
     "/it-services/:path*",
     "/admin/:path*",
     "/api/:path*",
+    "/uploads/:path*",
   ],
 };
