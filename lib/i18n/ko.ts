@@ -92,6 +92,16 @@ export const ko: Dictionary = {
       findEmployee: "직원 찾기",
       compass: "신입사원 나침반",
     },
+    tabs: {
+      news: "공지사항",
+      about: "회사 소개",
+    },
+    about: {
+      all: "전체",
+      empty: "‘회사 소개’ 내용이 아직 없습니다.",
+      loadFailed: "‘회사 소개’를 불러오지 못했습니다.",
+      retry: "다시 시도",
+    },
   },
   orgStructure: {
     title: "조직도",

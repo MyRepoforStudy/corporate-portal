@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Eye, Heart, MessageCircle, Newspaper, Paperclip, Pin, X } from "lucide-react";
 import type { News, NewsCategory } from "@prisma/client";
 import type { Dictionary, Locale } from "@/lib/i18n";
@@ -413,6 +413,7 @@ export function NewsList({
   newBadge,
   common,
   dict,
+  tabBar,
 }: {
   news: NewsWithMeta[];
   categories: NewsCategory[];
@@ -422,6 +423,8 @@ export function NewsList({
   newBadge: string;
   common: Dictionary["common"];
   dict: Dictionary["newsBoard"];
+  /** "Новости | О нас" - replaces the plain "Новости" heading (see HomeTabBar). */
+  tabBar?: ReactNode;
 }) {
   const [newsState, setNewsState] = useState(news);
   const [openItemId, setOpenItemId] = useState<string | null>(null);
@@ -430,9 +433,13 @@ export function NewsList({
   if (news.length === 0) {
     return (
       <div>
-        <h2 id="news" className="mb-3 scroll-mt-6 text-lg font-semibold text-gray-900">
-          {title}
-        </h2>
+        {tabBar ? (
+          <div className="mb-3">{tabBar}</div>
+        ) : (
+          <h2 id="news" className="mb-3 scroll-mt-6 text-lg font-semibold text-gray-900">
+            {title}
+          </h2>
+        )}
         <p className="text-sm text-gray-500">{emptyText}</p>
       </div>
     );
@@ -497,9 +504,11 @@ export function NewsList({
   return (
     <>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <h2 id="news" className="scroll-mt-6 text-lg font-semibold text-gray-900">
-          {title}
-        </h2>
+        {tabBar ?? (
+          <h2 id="news" className="scroll-mt-6 text-lg font-semibold text-gray-900">
+            {title}
+          </h2>
+        )}
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             <button

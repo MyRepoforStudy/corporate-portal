@@ -335,6 +335,33 @@ model Announcement {
   @@index([order])
 }
 
+// Admin/HR-managed "О нас" tab on the home page (the Welcome Book): chapters
+// (parentId = null) that hold sections (parentId = a chapter). Every text exists in
+// three languages; an empty translation falls back to Russian (lib/about.ts).
+// `key` is a stable slug used by the JSON import/export, so a file with only
+// the Kazakh texts can be merged into existing sections without touching Russian.
+model AboutSection {
+  id          String  @id @default(cuid())
+  key         String  @unique
+  parentId    String?
+  parent      AboutSection?  @relation("AboutTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children    AboutSection[] @relation("AboutTree")
+  order       Int     @default(0)
+  isPublished Boolean @default(true)
+
+  titleRu String
+  titleKk String @default("")
+  titleKo String @default("")
+  bodyRu  String @default("")
+  bodyKk  String @default("")
+  bodyKo  String @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId, order])
+}
+
 model Holiday {
   id    String   @id @default(cuid())
   title String

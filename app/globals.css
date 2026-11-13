@@ -224,6 +224,11 @@ body {
   animation: modal-panel-out 0.16s ease-in forwards;
 }
 
+/* A tab panel that is shown again fades in (display:none -> block restarts the animation) */
+.fade-in {
+  animation: modal-overlay-in 0.2s ease-out;
+}
+
 /* Dropdowns (bell, profile menu, search results) */
 @keyframes popover-in {
   from {

@@ -92,6 +92,16 @@ export const kk: Dictionary = {
       findEmployee: "Қызметкерді табу",
       compass: "Жаңашы компасы",
     },
+    tabs: {
+      news: "Жаңалықтар",
+      about: "Біз туралы",
+    },
+    about: {
+      all: "Барлығы",
+      empty: "«Біз туралы» бөлімі әзірге бос.",
+      loadFailed: "«Біз туралы» бөлімін жүктеу мүмкін болмады.",
+      retry: "Қайталау",
+    },
   },
   orgStructure: {
     title: "Ұйымдық құрылым",

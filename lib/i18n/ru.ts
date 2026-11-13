@@ -90,6 +90,16 @@ export const ru = {
       findEmployee: "Найти сотрудника",
       compass: "Компас новичка",
     },
+    tabs: {
+      news: "Новости",
+      about: "О нас",
+    },
+    about: {
+      all: "Все",
+      empty: "Раздел «О нас» пока пуст.",
+      loadFailed: "Не удалось загрузить раздел «О нас».",
+      retry: "Повторить",
+    },
   },
   orgStructure: {
     title: "Оргструктура",

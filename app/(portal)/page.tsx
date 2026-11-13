@@ -2,6 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NewsList } from "@/components/home/news-list";
+import { HomeTabBar } from "@/components/home/home-tab-bar";
+import { HomeTabPanel } from "@/components/home/home-tab-panel";
+import { AboutPanel } from "@/components/about/about-panel";
 import { HeroBanner } from "@/components/home/hero-banner";
 import { PeopleWidget } from "@/components/home/people-widget";
 import { CalendarWidget } from "@/components/home/calendar-widget";
@@ -113,16 +116,23 @@ export default async function HomePage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <Reveal index={2}>
-          <NewsList
-            news={news}
-            categories={newsCategories}
-            locale={locale}
-            title={dict.home.news}
-            emptyText={dict.home.noNews}
-            newBadge={dict.home.newBadge}
-            common={dict.common}
-            dict={dict.newsBoard}
-          />
+          <HomeTabPanel tab="news">
+            <NewsList
+              news={news}
+              categories={newsCategories}
+              locale={locale}
+              title={dict.home.news}
+              emptyText={dict.home.noNews}
+              newBadge={dict.home.newBadge}
+              common={dict.common}
+              dict={dict.newsBoard}
+              tabBar={<HomeTabBar labels={dict.home.tabs} panel="news" />}
+            />
+          </HomeTabPanel>
+          {/* "О нас" is fetched only when the tab is opened for the first time */}
+          <HomeTabPanel tab="about" lazy>
+            <AboutPanel locale={locale} dict={dict.home.about} tabBar={<HomeTabBar labels={dict.home.tabs} panel="about" />} />
+          </HomeTabPanel>
         </Reveal>
         <div>
           <Reveal index={3}>
