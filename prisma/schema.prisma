@@ -255,23 +255,6 @@ model CompassTip {
   @@index([order])
 }
 
-// Admin/HR-managed onboarding checklist shown on "Компас новичка" -
-// stageId is a plain string (not a Prisma enum) because its allowed values
-// are already fixed in code (lib/compass/mock-data.ts -> ONBOARDING_STAGES)
-// and validated via zod; a DB enum would just make future stage changes
-// harder to migrate for no real safety gain.
-model OnboardingTask {
-  id      String @id @default(cuid())
-  title   String
-  stageId String
-  order   Int    @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([stageId, order])
-}
-
 // Admin/HR-managed FAQ shown on "Компас новичка".
 model FaqItem {
   id       String @id @default(cuid())

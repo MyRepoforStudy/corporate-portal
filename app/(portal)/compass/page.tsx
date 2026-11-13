@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getDictionary } from "@/lib/i18n";
-import { OnboardingInteractive } from "@/components/compass/onboarding-interactive";
+import { WelcomeHero } from "@/components/compass/welcome-hero";
 import { TeamSection } from "@/components/compass/team-section";
 import { TipsGrid } from "@/components/compass/tips-grid";
 import { ResourceSection } from "@/components/compass/resource-section";
@@ -25,7 +25,7 @@ export default async function CompassPage() {
 
   const employee = user.employee;
 
-  const [department, colleagues, hrDepartment, itDepartment, resourceLinks, tips, tasks, faqItems] = await Promise.all([
+  const [department, colleagues, hrDepartment, itDepartment, resourceLinks, tips, faqItems] = await Promise.all([
     employee
       ? prisma.department.findUnique({
           where: { id: employee.departmentId },
@@ -50,7 +50,6 @@ export default async function CompassPage() {
     }),
     prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] }),
     prisma.compassTip.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
-    prisma.onboardingTask.findMany({ orderBy: [{ stageId: "asc" }, { order: "asc" }] }),
     prisma.faqItem.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
   ]);
 
@@ -73,17 +72,18 @@ export default async function CompassPage() {
   return (
     <div className="max-w-4xl space-y-6">
       {employee ? (
-        <OnboardingInteractive
-          userId={session!.user.id}
+        <WelcomeHero
           fullName={employee.fullName}
           positionTitle={employee.position.title}
           departmentName={employee.department.name}
           hireDate={employee.hireDate}
           photoUrl={employee.photoUrl}
-          tasks={tasks}
           locale={locale}
-          dict={dict.compass}
-          common={dict.common}
+          title={dict.compass.title}
+          subtitle={dict.compass.subtitle}
+          hireDateLabel={dict.compass.hireDateLabel}
+          openPhotoLabel={dict.common.openPhoto}
+          closePhotoLabel={dict.common.close}
         />
       ) : (
         <div className="rounded-lg border border-gray-200 bg-white p-5">
