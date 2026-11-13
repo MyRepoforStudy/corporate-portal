@@ -503,6 +503,194 @@ button[class*="bg-brand-600"]:not(:disabled):active {
   transform: scale(0.97);
 }
 
+/* ---- Portal background (Admin -> Оформление): soft glow, Almaty mountains, snow ----
+   Markup: components/layout/portal-background.tsx. Two fixed layers that never take a click:
+   - .portal-bg--back (glow + mountains) sits behind the page: above the white canvas, below the cards;
+   - .portal-bg--snow falls over the page but under menus, dialogs and toasts (they are z-10 and up).
+   Only transform animations run (on the compositor: no layout, no repaint). People who asked for reduced
+   motion get no snow, and the glow and the mountains stand still. `.is-contained` fits a layer into the
+   preview of the admin page instead of the whole window. */
+:root {
+  --bg-k: 1; /* strength of the decoration: a dark page needs less of it */
+  --snow-rgb: 125 150 190;
+  --mtn-rgb: 100 115 145;
+  --cap-a: 0.95;
+  --portal-fall: 100vh;
+}
+
+.dark {
+  --bg-k: 0.75;
+  --snow-rgb: 235 242 255;
+  --mtn-rgb: 170 185 215;
+  --cap-a: 0.2;
+}
+
+@supports (height: 1cqh) {
+  .portal-bg {
+    --portal-fall: 100cqh; /* the height of the layer itself, so the preview box works too */
+  }
+}
+
+.portal-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  container-type: size;
+}
+
+.portal-bg.is-contained {
+  position: absolute;
+}
+
+.portal-bg--back {
+  z-index: -10;
+}
+
+.portal-bg--snow {
+  z-index: 5;
+}
+
+.portal-bg--back.is-contained {
+  z-index: 0;
+}
+
+.portal-bg--snow.is-contained {
+  z-index: 2;
+}
+
+.glow-blob {
+  position: absolute;
+  width: 56%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.glow-blob--red {
+  right: -12%;
+  top: -22%;
+  background: radial-gradient(circle, rgb(216 0 16 / calc(0.17 * var(--bg-k))), transparent 65%);
+  animation: glow-drift-a 26s ease-in-out infinite alternate;
+}
+
+.glow-blob--warm {
+  left: 14%;
+  bottom: -34%;
+  width: 62%;
+  background: radial-gradient(circle, rgb(255 140 60 / calc(0.16 * var(--bg-k))), transparent 65%);
+  animation: glow-drift-b 32s ease-in-out infinite alternate;
+}
+
+.glow-blob--violet {
+  left: 52%;
+  top: 26%;
+  width: 44%;
+  background: radial-gradient(circle, rgb(110 90 200 / calc(0.13 * var(--bg-k))), transparent 65%);
+  animation: glow-drift-a 38s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes glow-drift-a {
+  from {
+    transform: translate(-6%, -4%) scale(1);
+  }
+  to {
+    transform: translate(8%, 7%) scale(1.14);
+  }
+}
+
+@keyframes glow-drift-b {
+  from {
+    transform: translate(7%, 5%) scale(1);
+  }
+  to {
+    transform: translate(-9%, -6%) scale(1.1);
+  }
+}
+
+.mtn {
+  position: absolute;
+  left: -6%;
+  bottom: 0;
+  width: 112%;
+  will-change: transform;
+}
+
+.mtn--far {
+  height: 42%;
+  animation: mtn-sway 70s ease-in-out infinite alternate;
+}
+
+.mtn--mid {
+  height: 32%;
+  animation: mtn-sway 52s ease-in-out infinite alternate-reverse;
+}
+
+.mtn--near {
+  height: 20%;
+  animation: mtn-sway 38s ease-in-out infinite alternate;
+}
+
+.mtn--far .ridge {
+  fill: rgb(var(--mtn-rgb) / calc(0.15 * var(--bg-k)));
+}
+
+.mtn--far .caps {
+  fill: rgb(255 255 255 / var(--cap-a));
+}
+
+.mtn--mid .ridge {
+  fill: rgb(var(--mtn-rgb) / calc(0.24 * var(--bg-k)));
+}
+
+.mtn--near .ridge {
+  fill: rgb(var(--mtn-rgb) / calc(0.34 * var(--bg-k)));
+}
+
+@keyframes mtn-sway {
+  from {
+    transform: translateX(-2.5%);
+  }
+  to {
+    transform: translateX(2.5%);
+  }
+}
+
+.flake {
+  position: absolute;
+  top: 0;
+  border-radius: 50%;
+  background: rgb(var(--snow-rgb) / var(--a, 0.7));
+  animation: snow-fall var(--t, 12s) linear var(--d, 0s) infinite;
+  will-change: transform;
+}
+
+@keyframes snow-fall {
+  from {
+    transform: translate3d(0, -12px, 0);
+  }
+  to {
+    transform: translate3d(var(--dx, 0px), calc(var(--portal-fall) + 12px), 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-bg,
+  .portal-bg * {
+    animation: none !important;
+  }
+
+  .portal-bg--snow {
+    display: none;
+  }
+}
+
+@media print {
+  .portal-bg {
+    display: none;
+  }
+}
+
 /* Reduced motion: every animation and transition above (and elsewhere) is effectively off.
    The delay goes too, or staggered blocks (.reveal) would sit invisible until their turn. */
 @media (prefers-reduced-motion: reduce) {

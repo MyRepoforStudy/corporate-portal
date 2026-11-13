@@ -453,3 +453,13 @@ model Workplace {
   @@index([floor])
   @@index([building])
 }
+
+// Site-wide settings the administrator changes in the admin panel. One row per
+// group of settings ("appearance": the soft glow, the Almaty mountains and the
+// snow behind the pages); `value` is JSON that the code validates and fills with
+// defaults (lib/appearance.ts), so a new option needs no migration.
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}

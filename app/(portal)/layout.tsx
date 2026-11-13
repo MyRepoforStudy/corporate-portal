@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { Header } from "@/components/layout/header";
 import { IconSidebar } from "@/components/layout/icon-sidebar";
 import { SideDecoration } from "@/components/layout/side-decoration";
+import { PortalBackground } from "@/components/layout/portal-background";
 import { ToastProvider } from "@/components/ui/toast-provider";
+import { getAppearance } from "@/lib/appearance-db";
 import { getLocale, getDictionary } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import { hasBookingAccess } from "@/lib/booking-access";
@@ -23,18 +25,20 @@ export default async function PortalLayout({
   const locale = getLocale();
   const dict = getDictionary(locale);
   const theme = getTheme();
-  const [resourceLinks, user] = await Promise.all([
+  const [resourceLinks, user, appearance] = await Promise.all([
     prisma.resourceLink.findMany({ orderBy: [{ order: "asc" }, { title: "asc" }] }),
     prisma.user.findUnique({
       where: { id: session.user.id },
       include: { employee: { include: { department: true } } },
     }),
+    getAppearance(),
   ]);
 
   const canBook = hasBookingAccess({ role: session.user.role, canBookRooms: user?.canBookRooms });
 
   return (
     <ToastProvider>
+      <PortalBackground appearance={appearance} />
       <SideDecoration />
       <div className="min-h-screen">
         <Header

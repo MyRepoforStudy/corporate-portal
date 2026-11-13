@@ -17,6 +17,7 @@ const ADMIN_LINKS = [
   { href: "/admin/resource-links", label: "Ресурсы", adminOnly: true },
   { href: "/admin/bookings", label: "Бронирования", adminOnly: true },
   { href: "/admin/users", label: "Пользователи", adminOnly: true },
+  { href: "/admin/appearance", label: "Оформление", adminOnly: true },
   { href: "/admin/audit-log", label: "Журнал", adminOnly: true },
 ];
 
