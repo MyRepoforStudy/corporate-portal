@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getLocale, getDictionary } from "@/lib/i18n";
 import { EmployeeCard } from "@/components/org-structure/employee-card";
 import { VacationCard } from "@/components/hr/vacation-card";
+import { hasBookingAccess } from "@/lib/booking-access";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export default async function HrPage() {
     { href: "/compass", label: dict.hr.quickLinkCompass, icon: Compass },
     { href: "/bookings", label: dict.hr.quickLinkBooking, icon: CalendarClock },
     { href: "/profile", label: dict.hr.quickLinkProfile, icon: User },
-  ];
+  ].filter((link) => link.href !== "/bookings" || hasBookingAccess({ role: session!.user.role, canBookRooms: user.canBookRooms }));
 
   return (
     <div className="max-w-4xl space-y-6">

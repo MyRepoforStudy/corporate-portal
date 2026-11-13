@@ -14,6 +14,7 @@ import { AutoRefresh } from "@/components/home/auto-refresh";
 import { Reveal } from "@/components/ui/reveal";
 import { getUpcomingBirthdays } from "@/lib/birthdays";
 import { getNewHireWindow } from "@/lib/new-hires";
+import { hasBookingAccess } from "@/lib/booking-access";
 import { getLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -92,13 +93,14 @@ export default async function HomePage() {
 
   const upcomingBirthdays = getUpcomingBirthdays(employeesWithBirthdays);
   const employee = currentUser?.employee ?? null;
+  const canBook = hasBookingAccess({ role: session!.user.role, canBookRooms: currentUser?.canBookRooms });
 
   return (
     <div className="space-y-6">
       <AutoRefresh />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <Reveal index={0} className="h-full">
-          <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} />
+          <HeroBanner displayName={session!.user.name ?? ""} locale={locale} dict={dict.home} canBook={canBook} />
         </Reveal>
         {employee && (
           <Reveal index={1} className="h-full">
@@ -166,6 +168,7 @@ export default async function HomePage() {
                 booking={nearestBooking}
                 locale={locale}
                 dict={dict.home}
+                canBook={canBook}
               />
             </Reveal>
           </div>

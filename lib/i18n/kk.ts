@@ -228,7 +228,6 @@ export const kk: Dictionary = {
     activityAreaPlaceholder: "Қызмет саласы / бағыты",
     photoLabel: "Фото",
     uploading: "Жүктелуде...",
-    bioLabel: "Өзі туралы",
     save: "Сақтау",
     saveSuccess: "Өзгерістер сақталды",
     uploadPhotoError: "Фотоны жүктеу мүмкін болмады",

@@ -8,6 +8,7 @@ import { SideDecoration } from "@/components/layout/side-decoration";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { getLocale, getDictionary } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
+import { hasBookingAccess } from "@/lib/booking-access";
 
 export default async function PortalLayout({
   children,
@@ -30,6 +31,8 @@ export default async function PortalLayout({
     }),
   ]);
 
+  const canBook = hasBookingAccess({ role: session.user.role, canBookRooms: user?.canBookRooms });
+
   return (
     <ToastProvider>
       <SideDecoration />
@@ -46,6 +49,7 @@ export default async function PortalLayout({
           <IconSidebar
             dict={dict}
             canAccessAdmin={session.user.role === "ADMIN" || session.user.role === "HR"}
+            canBook={canBook}
             resourceLinks={resourceLinks}
           />
           <main className="min-w-0 flex-1 px-6 py-6 lg:px-10">{children}</main>

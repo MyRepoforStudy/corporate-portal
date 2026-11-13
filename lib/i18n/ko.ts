@@ -228,7 +228,6 @@ export const ko: Dictionary = {
     activityAreaPlaceholder: "직무 분야 / 담당 업무",
     photoLabel: "사진",
     uploading: "업로드 중...",
-    bioLabel: "자기소개",
     save: "저장",
     saveSuccess: "변경 사항이 저장되었습니다",
     uploadPhotoError: "사진을 업로드하지 못했습니다",

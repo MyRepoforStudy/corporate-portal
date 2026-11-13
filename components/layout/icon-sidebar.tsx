@@ -83,10 +83,13 @@ interface Highlight {
 export function IconSidebar({
   dict,
   canAccessAdmin,
+  canBook,
   resourceLinks,
 }: {
   dict: Dictionary;
   canAccessAdmin: boolean;
+  /** Without booking access (see lib/booking-access.ts) there is no "Бронирование" tab. */
+  canBook: boolean;
   resourceLinks: ResourceLink[];
 }) {
   const pathname = usePathname();
@@ -100,7 +103,7 @@ export function IconSidebar({
     { href: "/org-structure", label: dict.nav.orgStructure, icon: Building2 },
     { href: "/bookings", label: dict.nav.bookings, icon: CalendarClock },
     { href: "/profile", label: dict.nav.profile, icon: User },
-  ];
+  ].filter((link) => canBook || link.href !== "/bookings");
 
   // Measure the active row and put the highlight on it. Until the first
   // measurement (server render, hydration) the active row paints its own

@@ -8,13 +8,16 @@ export function HeroBanner({
   displayName,
   locale,
   dict,
+  canBook,
 }: {
   displayName: string;
   locale: Locale;
   dict: Dictionary["home"];
+  /** Only people with booking access get the "book a room" shortcut. */
+  canBook: boolean;
 }) {
   const actions = [
-    { href: "/bookings", label: dict.quickActions.bookRoom, icon: CalendarClock },
+    ...(canBook ? [{ href: "/bookings", label: dict.quickActions.bookRoom, icon: CalendarClock }] : []),
     { href: "/org-structure", label: dict.quickActions.findEmployee, icon: Search },
     { href: "/compass", label: dict.quickActions.compass, icon: Compass },
   ];

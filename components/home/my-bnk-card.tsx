@@ -23,20 +23,21 @@ export function MyBnkCard({
           {profileLink} →
         </Link>
       </div>
-      {/* flex-1 + items-center: the card stretches to the height of the banner next to it, the person sits in the middle */}
-      <div className="flex flex-1 items-center gap-3">
+      {/* The person fills the rest of the card (it is as tall as the banner next to it): a big photo and
+          larger text; long names, positions and departments wrap instead of being cut off. */}
+      <div className="flex flex-1 items-center gap-4">
         {photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={photoUrl} alt="" className="h-12 w-12 shrink-0 rounded-full border border-gray-200 object-cover" />
+          <img src={photoUrl} alt="" className="h-24 w-24 shrink-0 rounded-full border border-gray-200 object-cover" />
         ) : (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-medium text-gray-500">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-3xl font-medium text-gray-500">
             {fullName.charAt(0)}
           </div>
         )}
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-gray-900">{fullName}</p>
-          {positionTitle && <p className="truncate text-xs text-gray-600">{positionTitle}</p>}
-          {departmentName && <p className="truncate text-xs text-gray-500">{departmentName}</p>}
+          <p className="break-words text-lg font-semibold leading-snug text-gray-900">{fullName}</p>
+          {positionTitle && <p className="mt-1 text-sm text-gray-700">{positionTitle}</p>}
+          {departmentName && <p className="mt-0.5 text-sm text-gray-500">{departmentName}</p>}
         </div>
       </div>
     </div>

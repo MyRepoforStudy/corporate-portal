@@ -17,11 +17,14 @@ export function CalendarWidget({
   booking,
   locale,
   dict,
+  canBook,
 }: {
   holidays: Holiday[];
   booking: NearestBooking | null;
   locale: Locale;
   dict: Dictionary["home"];
+  /** The link to the bookings is only for people with booking access (a meeting they were invited to is still shown). */
+  canBook: boolean;
 }) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
@@ -60,12 +63,14 @@ export function CalendarWidget({
           <p className="text-sm text-gray-500">{dict.nearestBooking.empty}</p>
         )}
 
-        <Link
-          href="/bookings"
-          className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200"
-        >
-          {dict.nearestBooking.cta}
-        </Link>
+        {canBook && (
+          <Link
+            href="/bookings"
+            className="mt-3 inline-block text-sm font-medium text-brand-700 hover:text-brand-800 dark:text-brand-300 dark:hover:text-brand-200"
+          >
+            {dict.nearestBooking.cta}
+          </Link>
+        )}
       </section>
     </div>
   );

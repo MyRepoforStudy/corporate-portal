@@ -18,7 +18,6 @@ interface EmployeeProfile {
   email: string;
   phone: string | null;
   photoUrl: string | null;
-  bio: string | null;
   activityArea: string | null;
   location: string | null;
   department: string;
@@ -42,7 +41,6 @@ export function ProfileForm({
     phone: employee?.phone ?? "",
     email: employee?.email ?? account.email,
     photoUrl: employee?.photoUrl ?? "",
-    bio: employee?.bio ?? "",
     activityArea: employee?.activityArea ?? "",
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -215,16 +213,6 @@ export function ProfileForm({
                 />
                 {isUploading && <span className="text-xs text-gray-500">{dict.uploading}</span>}
               </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs text-gray-500">{dict.bioLabel}</label>
-              <textarea
-                value={form.bio}
-                onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                rows={3}
-                className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
-              />
             </div>
 
             {error && <p className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{error}</p>}

@@ -226,7 +226,6 @@ export const ru = {
     activityAreaPlaceholder: "Род деятельности / направление",
     photoLabel: "Фото",
     uploading: "Загрузка...",
-    bioLabel: "О себе",
     save: "Сохранить",
     saveSuccess: "Изменения сохранены",
     uploadPhotoError: "Не удалось загрузить фото",

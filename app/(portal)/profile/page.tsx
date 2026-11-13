@@ -39,7 +39,6 @@ export default async function ProfilePage() {
                 email: employee.email,
                 phone: employee.phone,
                 photoUrl: employee.photoUrl,
-                bio: employee.bio,
                 activityArea: employee.activityArea,
                 location: employee.location,
                 department: employee.department.name,

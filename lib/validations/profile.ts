@@ -18,13 +18,6 @@ export const profileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
-  bio: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .or(z.literal(""))
-    .transform((v) => (v ? v : undefined)),
   activityArea: z
     .string()
     .trim()
