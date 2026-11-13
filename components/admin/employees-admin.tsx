@@ -5,6 +5,7 @@ import { Download, Search, SearchX, Users } from "lucide-react";
 import type { Department, Employee, Position } from "@prisma/client";
 import { useCrudList } from "@/lib/hooks/use-crud-list";
 import { toDateInputValue } from "@/lib/booking-time";
+import { UNKNOWN_BIRTH_YEAR } from "@/lib/birthdays";
 import { EmptyState } from "@/components/ui/empty-state";
 
 type EmployeeWithRelations = Employee & { department: Department; position: Position };
@@ -352,6 +353,11 @@ export function EmployeesAdmin() {
             onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
             className="w-full rounded-md border border-gray-300 bg-white text-gray-900 px-3 py-2 text-sm"
           />
+          {form.birthDate.startsWith(`${UNKNOWN_BIRTH_YEAR}-`) && (
+            <p className="mt-1 text-xs text-gray-500">
+              Год {UNKNOWN_BIRTH_YEAR} — служебное значение: год рождения неизвестен. На сайте показываются только день и месяц.
+            </p>
+          )}
         </div>
         <div>
           <label className="mb-1 block text-xs text-gray-500">Дата приёма на работу (необязательно)</label>

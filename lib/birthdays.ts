@@ -1,3 +1,15 @@
+/**
+ * An imported birthday often has no year (the HR list gives only the day and the month), but Employee.birthDate
+ * is a full date. An unknown year is stored as this leap year (so 29 February fits): an obviously synthetic value
+ * that no colleague was born in. The portal only ever shows the day and the month of a birthday.
+ */
+export const UNKNOWN_BIRTH_YEAR = 1904;
+
+/** Day and month at 12:00 UTC, so it is the same calendar day in every time zone from UTC-12 to UTC+11. */
+export function birthDateOf(day: number, month: number, year: number = UNKNOWN_BIRTH_YEAR): Date {
+  return new Date(Date.UTC(year, month - 1, day, 12));
+}
+
 export interface UpcomingBirthday {
   id: string;
   fullName: string;
